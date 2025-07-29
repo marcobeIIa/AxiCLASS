@@ -113,6 +113,7 @@
  */
 
 #include "background.h"
+#include "romberg.h"  // for romberg integration of DE fluid for IC
 //#include "gsl/gsl_sf_gamma.h"
 //#include "gsl/gsl_sf_hyperg.h"
 
@@ -741,6 +742,23 @@ int background_functions(
  * @return the error status
  */
 
+//  This is for numerical integration of 3*(1+w_fld)/a for initial conditions. done with Romberg's method
+// Helper structure for the integrand
+typedef struct {
+    struct background *pba;
+} integrand_params;
+
+// The integrand function: 3*(1+w_fld(a))/a
+static double integrand_fld(double a, void *params) {
+    integrand_params *p = (integrand_params *)params;
+    double w_fld, dw_over_da, integral_fld;
+    
+    // Get w_fld at this scale factor
+    background_w_fld(p->pba, a, &w_fld, &dw_over_da, &integral_fld);
+    
+    return 3.0 * (1.0 + w_fld) / a;
+}
+
 int background_w_fld(
                      struct background * pba,
                      double a,
@@ -771,6 +789,12 @@ int background_w_fld(
     }
     else if(pba->ede_parametrization == EDE_is_DR){
       *w_fld = 1./3;
+    }
+    else if(pba->ede_parametrization == pheno_axion_p){
+      // w_ede(a) defined from a mash-up of 1811.04083 and 1905.12618
+      w_f = pba->w_fld_f; //e.o.s. once the field starts oscillating
+      w_i = pba->w_fld_i; //e.o.s. once the field starts oscillating
+      *w_fld = (w_f-w_i)/pow((1+pow(pba->a_c/a,3*(1+w_f)/pba->nu_fld)),pba->nu_fld)+w_i;
     }
     else {
       // Omega_ede(a) taken from eq. (10) in 1706.00730
@@ -813,8 +837,12 @@ int background_w_fld(
       *dw_over_da_fld =    (3*pba->a_c*pow(pba->a_c/a,-1+3*(1+w_f)/pba->nu_fld)*(1+w_f)*(w_f-w_i))
       /(a*a*pba->nu_fld*pow(1 + (pba->a_c/a,3*(1+w_f)/pba->nu_fld),2));
 
-    }
-    else if(pba->ede_parametrization == EDE_is_DR){
+    }    
+  else if(pba->ede_parametrization == pheno_axion_p){
+      *dw_over_da_fld = (pba->nu_fld)*(3*pba->a_c*pow(pba->a_c/a,-1+3*(1+w_f)/pba->nu_fld)*(1+w_f)*(w_f-w_i))
+      /(a*a*pba->nu_fld*pow(1 + (pba->a_c/a,3*(1+w_f)/pba->nu_fld),2));
+    }    
+  else if(pba->ede_parametrization == EDE_is_DR){
       *dw_over_da_fld = 0;
     }
     else {
@@ -854,6 +882,9 @@ int background_w_fld(
       // *integral_fld = //-3*(1+w)*log(a/pba->a_today) - pba->nu_fld*log(1+ pow(pba->a_c[n]/a,3*(1+w)/pba->nu_fld));
       //   3*(1+w)*( log(1/a)
       //   + pba->nu_fld/3/(1+w)*log( (1 + pow((pba->a_c),3*(1+w)/pba->nu_fld) ) / (1 + pow((pba->a_c/a),3*(1+w)/pba->nu_fld) ) ) );
+    }
+    else if (pba->ede_parametrization == pheno_axion_p){
+      *integral_fld = 0;
     }
     else if(pba->ede_parametrization == EDE_is_DR){
       *integral_fld = -4*log(a);
@@ -2771,6 +2802,18 @@ int background_initial_conditions(
        numerically the simple 1d integral [int_{a_ini}^{a_0} 3
        [(1+w_fld)/a] da] (e.g. with the Romberg method?) instead of
        calling background_w_fld */
+    if (pba->ede_parametrization == pheno_axion_p){
+      /* For the pheno_axion_p parametrization, we need to set the initial value of rho_fld
+         such that it is consistent with the value of f_ede at z_c */
+        /* integrate rho_fld(a) from a_ini to a_0, to get rho_fld(a_ini) given rho_fld(a0) */
+        integrand_params params;
+        params.pba = pba;
+        /* Compute the integral numerically using Romberg */
+        integral_fld = romberg(integrand_fld, *loga_ini, 1.0, &params);
+    }
+    else{
+      integral_fld = 3.*(1.+w_fld)/a*log(a/ppr->a_ini_over_a_today_default);
+    }
 
     /* rho_fld at initial time */
     pvecback_integration[pba->index_bi_rho_fld] = rho_fld_today * exp(integral_fld);

@@ -54,7 +54,7 @@ enum spatial_curvature {flat,open,closed};
 /** list of possible parametrisations of the DE equation of state */
 
 enum equation_of_state {CLP,EDE};
-enum ede_parametrization {tracker,pheno_axion,pheno_ADE,EDE_is_DR};
+enum ede_parametrization {tracker,pheno_axion,pheno_axion_p,pheno_ADE,EDE_is_DR};
 
 
 /** list of possible parametrizations of the varying fundamental constants */

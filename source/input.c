@@ -3870,6 +3870,7 @@ int input_read_parameters_species(struct file_content * pfc,
                   if (flag1 == _TRUE_) {
                     if ((strstr(string1,"tracker") != NULL) ) pba->ede_parametrization = tracker;
                     else if ((strstr(string1,"pheno_axion") != NULL)) pba->ede_parametrization = pheno_axion;
+                    else if ((strstr(string1,"pheno_axion_p") != NULL)) pba->ede_parametrization = pheno_axion_p;
                     else if ((strstr(string1,"pheno_ADE") != NULL)) pba->ede_parametrization = pheno_ADE;
                     else if ((strstr(string1,"EDE_is_DR") != NULL)) pba->ede_parametrization = EDE_is_DR;
                     else class_stop(errmsg,"incomprehensible input '%s' for the field 'ede_parametrization'",string1);

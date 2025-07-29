@@ -62,6 +62,18 @@ HEATING = external/heating
 HALOFIT = external/Halofit
 HMCODE = external/HMcode
 
+########ROMBERG INTEGRATION ########
+CFLAGS = -Wall -O2 -Iinclude -Itools
+
+OBJS = ... romberg.o background.o ...
+
+romberg.o: tools/romberg.c include/romberg.h
+	$(CC) $(CFLAGS) -c tools/romberg.c -o $@
+
+background.o: source/background.c include/background.h include/romberg.h
+	$(CC) $(CFLAGS) -c source/background.c -o $@
+
+
 ########################################################
 ###### IN PRINCIPLE THE REST SHOULD BE LEFT UNCHANGED ##
 ########################################################
