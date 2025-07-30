@@ -147,6 +147,7 @@ test_lensedCls.py
 ./include/precisions.h
 ./include/primordial.h
 ./include/quadrature.h
+./include/romberg.h
 ./include/sparse.h
 ./include/svnversion.h
 ./include/thermodynamics.h
@@ -163,6 +164,7 @@ test_lensedCls.py
 ./python/interface_generator.py
 ./python/setup.py
 ./python/test_class.py
+./source/.DS_Store
 ./source/background.c
 ./source/distortions.c
 ./source/fourier.c
@@ -187,6 +189,7 @@ test_lensedCls.py
 ./tools/hyperspherical.c
 ./tools/parser.c
 ./tools/quadrature.c
+./tools/romberg.c
 ./tools/sparse.c
 ./tools/trigonometric_integrals.c
 classy.egg-info/PKG-INFO
