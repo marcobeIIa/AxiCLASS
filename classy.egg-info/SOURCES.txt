@@ -87,6 +87,7 @@ test_lensedCls.py
 ./external_fz/DarkAges/data/pi0_normed.dat
 ./external_fz/DarkAges/data/piCh_normed.dat
 ./external_fz/bin/DarkAges
+./external_fz/models/.DS_Store
 ./external_fz/models/HiggsPortal/prepare.py
 ./external_fz/models/HiggsPortal/run.py
 ./external_fz/models/HiggsPortal/data/Fractions.dat
@@ -335,6 +336,7 @@ include/perturbations.h
 include/precisions.h
 include/primordial.h
 include/quadrature.h
+include/romberg.h
 include/sparse.h
 include/svnversion.h
 include/thermodynamics.h
@@ -351,6 +353,7 @@ python/extract_errors.py
 python/interface_generator.py
 python/setup.py
 python/test_class.py
+source/.DS_Store
 source/background.c
 source/distortions.c
 source/fourier.c
@@ -376,5 +379,6 @@ tools/hermite6_interpolation_csource.h
 tools/hyperspherical.c
 tools/parser.c
 tools/quadrature.c
+tools/romberg.c
 tools/sparse.c
 tools/trigonometric_integrals.c

@@ -62,17 +62,6 @@ HEATING = external/heating
 HALOFIT = external/Halofit
 HMCODE = external/HMcode
 
-########ROMBERG INTEGRATION ########
-CFLAGS = -Wall -O2 -Iinclude -Itools
-
-OBJS = ... romberg.o background.o ...
-
-build/romberg.o: tools/romberg.c include/romberg.h
-	$(CC) $(CFLAGS) -c tools/romberg.c -o build/romberg.o
-
-background.o: source/background.c include/background.h include/romberg.h
-	$(CC) $(CFLAGS) -c source/background.c -o $@
-
 ########################################################
 ###### IN PRINCIPLE THE REST SHOULD BE LEFT UNCHANGED ##
 ########################################################
@@ -127,7 +116,7 @@ HEADERFILES += $(wildcard ./$(HMCODE)/*.h)
 %.opp:  %.c .base $(HEADERFILES)
 	cd $(WRKDIR);$(CPP) $(OPTFLAG) $(OMPFLAG) $(CCFLAG) $(INCLUDES) -c ../$< -o $*.opp
 
-TOOLS = growTable.o dei_rkck.o sparse.o evolver_rkck.o  evolver_ndf15.o arrays.opp parser.o quadrature.o hyperspherical.opp common.o trigonometric_integrals.o
+TOOLS = growTable.o dei_rkck.o sparse.o evolver_rkck.o  evolver_ndf15.o arrays.opp parser.o quadrature.o hyperspherical.opp common.o trigonometric_integrals.o romberg.o
 
 SOURCE = input.o background.o thermodynamics.o perturbations.opp primordial.opp fourier.o transfer.opp harmonic.opp lensing.opp distortions.o
 
