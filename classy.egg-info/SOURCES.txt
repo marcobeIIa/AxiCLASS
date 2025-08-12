@@ -167,6 +167,7 @@ test_lensedCls.py
 ./python/test_class.py
 ./source/.DS_Store
 ./source/background.c
+./source/background.o
 ./source/distortions.c
 ./source/fourier.c
 ./source/harmonic.c
@@ -276,6 +277,7 @@ external_fz/DarkAges/data/muon_normed.dat
 external_fz/DarkAges/data/pi0_normed.dat
 external_fz/DarkAges/data/piCh_normed.dat
 external_fz/bin/DarkAges
+external_fz/models/.DS_Store
 external_fz/models/HiggsPortal/prepare.py
 external_fz/models/HiggsPortal/run.py
 external_fz/models/HiggsPortal/data/Fractions.dat
@@ -355,6 +357,7 @@ python/setup.py
 python/test_class.py
 source/.DS_Store
 source/background.c
+source/background.o
 source/distortions.c
 source/fourier.c
 source/harmonic.c

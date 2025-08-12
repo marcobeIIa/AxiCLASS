@@ -741,6 +741,43 @@ int background_functions(
  * @return the error status
  */
 
+/* Compute t = 1 / (1 + (a/ac)^(3*(1+w_f)/p)) */
+static double compute_t(double a, double ac, double w_f, double p) {
+    if (!(p > 0.0) || ac <= 0.0 || a <= 0.0) return NAN;
+    double exponent = 3.0 * (1.0 + w_f) / p;
+    double log_ratio = log(a) - log(ac);
+    double r = exp(exponent * log_ratio);
+    return 1.0 / (1.0 + r);
+}
+
+/* Evaluate S = (p/3) * sum_{n>=0} ( 1/(p+n) * (2^{-(p+n)} - t^{p+n}) ) */
+static double compute_series_p_sum(double p, double t, double t0) {
+    if (!(p > 0.0) || !(t >= 0.0 && t <= 1.0)) return NAN;
+
+    const int MAX_IT = 20000;
+    const double EPS = 1e-5;
+
+    double sum = 0.0;
+    double tpow = (t == 0.0) ? 0.0 : pow(t, p);
+    double t0pow = (t0 == 0.0) ? 0.0 : pow(t0, p);
+
+    for (int n = 0; n < MAX_IT; ++n) {
+        double denom = p + (double)n;
+        double term = (t0pow - tpow) / denom;
+        sum += term;
+
+        if (fabs(t0pow / denom) < EPS && fabs(tpow / denom) < EPS) break;
+
+
+        t0pow *= t0;
+        tpow *= t;
+
+        if (t0pow == 0.0 && tpow == 0.0) break;
+    }
+    return p * sum;
+}
+
+
 int background_w_fld(
                      struct background * pba,
                      double a,
@@ -767,7 +804,7 @@ int background_w_fld(
       w_f = pba->w_fld_f; //e.o.s. once the field starts oscillating
       w_i = pba->w_fld_i; //e.o.s. once the field starts oscillating
       // *w_fld = (1+w_f)/(1+pow(pba->a_c/a,3*(1+w_f)/pba->nu_fld))-1;
-      *w_fld = (w_f-w_i)/(1+pow(pba->a_c/a,3*(w_f-w_i)/pba->nu_fld))+w_i;
+      *w_fld = (w_f-w_i)/pow((1+pow(pba->a_c/a,3*(w_f-w_i)/pba->nu_fld)),pba->nu_fld)+w_i;
     }
     else if(pba->ede_parametrization == EDE_is_DR){
       *w_fld = 1./3;
@@ -843,7 +880,14 @@ int background_w_fld(
     *integral_fld = 3.*((1.+pba->w0_fld+pba->wa_fld)*log(1./a) + pba->wa_fld*(a-1.));
     break;
   case EDE:
-  if (pba->ede_parametrization == pheno_axion || pba->ede_parametrization == pheno_ADE){
+/* Main modification integrating into your original logic */
+    if (pba->ede_parametrization == pheno_axion || pba->ede_parametrization == pheno_ADE) {
+        //// Compute t and the series sum
+        //double t = compute_t(a, pba->a_c, w_f, pba->nu_fld);
+        //double t0 = compute_t(1, pba->a_c, w_f, pba->nu_fld);
+        //double series_sum = compute_series_p_sum(pba->nu_fld, t, t0);
+   //     *integral_fld = series_sum;
+  //if (pba->ede_parametrization == pheno_axion || pba->ede_parametrization == pheno_ADE){
     powac=pow(pba->a_c,3*(1+w_f)/pba->nu_fld);
     powa=pow(a,3*(1+w_f));
       *integral_fld = //-3*(1+w)*log(a/pba->a_today) - pba->nu_fld*log(1+ pow(pba->a_c[n]/a,3*(1+w)/pba->nu_fld));
@@ -2648,6 +2692,13 @@ class_call(background_initial_conditions(ppr,pba,pvecback,pvecback_integration,&
  * @return the error status
  */
 
+static double integrand(double a, void *params) {
+    struct background *pba = (struct background *) params;
+    double exponent = 3.0 * (1.0 + pba->w_fld_f) / pba->nu_fld;
+    double term = pow(pba->a_c / a, exponent);
+    return 3.0 * (1.0 + pba->w_fld_f) / (a * pow(1.0 + term, pba->nu_fld));
+}
+
 int background_initial_conditions(
                                   struct precision *ppr,
                                   struct background *pba,
@@ -2764,13 +2815,17 @@ int background_initial_conditions(
     rho_fld_today = pba->Omega0_fld * pow(pba->H0,2);
 
     /* integrate rho_fld(a) from a_ini to a_0, to get rho_fld(a_ini) given rho_fld(a0) */
-    class_call(background_w_fld(pba,a,&w_fld,&dw_over_da_fld,&integral_fld), pba->error_message, pba->error_message);
+    //class_call(background_w_fld(pba,a,&w_fld,&dw_over_da_fld,&integral_fld), pba->error_message, pba->error_message);
 
     /* Note: for complicated w_fld(a) functions with no simple
        analytic integral, this is the place were you should compute
        numerically the simple 1d integral [int_{a_ini}^{a_0} 3
        [(1+w_fld)/a] da] (e.g. with the Romberg method?) instead of
        calling background_w_fld */
+
+        // integrand needs to match romberg's expected type: f(x, params)
+        #include "romberg.h"
+    double integral_fld = romberg(integrand, a, 1.0, pba);
 
     /* rho_fld at initial time */
     pvecback_integration[pba->index_bi_rho_fld] = rho_fld_today * exp(integral_fld);
