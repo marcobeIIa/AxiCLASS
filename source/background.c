@@ -847,8 +847,8 @@ int background_w_fld(
     break;
   case EDE:
   if (pba->ede_parametrization == pheno_axion || pba->ede_parametrization == pheno_ADE){
-      *dw_over_da_fld =    (3*pba->a_c*pow(pba->a_c/a,-1+3*(1+w_f)/pba->nu_fld)*(1+w_f)*(w_f-w_i))
-      /(a*a*pba->nu_fld*pow(1 + (pba->a_c/a,3*(1+w_f)/pba->nu_fld),2));
+      *dw_over_da_fld =    pba->nu_fld * (3*pba->a_c*pow(pba->a_c/a,-1+3*(1+w_f)/pba->nu_fld)*(1+w_f)*(w_f-w_i))
+      /(a*a*pba->nu_fld*pow(1 + (pba->a_c/a,3*(1+w_f)/pba->nu_fld),pba->nu_fld + 1));
 
     }
     else if(pba->ede_parametrization == EDE_is_DR){
@@ -890,10 +890,11 @@ int background_w_fld(
   //if (pba->ede_parametrization == pheno_axion || pba->ede_parametrization == pheno_ADE){
     powac=pow(pba->a_c,3*(1+w_f)/pba->nu_fld);
     powa=pow(a,3*(1+w_f));
-      *integral_fld = //-3*(1+w)*log(a/pba->a_today) - pba->nu_fld*log(1+ pow(pba->a_c[n]/a,3*(1+w)/pba->nu_fld));
+      *integral_fld = 0;
+      //-3*(1+w)*log(a/pba->a_today) - pba->nu_fld*log(1+ pow(pba->a_c[n]/a,3*(1+w)/pba->nu_fld));
         // 3*(w_f-w_i)*( log(1/a)
         // + pba->nu_fld/3/(w_f-w_i)*log( (1 + pow((pba->a_c),3*(w_f-w_i)/pba->nu_fld) ) / (1 + pow((pba->a_c/a),3*(w_f-w_i)/pba->nu_fld) ) ) )+3*a*(1+w_i);
-        -3*(1 + w_i)*log(a) + pba->nu_fld*(w_f-w_i)*(log(1+1/powac)-log(1/powac*(powa+powac)))/(1+w_f);
+//        -3*(1 + w_i)*log(a) + pba->nu_fld*(w_f-w_i)*(log(1+1/powac)-log(1/powac*(powa+powac)))/(1+w_f);
 
       // *integral_fld = //-3*(1+w)*log(a/pba->a_today) - pba->nu_fld*log(1+ pow(pba->a_c[n]/a,3*(1+w)/pba->nu_fld));
       //   3*(1+w)*( log(1/a)
