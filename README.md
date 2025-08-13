@@ -1,3 +1,9 @@
+this version has alternative ADE fluid parametrisation: 
+
+$1 + w(z) = \frac{1+w_f}{\left[1+\left(\frac{a_c}{a}\right)^{3(1+w_f)/p}\right]^p}$
+
+[as well as romberg integration for initial conditions (for integral_fld in background.)]
+
 AxiCLASS is based on CLASS by Julien Lesgourgues and Thomas Tram
 
 AxiCLASS authors: Vivian Poulin, Tristan Smith, Tanvi Karwal
