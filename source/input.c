@@ -4911,6 +4911,43 @@ class_call(parser_read_double(pfc,"Omega_scf_shoot_fa",&param4,&flag4,errmsg),
         pba->precision_loop_over_background = 1e-3; //default value.
       }
     }
+// 1. Read the number of scalar fields (N_mscf)
+  class_read_int("N_mscf",pba->N_mscf);
+  /* Complete set of parameters */
+  printf("line 4917 reached. allocating");
+  if (pba->N_mscf > 0){
+    // Allocate memory for arrays related to multiple scalar fields
+    class_alloc(pba->Omega0_mscf, pba->N_mscf * sizeof(double), errmsg);
+    class_alloc(pba->phi_ini_mscf, pba->N_mscf * sizeof(double), errmsg);
+    class_alloc(pba->phi_prime_ini_mscf, pba->N_mscf * sizeof(double), errmsg);
+    class_alloc(pba->m_mscf, pba->N_mscf * sizeof(double), errmsg);
+    class_alloc(pba->f_axion_mscf, pba->N_mscf * sizeof(double), errmsg);
+    class_alloc(pba->n_axion_mscf, pba->N_mscf * sizeof(double), errmsg);
+
+    // Read parameters for each scalar field
+    class_read_list_of_doubles_or_default("Omega_mscf",pba->Omega0_mscf,0.0,pba->N_mscf);
+    class_read_list_of_doubles_or_default("phi_ini_mscf",pba->phi_ini_mscf,0.0,pba->N_mscf);
+    class_read_list_of_doubles_or_default("phi_prime_ini_mscf",pba->phi_prime_ini_mscf,0.0,pba->N_mscf);
+    class_read_list_of_doubles_or_default("m_mscf",pba->m_mscf,0.0,pba->N_mscf);
+    class_read_list_of_doubles_or_default("f_axion_mscf",pba->f_axion_mscf,0.0,pba->N_mscf);
+    class_read_list_of_doubles_or_default("n_axion_mscf",pba->n_axion_mscf,0.0,pba->N_mscf);
+  } else {
+    // If N_mscf is 0 or negative, ensure all pointers are NULL.
+    pba->Omega0_mscf = NULL;
+    pba->phi_ini_mscf = NULL;
+    pba->phi_prime_ini_mscf = NULL;
+    pba->m_mscf = NULL;
+    pba->f_axion_mscf = NULL;
+    pba->n_axion_mscf = NULL;
+}
+
+// If all reads and allocations were successful, return success.
+return _SUCCESS_;
+
+// --- Memory Freeing Section ---
+// The background_free_mscf_arrays function is still essential for cleanup
+// and should be called appropriately in the module's cleanup routine.
+
 
 
 

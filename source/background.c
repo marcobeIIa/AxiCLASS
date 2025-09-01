@@ -546,6 +546,36 @@ int background_functions(
   }
   //printf("Scalar field? %f \n", pba->has_scf); //print_trigger
 
+  if (pba->has_mscf == _TRUE_) {
+    for (int k = 0; k < pba->N_mscf; k++) {
+      printf("551 reached background.c, phi and potential update\n");
+      //pba->kg_fld_switch = _FALSE_;
+      //printf("Inside scf table update\n"); //print_trigger
+      phi = pvecback_B[pba->index_bi_phi_mscf+k];
+      phi_prime = pvecback_B[pba->index_bi_phi_prime_mscf+k];
+      //At this point phi and phi prime have already been updated, from their evolution equations, rho_scf is still from the last step,
+      //The next few lines then calculate the new values for the density etc... from the new values of phi and phi prime
+      pvecback[pba->index_bg_phi_mscf+k] = phi; // value of the scalar field phi
+      pvecback[pba->index_bg_phi_prime_mscf+k] = phi_prime; // value of the scalar field phi derivative wrt conformal time
+      pvecback[pba->index_bg_V_mscf+k] = V_mscf(pba,k,phi); //V_scf(pba,phi); //write here potential as function of phi
+      pvecback[pba->index_bg_dV_mscf+k] = dV_mscf(pba,k,phi); // dV_scf(pba,phi); //potential' as function of phi
+      pvecback[pba->index_bg_ddV_mscf+k] = ddV_mscf(pba,k,phi); // ddV_scf(pba,phi); //potential'' as function of phi
+      pvecback[pba->index_bg_rho_mscf+k] = (phi_prime*phi_prime/(2*a*a) + V_mscf(pba,k,phi))/3.; // energy of the scalar field. The field units are set automatically by setting the initial conditions
+      pvecback[pba->index_bg_p_mscf+k] = (phi_prime*phi_prime/(2*a*a) - V_mscf(pba,k,phi))/3.; // pressure of the scalar field
+
+      pvecback[pba->index_bg_w_mscf+k] =pvecback[pba->index_bg_p_mscf+k]/pvecback[pba->index_bg_rho_mscf+k]; // e.o.s of the scalar field, only used for outputs
+      pvecback_B[pba->index_bi_rho_mscf+k] = pvecback[pba->index_bg_rho_mscf+k];
+
+      rho_tot += pvecback[pba->index_bg_rho_mscf+k];
+      p_tot += pvecback[pba->index_bg_p_mscf+k];
+      dp_dloga += 0.0; /** <-- This depends on a_prime_over_a, so we cannot add it now! */
+
+      rho_r += 3.*pvecback[pba->index_bg_p_mscf+k]; //field pressure contributes radiation
+      rho_m += pvecback[pba->index_bg_rho_mscf+k] - 3.* pvecback[pba->index_bg_p_mscf+k]; //the rest contributes matter
+
+      if(pba->background_verbose>11) printf("here KG equation, for %e -th field, a %e phi: %e, phi': %e rho_mscf: %e \n", k, a, pvecback_B[pba->index_bi_phi_mscf+k], pvecback_B[pba->index_bi_phi_prime_mscf+k], pvecback[pba->index_bg_rho_mscf+k]);
+    }
+  }
 
   /* ncdm */
   if (pba->has_ncdm == _TRUE_) {
@@ -648,7 +678,14 @@ int background_functions(
   pvecback[pba->index_bg_H_prime] = - (3./2.) * (rho_tot + p_tot) * a + pba->K/a;
 
   if(pba->has_scf == _TRUE_){
+    printf("has_scf==TRUE 681 reached background.c, Omega_mscf\n");
     pvecback[pba->index_bg_Omega_scf] = pvecback[pba->index_bg_rho_scf] / rho_tot;
+  }
+  if(pba->has_mscf == _TRUE_){
+    printf("683 reached background.c, Omega_mscf\n");
+    for (int k = 0; k < pba->N_mscf; k++) {
+      pvecback[pba->index_bg_Omega_mscf+k] = pvecback[pba->index_bg_rho_mscf+k] / rho_tot;
+    }
   }
 
   /* Total energy density*/
@@ -664,6 +701,14 @@ int background_functions(
     pvecback[pba->index_bg_p_prime_scf] = pvecback[pba->index_bg_phi_prime_scf]*
       (-pvecback[pba->index_bg_phi_prime_scf]*pvecback[pba->index_bg_H]/a-2./3.*pvecback[pba->index_bg_dV_scf]);
     pvecback[pba->index_bg_p_tot_prime] += pvecback[pba->index_bg_p_prime_scf];
+  }
+  if (pba->has_mscf == _TRUE_) {
+    /** The contribution of mscf was not added to dp_dloga, add p_mscf_prime here: */
+    for (int k = 0; k < pba->N_mscf; k++) {
+      pvecback[pba->index_bg_p_prime_mscf+k] = pvecback[pba->index_bg_phi_prime_mscf+k]*
+        (-pvecback[pba->index_bg_phi_prime_mscf+k]*pvecback[pba->index_bg_H]/a-2./3.*pvecback[pba->index_bg_dV_mscf+k]);
+      pvecback[pba->index_bg_p_tot_prime] += pvecback[pba->index_bg_p_prime_mscf+k];
+    }
   }
 
   /** - compute critical density */
@@ -1298,6 +1343,16 @@ int background_free_input(
     if (pba->scf_parameters != NULL)
       free(pba->scf_parameters);
   }
+  if (pba->Omega0_mscf_tot != 0.){
+    printf("1344 reached background.c, freeing memory\n");
+    free(pba->m_mscf);
+    free(pba->m_mscf);
+    free(pba->phi_ini_mscf);
+    free(pba->phi_prime_ini_mscf);
+    free(pba->m_mscf);
+    free(pba->f_axion_mscf);
+    free(pba->n_axion_mscf);
+  }
   return _SUCCESS_;
 }
 
@@ -1328,6 +1383,7 @@ int background_indices(
   pba->has_dcdm = _FALSE_;
   pba->has_dr = _FALSE_;
   pba->has_scf = _FALSE_;
+  pba->has_mscf = _FALSE_;
   pba->has_lambda = _FALSE_;
   pba->has_fld = _FALSE_;
   pba->has_ur = _FALSE_;
@@ -1336,6 +1392,7 @@ int background_indices(
   pba->has_varconst  = _FALSE_;
 
   pba->scf_kg_eq = _FALSE_; //VP: in AxiCLASS we can solve for the Klein Gordon equations or for the fluid variables
+  pba->mscf_kg_eq = _FALSE_; //VP: in AxiCLASS we can solve for the Klein Gordon equations or for the fluid variables
 
 
   if (pba->Omega0_cdm != 0.)
@@ -1359,6 +1416,12 @@ int background_indices(
     /* -30 default value for log_axion */
     pba->has_scf = _TRUE_;
     pba->scf_kg_eq = _TRUE_; //Initially, we solve the KG equation.
+  }
+
+  if (pba->N_mscf != 0){
+    printf("1417 reached background.c, updating has_mscf\n");
+    pba->has_mscf = _TRUE_;
+    pba->mscf_kg_eq = _TRUE_; //In case of multiple scalar fields, we always solve the KG equation.
   }
 
 
@@ -1432,6 +1495,25 @@ int background_indices(
   class_define_index(pba->index_bg_w_scf,pba->has_scf,index_bg,1);
   class_define_index(pba->index_bg_dw_scf,pba->has_scf,index_bg,1);
   class_define_index(pba->index_bg_ddw_scf,pba->has_scf,index_bg,1);
+
+  /* - indices for many scalar fields. 
+     We only define the indices for the first scf, 
+     the other ncdm indices are contiguous */ 
+  class_define_index(pba->index_bg_phi_mscf,pba->has_mscf,index_bg,pba->N_mscf);
+  class_define_index(pba->index_bg_phi_prime_mscf,pba->has_mscf,index_bg,pba->N_mscf);
+  class_define_index(pba->index_bg_V_mscf,pba->has_mscf,index_bg,pba->N_mscf);
+  class_define_index(pba->index_bg_dV_mscf,pba->has_mscf,index_bg,pba->N_mscf);
+  class_define_index(pba->index_bg_ddV_mscf,pba->has_mscf,index_bg,pba->N_mscf);
+  class_define_index(pba->index_bg_rho_mscf,pba->has_mscf,index_bg,pba->N_mscf);
+  class_define_index(pba->index_bg_Omega_mscf,pba->has_mscf,index_bg,pba->N_mscf);
+  class_define_index(pba->index_bg_p_mscf,pba->has_mscf,index_bg,pba->N_mscf);
+  class_define_index(pba->index_bg_p_prime_mscf,pba->has_mscf,index_bg,pba->N_mscf);
+  class_define_index(pba->index_bg_w_mscf,pba->has_mscf,index_bg,pba->N_mscf);
+  class_define_index(pba->index_bg_dw_mscf,pba->has_mscf,index_bg,pba->N_mscf);
+  class_define_index(pba->index_bg_ddw_mscf,pba->has_mscf,index_bg,pba->N_mscf);
+  class_define_index(pba->index_bi_rho_mscf,pba->has_mscf,index_bi,pba->N_mscf);
+  class_define_index(pba->index_bi_phi_mscf,pba->has_mscf,index_bi,pba->N_mscf);
+  class_define_index(pba->index_bi_phi_prime_mscf,pba->has_mscf,index_bi,pba->N_mscf);
 
   /* - index for Lambda */
   class_define_index(pba->index_bg_rho_lambda,pba->has_lambda,index_bg,1);
@@ -2606,6 +2688,42 @@ class_call(background_initial_conditions(ppr,pba,pvecback,pvecback_integration,&
       }
 
     }
+    if (pba->has_mscf == _TRUE_) {
+      printf("    Many scalar fields details:\n");
+      for (int k=0; k<pba->N_mscf; k++){
+        printf("     -> Omega_mscf = %g, wished %g\n",
+        pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_mscf+k]/pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_crit], pba->Omega0_mscf[k]);
+      }
+      printf("     -> Omega_mscf_tot = %g\n",pba->Omega0_mscf_tot);
+      //if(pba->mscf_potential == axionquad_mscf){
+      ////printf("Additional scf parameters used: \n");
+      ////// printf("m_a = %g eV\n",(pba->scf_parameters[0]*pba->H0/1.5638e29));
+      ////printf("m_a = %g eV\n",(pba->scf_parameters[0]));
+      ////printf("H_0 = %g eV\n",pba->H0/_eV_over_Mpc_);
+      ////if (pba->has_cdm == _TRUE_) printf("     -> scf fraction of cdm today = %g \n", (pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_scf]) / (pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_scf] + pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_cdm]) );
+      ////// printf("     -> for reference, rho_crit today = %g \n",pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_crit]);
+      //printf("wait for implem");
+      //}
+//      if(pba->mscf_potential == axion_mscf){
+        printf("Additional scf parameters used: \n");
+        for (int k=0; k<pba->N_mscf; k++){
+          printf("n = %e m_a = %e eV, f_a/mpl = %e\n",pba->n_axion_mscf[k],(pba->m_mscf[k]*pba->H0/1.5638e29),pba->f_axion_mscf[k]);
+          printf("  phi_ini = %e \n", pba->phi_ini_mscf[k]);
+ //     }
+      }
+      //if(pba->mscf_potential ==phi_2n){
+        //printf("wait for implem");
+      //}
+
+      if (pba->has_lambda == _TRUE_) {
+        printf("     -> Omega_Lambda = %g, wished %g\n",
+               pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_lambda]/pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_crit], pba->Omega0_lambda);
+      }
+      //if(pba->mscf_potential==pol_times_exp || pba->mscf_potential==double_exp )
+      //{
+        //printf("wait for implem");
+      //}
+    }
   }
 
   /**  - store information in the background structure */
@@ -2846,6 +2964,43 @@ int background_initial_conditions(
   }
   // printf("Calling background functions.\n");//print_trigger
   /* Infer pvecback from pvecback_integration */
+  if (pba->has_mscf == _TRUE_) {
+  printf("2966 reached background.c, doing stuff");
+    //if (pba->attractor_ic_scf == _TRUE_) {
+      //printf("not implemented");
+    //}
+   // else {
+      // printf("Not using attractor initial conditions\n");
+      /** - --> If no attractor initial conditions are assigned, gets the provided ones. */
+      for(int k = 0; k<pba->N_mscf; k++){
+        pvecback_integration[pba->index_bi_phi_mscf+k] = pba->phi_ini_mscf[k];
+        pvecback_integration[pba->index_bi_phi_prime_mscf+k] = pba->phi_prime_ini_mscf[k];
+    //  }
+    }
+
+    //if(pba->mscf_potential == phi_2n){
+      //printf("not implemented");
+      //}else{
+        //// printf("phi_i %e pba->V0_phi2n %e \n",pba->phi_ini_scf,pba->V0_phi2n); //check that the 2 ways of calculating V0 agrees.
+      //for(int k = 0; k<pba->N_mscf; k++){
+          //pvecback_integration[pba->index_bi_phi_mscf+k] = pba->phi_ini_mscf[k];
+          //pvecback_integration[pba->index_bi_phi_prime_mscf+k] =  pba->phi_prime_ini_mscf[k];
+        //}
+      //}
+
+    for(int k = 0; k<pba->N_mscf; k++){
+      class_test(!isfinite(pvecback_integration[pba->index_bi_phi_mscf+k]) ||
+                !isfinite(pvecback_integration[pba->index_bi_phi_mscf+k]),
+                pba->error_message,
+                "initial phi = %e phi_prime = %e -> check initial conditions",
+                pvecback_integration[pba->index_bi_phi_mscf+k],
+                pvecback_integration[pba->index_bi_phi_mscf+k]);
+
+      pvecback_integration[pba->index_bi_rho_mscf+k] = 0; //vp: in axiclass we initialise the fluid scf variable to 0, we will update its value when needed at the time of the switch.
+    }
+  }
+  // printf("calling background functions.\n");//print_trigger
+  /* infer pvecback from pvecback_integration */
   class_call(background_functions(pba, a, pvecback_integration, normal_info, pvecback),
              pba->error_message,
              pba->error_message);
@@ -3026,6 +3181,31 @@ int background_output_titles(
   class_store_columntitle(titles,"V_scf",pba->has_scf);
   class_store_columntitle(titles,"V'_scf",pba->has_scf);
   class_store_columntitle(titles,"V''_scf",pba->has_scf);
+  if (pba->has_mscf == _TRUE_){
+    printf("3183 reached background.c, storing outputs");
+    class_sprintf(tmp,"(.)rho_rho_mscf[%d]",n);
+    class_store_columntitle(titles,tmp,_TRUE_);
+    class_sprintf(tmp,"(.)Omega_mscf[%d]",n);
+    class_store_columntitle(titles,tmp,_TRUE_);
+    class_sprintf(tmp,"(.)p_mscf[%d]",n);
+    class_store_columntitle(titles,tmp,_TRUE_);
+    class_sprintf(tmp,"(.)p_prime_mscf[%d]",n);
+    class_store_columntitle(titles,tmp,_TRUE_);
+    class_sprintf(tmp,"(.)w_mscf[%d]",n);
+    class_store_columntitle(titles,tmp,_TRUE_);
+    class_sprintf(tmp,"(.)dw_mscf[%d]",n);
+    class_store_columntitle(titles,tmp,_TRUE_);
+    class_sprintf(tmp,"phi_mscf[%d]",n);
+    class_store_columntitle(titles,tmp,_TRUE_);
+    class_sprintf(tmp,"phi'_mscf[%d]",n);
+    class_store_columntitle(titles,tmp,_TRUE_);
+    class_sprintf(tmp,"V_mscf[%d]",n);
+    class_store_columntitle(titles,tmp,_TRUE_);
+    class_sprintf(tmp,"V'_mscf[%d]",n);
+    class_store_columntitle(titles,tmp,_TRUE_);
+    class_sprintf(tmp,"V''_mscf[%d]",n);
+    class_store_columntitle(titles,tmp,_TRUE_);
+  }
 
   class_store_columntitle(titles,"(.)rho_tot",_TRUE_);
   class_store_columntitle(titles,"(.)p_tot",_TRUE_);
@@ -3105,6 +3285,24 @@ int background_output_data(
     class_store_double(dataptr,pvecback[pba->index_bg_V_scf],pba->has_scf,storeidx);
     class_store_double(dataptr,pvecback[pba->index_bg_dV_scf],pba->has_scf,storeidx);
     class_store_double(dataptr,pvecback[pba->index_bg_ddV_scf],pba->has_scf,storeidx);
+
+    if (pba->has_mscf == _TRUE_){
+      for (int k = 0 ; k < pba->N_mscf; k++){
+      printf("3183 reached background.c, storing outputs (again?)");
+      class_store_double(dataptr,pvecback[pba->index_bg_rho_mscf+k],_TRUE_,storeidx);
+      class_store_double(dataptr,pvecback[pba->index_bg_Omega_mscf+k],_TRUE_,storeidx);
+      // printf("a %e pvecback[pba->index_bg_w_scf] %e\n",a,pvecback[pba->index_bg_w_scf]);
+      class_store_double(dataptr,pvecback[pba->index_bg_p_mscf+k],_TRUE_,storeidx);
+      class_store_double(dataptr,pvecback[pba->index_bg_p_prime_mscf+k],_TRUE_,storeidx);
+      class_store_double(dataptr,pvecback[pba->index_bg_w_mscf+k],_TRUE_,storeidx);
+      class_store_double(dataptr,pvecback[pba->index_bg_dw_mscf+k],_TRUE_,storeidx);
+      class_store_double(dataptr,pvecback[pba->index_bg_phi_mscf+k],_TRUE_,storeidx);
+      class_store_double(dataptr,pvecback[pba->index_bg_phi_prime_mscf+k],_TRUE_,storeidx);
+      class_store_double(dataptr,pvecback[pba->index_bg_V_mscf+k],_TRUE_,storeidx);
+      class_store_double(dataptr,pvecback[pba->index_bg_dV_mscf+k],_TRUE_,storeidx);
+      class_store_double(dataptr,pvecback[pba->index_bg_ddV_mscf+k],_TRUE_,storeidx);
+      }
+    }
 
     class_store_double(dataptr,pvecback[pba->index_bg_rho_tot],_TRUE_,storeidx);
     class_store_double(dataptr,pvecback[pba->index_bg_p_tot],_TRUE_,storeidx);
@@ -3234,6 +3432,22 @@ int background_derivs(
       /*ignore contribution*/
     }
   }
+  if (pba->has_mscf == _TRUE_ && pba->include_mscf_in_growth_factor == _TRUE_) {
+    for (int k = 0; k<pba->N_mscf; k++){
+      printf("3435 reached background.c, storing outputs (again?)");
+      /*VP: add the scf contribution if the user wants to, e.g., for axion-like dark matter */
+      //if(pba->mscf_potential==axionquad)
+      //printf("not implemented");
+      //if(pba->mscf_potential==axion_mscf && pba->n_axion_mscf[k] ==1){
+      if(pba->n_axion_mscf[k] ==1){
+          rho_M += pvecback[pba->index_bg_rho_mscf+k];
+      }
+      else{
+        /*ignore contribution*/
+      }
+    }
+  }
+
   dy[pba->index_bi_D] = y[pba->index_bi_D_prime]/a/H;
   dy[pba->index_bi_D_prime] = -y[pba->index_bi_D_prime] + 1.5*a*rho_M*y[pba->index_bi_D]/H;
 
@@ -3287,6 +3501,39 @@ int background_derivs(
       /*COComment Throw an error code if neither KG nor fluid equations apply - this should never happen */
       class_stop(pba->error_message,"We are not evolving scalar field as KG nor fluid eq, something has gone wrong!\n");
     }
+} 
+if (pba->has_mscf == _TRUE_){
+    /*<VP: Main modifications to SCF in AxiCLASS: we can seither solve using KG equations or fluid variables.*/
+    /** - Scalar field equation: \f$ \phi'' + 2 a H \phi' + a^2 dV = 0 \f$  (note H is wrt cosmic time) */
+    /*COComment - add if statement, dependent on flag, to either use KG equation or fluid equation  */
+    // printf("inside SF evolution call\n");
+    if (pba->mscf_kg_eq == _TRUE_) {
+    for (int k = 0; k < pba->N_mscf; k++){
+      /* VP: OLD AXICLASS: derivative with respect to conformal time */
+      // dy[pba->index_bi_phi_scf] = y[pba->index_bi_phi_prime_scf];
+      // dy[pba->index_bi_phi_prime_scf] = - y[pba->index_bi_a]*
+      //   (2*pvecback[pba->index_bg_H]*y[pba->index_bi_phi_prime_scf]
+      //    + y[pba->index_bi_a]*dV_scf(pba,y[pba->index_bi_phi_scf])) ;
+
+      /* VP: NEW AXICLASS: derivative with respect to log(a) */
+      /** - Scalar field equation: \f$ \phi'' + 2 a H \phi' + a^2 dV = 0 \f$  (note H is wrt cosmological time)
+          written as \f$ d\phi/dlna = phi' / (aH) \f$ and \f$ d\phi'/dlna = -2*phi' - (a/H) dV \f$ */
+      dy[pba->index_bi_phi_mscf+k] = y[pba->index_bi_phi_prime_mscf+k]/a/H;
+      dy[pba->index_bi_phi_prime_mscf+k] = - 2*y[pba->index_bi_phi_prime_mscf+k] - a*dV_mscf(pba,k,y[pba->index_bi_phi_mscf+k])/H ;
+
+      dy[pba->index_bi_rho_mscf+k] = 0; //Update the scf density until the fluid equation starts.
+      // printf("aEvolving scalar field using KG equation. phi %e phi prime %e \n", y[pba->index_bi_phi_scf],y[pba->index_bi_phi_prime_scf]);
+      // printf("dV %e \n", dV_scf(pba,y[pba->index_bi_phi_scf])  );
+      // if(pba->background_verbose > 11) printf("Evolving scalar field using KG equation. phi %e phi prime %e \n", y[pba->index_bi_phi_scf],dy[pba->index_bi_phi_scf]  );
+      }
+    }
+    else if(pba->mscf_kg_eq == _FALSE_) {
+      printf("not implemented");
+    }
+    //else if (pba->scf_evolve_as_fluid == _FALSE_ && pba->scf_kg_eq == _FALSE_) {
+      ///*COComment Throw an error code if neither KG nor fluid equations apply - this should never happen */
+      //class_stop(pba->error_message,"We are not evolving scalar field as KG nor fluid eq, something has gone wrong!\n");
+   // }
 }
 
 
@@ -3494,6 +3741,15 @@ int background_output_budget(
         class_print_species("Scalar Axion",axion);
         budget_other+=pba->Omega0_axion;
       }
+    } if (pba->has_mscf == _TRUE_){
+      for (int k = 0; k < pba->N_mscf; k++){
+//       if (!(pba->mscf_potential == axion_mscf && pba->n_axion_mscf[k] == 1) ){
+     if (!(pba->n_axion_mscf[k] == 1) ){
+        class_print_species("Many scalar Fields",scf);
+        budget_other+=pba->Omega0_mscf[k];
+        // printf("pba->Omega0_axion %e\n", pba->Omega0_axion);
+        }
+      }
     }
     // if(pba->has_scf && (pba->scf_potential == axion || pba->scf_potential == phi_2n)){
     //   _class_print_species_("Axion",axion);
@@ -3511,7 +3767,7 @@ int background_output_budget(
       printf(" - Non-Free-Streaming Matter      Omega = %-15g , omega = %-15g \n",pba->Omega0_nfsm,pba->Omega0_nfsm*pba->h*pba->h);
       printf(" - Non-Cold Dark Matter           Omega = %-15g , omega = %-15g \n",budget_neutrino,budget_neutrino*pba->h*pba->h);
     }
-    if ((pba->has_lambda == _TRUE_) || (pba->has_fld == _TRUE_) || (pba->has_scf == _TRUE_) || (pba->has_curvature == _TRUE_)) {
+    if ((pba->has_lambda == _TRUE_) || (pba->has_fld == _TRUE_) || (pba->has_scf == _TRUE_) || (pba->has_mscf == _TRUE_)||(pba->has_curvature == _TRUE_)) {
       printf(" Other Content                    Omega = %-15g , omega = %-15g \n",budget_other,budget_other*pba->h*pba->h);
     }
     printf(" TOTAL                            Omega = %-15g , omega = %-15g \n",budget_radiation+budget_matter+budget_other,(budget_radiation+budget_matter+budget_other)*pba->h*pba->h);
@@ -3859,3 +4115,105 @@ double ddV_scf(
   return result;
 
 }
+
+double V_axion_mscf(
+                  struct background *pba,
+                  int k, 
+                  double phi){
+    // int n = pba->mscf_parameters[0];
+    double n = pba->n_axion_mscf[k];
+    // double fa = pba->mscf_parameters[2];
+    double fa = pba->f_axion_mscf[k];
+    double m = pba->m_mscf[k]*pba->H0;
+    double result;
+    // printf("n %d fa %e V %e phi/fa %e \n",n,fa,m*m/pow(2,n),phi/fa);
+    if(n>1)result = pow(m,2)*pow(fa,2)*pow(1 - cos(phi/fa),n);
+    else result = pow(m,2)*pow(fa,2)*(1 - cos(phi/fa));
+    // printf("result %e phi %e m^2 %e\n",result,phi,m*m);
+    return result;
+
+}
+
+double dV_axion_mscf(
+                  struct background *pba,
+                  int k, 
+                  double phi){
+    // int n = pba->mscf_parameters[0];
+    double n = pba->n_axion_mscf[k];
+    // double fa = pba->mscf_parameters[2];
+    double fa = pba->f_axion_mscf[k];
+    double m = pba->m_mscf[k]*pba->H0;
+    double result;
+    if(n>1)result = n*pow(m,2)*fa*pow(1-cos(phi/fa),n-1)*sin(phi/fa);
+    else result = pow(m,2)*fa*sin(phi/fa);
+
+    return result;
+
+}
+
+double ddV_axion_mscf(
+                  struct background *pba,
+                  int k, 
+                  double phi){
+    // int n = pba->mscf_parameters[0];
+    double n = pba->n_axion_mscf[k];
+    // double fa = pba->mscf_parameters[2];
+    double fa = pba->f_axion_mscf[k];
+    double m = pba->m_mscf[k]*pba->H0;
+    double result;
+    if(n==1) result = n*pow(m,2)*cos(phi/fa);
+    else if (n==2) result =  n*pow(m,2)*(pow(sin(phi/fa),2)+(1-cos(phi/fa))*cos(phi/fa));
+    else result = n*pow(m,2)*fa*((n-1)/fa*pow(1-cos(phi/fa),n-2)*pow(sin(phi/fa),2)+pow(1-cos(phi/fa),n-1)/fa*cos(phi/fa)); //this formula bugs sometimes for n=1
+
+    return result;
+}
+
+double V_mscf(
+             struct background *pba,
+             int k, 
+             double phi) {
+  /** we check first which potential should be considered */
+  double result = 0.;
+//  if(pba->mscf_potential == axion_mscf){
+    result = V_axion_mscf(pba,k,phi);
+ // } else {
+  //  printf("mscfs other than axion not implemented yet\n");
+   // exit(0);
+  //}
+    // printf("result Vf %e\n", result);
+  return result;
+}
+
+double dV_mscf(
+             struct background *pba,
+             int k, 
+             double phi) {
+  /** we check first which potential should be considered */
+  double result = 0.;
+//  if(pba->mscf_potential == axion_mscf){
+    result = dV_axion_mscf(pba,k,phi);
+ // } else {
+  //  printf("mscfs other than axion not implemented yet\n");
+   // exit(0);
+  //}
+    // printf("result Vf %e\n", result);
+  return result;
+}
+
+double ddV_mscf(
+             struct background *pba,
+             int k, 
+             double phi) {
+  /** we check first which potential should be considered */
+  double result = 0.;
+ // if(pba->mscf_potential == axion_mscf){
+    result = ddV_axion_mscf(pba,k,phi);
+ // } else {
+   // printf("mscfs other than axion not implemented yet\n");
+  //  exit(0);
+ // }
+    // printf("result Vf %e\n", result);
+  return result;
+}
+
+

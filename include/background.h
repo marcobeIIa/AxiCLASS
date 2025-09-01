@@ -88,6 +88,9 @@ enum scf_pot{
   phi_2n, /** scf_potential set to axion: V equals V0((phi)^2n) */
   axionquad /* scf_potential set to axion quadratic form: V = m^2phi^2/2 */
 };
+enum mscf_pot{
+  axion_mscf /** scf_potential set to axion: V equals m^2f^2(1-cos(phi/f)) */
+};
 struct background
 {
   /** @name - input parameters initialized by user in input module
@@ -163,6 +166,8 @@ struct background
   double Omega_ini_dcdm;    /**< \f$ \Omega_{ini,dcdm} \f$: rescaled initial value for dcdm density (see 1407.2418 for definitions) */
 
   double Omega0_scf;        /**< \f$ \Omega_{0 scf} \f$: scalar field */
+  int N_mscf;                            /**< Number of axion species (no fluid) */  
+  double *Omega0_mscf, Omega0_mscf_tot;        /**< \f$ \Omega_{0 mscf} \f$: many scalar field and total energy fraction */ 
   short scf_evolve_as_fluid; /** set to false to only evolve KG equations, otherwise - switch to fluid when necessary. To be used in perturbation module*/
   double threshold_scf_fluid_m_over_H; /** if scf_evolve_as_fluid set to true, the scf will be modeled as a fluid once m/H drops below threshold_scf_fluid_m_over_H */
   double security_small_Omega_scf; /** enforce fluid when Om_scf is below  security_small_Omega_scf even if scf_evolve_as_fluid = False to avoid code crashing; harmless due to the smallness of Om_scf */
@@ -170,7 +175,10 @@ struct background
   double phi_ini_scf;       /**< \f$ \phi(t_0) \f$: scalar field initial value */
   double phi_prime_ini_scf; /**< \f$ d\phi(t_0)/d\tau \f$: scalar field initial derivative wrt conformal time */
   enum scf_pot scf_potential; /**< List of currently implement potential for a scalar field */
+//  enum mscf_pot mscf_potential; /**< List of currently implement potential for many scalar fields */
   double * scf_parameters;  /**< list of parameters describing the scalar field potential */
+  double *phi_ini_mscf;       /**< \f$ \phi(t_0) \f$: scalar field initial value */
+  double *phi_prime_ini_mscf; /**< \f$ d\phi(t_0)/d\tau \f$: scalar field initial derivative wrt conformal time */
   int scf_parameters_size;  /**< size of scf_parameters */
   int scf_tuning_index;     /**< index in scf_parameters used for tuning */
   double theta_axion;
@@ -179,6 +187,8 @@ struct background
   double f_axion;
   double alpha_squared;
   double power_of_mu;
+  double *m_mscf;
+  double *f_axion_mscf;
   double log10_f_axion;
   double log10_m_axion;
   double log10_axion_ac;
@@ -193,17 +203,20 @@ struct background
   double f_ede; // TK added doubles to fill with values of the exact z_c and fraction_ede eventually
   double phi_scf_c; // Added for debugging. Trying to see whether the value of phi at z_c is really 7/8 phi_ini
   double n_axion;
+  double *n_axion_mscf;
   double w_scf;
   double cs2_scf;
 
   double n_axion_security;
   short scf_kg_eq;    /**< evolve scalar field with KG equations */
+  short mscf_kg_eq;    /**< evolve scalar field with KG equations */
   short kg_fld_switch;    /**< evolve scalar field with KG equations */
   short scf_fluid_eq;    /**< evolve scalar field with KG equations */
   short scf_evolve_like_axionCAMB; /**< evolve scalar field perturbations like axionCAMB */
   short scf_has_perturbations; /** do scalar field perts */
   short loop_over_background_for_closure_relation; /** do we want to loop over background?*/
   short include_scf_in_growth_factor; /** do we want to include the scf cntribution to the growth factor? useful for axion for instance. default=false*/
+  short include_mscf_in_growth_factor; /** do we want to include the mscf cntribution to the growth factor? useful for axion for instance. default=false*/
 
   double precision_loop_over_background;
   //double scf_lambda; /**< \f$ \lambda \f$ : scalar field exponential potential slope */
@@ -308,6 +321,20 @@ struct background
   int index_bg_w_scf;         /**< scalar field e.o.s. */
   int index_bg_dw_scf;         /**< scalar field derivative of e.o.s. w/r to tau */
   int index_bg_ddw_scf;         /**< scalar field double derivative of e.o.s. w/r to tau*/
+
+  int index_bg_phi_mscf;       /**< scalar field value */
+  int index_bg_phi_prime_mscf; /**< scalar field derivative wrt conformal time */
+  int index_bg_V_mscf;         /**< scalar field potential V */
+  int index_bg_dV_mscf;        /**< scalar field potential derivative V' */
+  int index_bg_ddV_mscf;       /**< scalar field potential second derivative V'' */
+  int index_bg_rho_mscf;       /**< scalar field energy density */
+  int index_bg_Omega_mscf;       /**< scalar field fractional energy density */
+  int index_bg_p_mscf;         /**< scalar field pressure */
+  int index_bg_p_prime_mscf;         /**< scalar field pressure */
+  int index_bg_w_mscf;         /**< scalar field e.o.s. */
+  int index_bg_dw_mscf;         /**< scalar field derivative of e.o.s. w/r to tau */
+  int index_bg_ddw_mscf;         /**< scalar field double derivative of e.o.s. w/r to tau*/
+
   int index_bg_rho_ncdm1;     /**< density of first ncdm species (others contiguous) */
   int index_bg_p_ncdm1;       /**< pressure of first ncdm species (others contiguous) */
   int index_bg_pseudo_p_ncdm1;/**< another statistical momentum useful in ncdma approximation */
@@ -384,6 +411,9 @@ struct background
   int index_bi_rho_scf; /**< {B} scf density */
   int index_bi_phi_scf;       /**< {B} scalar field value */
   int index_bi_phi_prime_scf; /**< {B} scalar field derivative wrt conformal time */
+  int index_bi_rho_mscf; /**< {B} scf density */
+  int index_bi_phi_mscf;       /**< {B} scalar field value */
+  int index_bi_phi_prime_mscf; /**< {B} scalar field derivative wrt conformal time */
 
   int index_bi_time;    /**< {C} proper (cosmological) time in Mpc */
   int index_bi_rs;      /**< {C} sound horizon */
@@ -411,6 +441,7 @@ struct background
   short has_dcdm;      /**< presence of decaying cold dark matter? */
   short has_dr;        /**< presence of relativistic decay radiation? */
   short has_scf;       /**< presence of a scalar field? */
+  short has_mscf;      /**< presence of many scalar fields? */
   short has_ncdm;      /**< presence of non-cold dark matter? */
   short has_lambda;    /**< presence of cosmological constant? */
   short has_fld;       /**< presence of fluid with constant w and cs2? */
@@ -689,6 +720,25 @@ extern "C" {
                  double phi
                  );
 
+
+  /** Many scalar field potential and its derivatives **/
+  
+  double V_mscf(
+               struct background *pba,
+               int n,
+               double phi
+               );
+
+  double dV_mscf(
+               struct background *pba,
+               int n,
+               double phi
+               );
+  double ddV_mscf(
+               struct background *pba,
+               int n,
+               double phi
+               );
   /** Coupling between scalar field and matter **/
   double Q_scf(
                struct background *pba,
