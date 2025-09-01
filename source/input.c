@@ -108,7 +108,7 @@ int input_find_file(int argc,
                     ErrorMsg errmsg){
 
   /** Summary: */
-
+  printf("entering input_find_file... \n");
   /** Define local variables */
   struct file_content fc_input;       // Temporary structure with all input parameters
   struct file_content fc_precision;   // Temporary structure with all precision parameters
@@ -221,6 +221,7 @@ int input_set_root(char* input_file,
                    struct file_content * pfc_setroot,
                    ErrorMsg errmsg) {
 
+  printf("entering input_set_root... \n");
   /** Define local variables */
   int flag1, filenum, iextens;
   int index_root_in_fc_input = -1;
@@ -394,6 +395,7 @@ int input_read_from_file(struct file_content * pfc,
                          struct output *pop,
                          ErrorMsg errmsg) {
 
+  printf("entering input_read_from_file... \n");
 
   /** Summary: */
 
@@ -430,7 +432,7 @@ int input_read_from_file(struct file_content * pfc,
                                     errmsg),
               errmsg,
               errmsg);
-
+  printf("starting to read input parameters...\n");
   if (has_shooting == _TRUE_ && pba->shooting_failed == _TRUE_) {
     // Shooting failed, but error must be thrown in background in order to trigger a
     // runtime error, so here we skip the rest and go straight to background
@@ -513,8 +515,9 @@ int input_shooting(struct file_content * pfc,
                    int * has_shooting,
                    ErrorMsg errmsg){
 
+  printf("entering input_shooting... \n");
   /** Summary: */
-
+  printf("entered input_shooting...\n");
   int flag1,flag2;
   int int1,int2;
 
@@ -1163,6 +1166,7 @@ int input_needs_shooting_for_target(struct file_content * pfc,
                                     int * needs_shooting,
                                     ErrorMsg errmsg){
 
+  printf("entering input_needs_shooting_for_target... \n");
   *needs_shooting = _TRUE_;
   switch (target_name){
   case Omega_dcdmdr:
@@ -1206,6 +1210,7 @@ int input_find_root(double *xzero,
                     double tol_x_rel,
                     struct fzerofun_workspace *pfzw,
                     ErrorMsg errmsg){
+  printf("entering input_find_root... \n");
 
   /** Summary: */
 
@@ -1288,6 +1293,7 @@ int input_fzerofun_1d(double input,
                       void* pfzw,
                       double *output,
                       ErrorMsg error_message){
+  printf("entering input_fzerofun_1d... \n");
 
   class_call(input_try_unknown_parameters(&input,
                                           1,
@@ -1335,6 +1341,7 @@ int input_fzero_ridder(int (*func)(double x,
                        int *fevals,
                        ErrorMsg error_message){
 
+  printf("entering input_fzero_ridder... \n");
   /** Summary: */
 
   /** Define local variables */
@@ -1435,6 +1442,7 @@ int input_get_guess(double *xguess,
                     struct fzerofun_workspace * pfzw,
                     ErrorMsg errmsg){
 
+  printf("entering input_get_guess... \n");
   /** Summary: */
 
   /** Define local variables */
@@ -1869,6 +1877,7 @@ int input_try_unknown_parameters(double * unknown_parameter,
                                  double * output,
                                  ErrorMsg errmsg){
   /** Summary */
+  printf("entering input_try_unknown_parameters... \n");
 
   /** Define local variables */
   struct precision pr;        /* for precision parameters */
@@ -2188,6 +2197,7 @@ int input_read_precisions(struct file_content * pfc,
                           struct distortions *psd,
                           struct output *pop,
                           ErrorMsg errmsg){
+  printf("entering input_read_precisions... \n");
 
   /** Summary: */
 
@@ -2255,6 +2265,7 @@ int input_read_parameters(struct file_content * pfc,
                           struct output *pop,
                           ErrorMsg errmsg){
 
+  printf("entering input_read_parameters... \n");
   /** Summary: */
 
   /** Define local variables */
@@ -2366,6 +2377,7 @@ int input_read_parameters_general(struct file_content * pfc,
                                   ErrorMsg errmsg){
 
   /** Summary: */
+  printf("entering input_read_parameters_general... \n");
 
   /** - Define local variables */
   int flag1,flag2;
@@ -2975,6 +2987,7 @@ int input_read_parameters_species(struct file_content * pfc,
                                   int input_verbose,
                                   ErrorMsg errmsg){
 
+  printf("entering input_read_parameters_species... \n");
   /** Summary: */
 
   /** - Define local variables */
@@ -4940,17 +4953,6 @@ class_call(parser_read_double(pfc,"Omega_scf_shoot_fa",&param4,&flag4,errmsg),
     pba->f_axion_mscf = NULL;
     pba->n_axion_mscf = NULL;
 }
-
-// If all reads and allocations were successful, return success.
-return _SUCCESS_;
-
-// --- Memory Freeing Section ---
-// The background_free_mscf_arrays function is still essential for cleanup
-// and should be called appropriately in the module's cleanup routine.
-
-
-
-
        /** 8) Dark energy
            Omega_0_lambda (cosmological constant), Omega0_fld (dark energy
            fluid), Omega0_scf (scalar field) */
