@@ -1410,7 +1410,9 @@ int background_indices(
      (density, pressure, pseudo-pressure), the other ncdm indices
      are contiguous */
   class_define_index(pba->index_bg_rho_ncdm1,pba->has_ncdm,index_bg,pba->N_ncdm);
+  printf("background_indices: pba->has_ncdm = %d, index_bg_rho_ncdm1 = %d\n", pba->has_ncdm, pba->index_bg_rho_ncdm1);
   class_define_index(pba->index_bg_p_ncdm1,pba->has_ncdm,index_bg,pba->N_ncdm);
+  printf("background_indices: pba->has_ncdm = %d, index_bg_p_ncdm1 = %d\n", pba->has_ncdm, pba->index_bg_p_ncdm1);
   class_define_index(pba->index_bg_pseudo_p_ncdm1,pba->has_ncdm,index_bg,pba->N_ncdm);
 
   /* - index for dcdm */
@@ -1421,7 +1423,9 @@ int background_indices(
 
   /* - indices for scalar field */
   class_define_index(pba->index_bg_phi_scf,pba->has_scf,index_bg,1);
+  printf("background_indices: pba->has_scf = %d, index_bg_phi_scf = %d\n", pba->has_scf, pba->index_bg_phi_scf);
   class_define_index(pba->index_bg_phi_prime_scf,pba->has_scf,index_bg,1);
+  printf("background_indices: pba->has_scf = %d, index_bg_phi_prime_scf = %d\n", pba->has_scf, pba->index_bg_phi_prime_scf);
   class_define_index(pba->index_bg_V_scf,pba->has_scf,index_bg,1);
   class_define_index(pba->index_bg_dV_scf,pba->has_scf,index_bg,1);
   class_define_index(pba->index_bg_ddV_scf,pba->has_scf,index_bg,1);
