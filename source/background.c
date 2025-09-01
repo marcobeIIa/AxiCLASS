@@ -1392,7 +1392,7 @@ int background_indices(
   pba->has_varconst  = _FALSE_;
 
   pba->scf_kg_eq = _FALSE_; //VP: in AxiCLASS we can solve for the Klein Gordon equations or for the fluid variables
-  pba->mscf_kg_eq = _FALSE_; //VP: in AxiCLASS we can solve for the Klein Gordon equations or for the fluid variables
+//  pba->mscf_kg_eq = _FALSE_; //VP: in AxiCLASS we can solve for the Klein Gordon equations or for the fluid variables
 
 
   if (pba->Omega0_cdm != 0.)
@@ -1421,7 +1421,7 @@ int background_indices(
   if (pba->N_mscf != 0){
     printf("1417 reached background.c, updating has_mscf\n");
     pba->has_mscf = _TRUE_;
-    pba->mscf_kg_eq = _TRUE_; //In case of multiple scalar fields, we always solve the KG equation.
+//    pba->mscf_kg_eq = _TRUE_; //In case of multiple scalar fields, we always solve the KG equation.
   }
 
 
@@ -1473,7 +1473,9 @@ int background_indices(
      (density, pressure, pseudo-pressure), the other ncdm indices
      are contiguous */
   class_define_index(pba->index_bg_rho_ncdm1,pba->has_ncdm,index_bg,pba->N_ncdm);
+  printf("background_indices: pba->has_scf = %d, index_bg_rho_ncdm1 = %d\n", pba->has_scf, pba->index_bg_rho_ncdm1);
   class_define_index(pba->index_bg_p_ncdm1,pba->has_ncdm,index_bg,pba->N_ncdm);
+  printf("background_indices: pba->has_scf = %d, index_bg_p_ncdm1 = %d\n", pba->has_scf, pba->index_bg_p_ncdm1);
   class_define_index(pba->index_bg_pseudo_p_ncdm1,pba->has_ncdm,index_bg,pba->N_ncdm);
 
   /* - index for dcdm */
@@ -1481,10 +1483,13 @@ int background_indices(
 
   /* - index for dr */
   class_define_index(pba->index_bg_rho_dr,pba->has_dr,index_bg,1);
+  printf("background_indices: pba->has_scf = %d, index_bg_rho_dr = %d\n", pba->has_scf, pba->index_bg_rho_dr);
 
   /* - indices for scalar field */
   class_define_index(pba->index_bg_phi_scf,pba->has_scf,index_bg,1);
+  printf("background_indices: pba->has_scf = %d, index_bg_phi_scf = %d\n", pba->has_scf, pba->index_bg_phi_scf);
   class_define_index(pba->index_bg_phi_prime_scf,pba->has_scf,index_bg,1);
+  printf("background_indices: pba->has_scf = %d, index_bg_phi_prime_scf = %d\n", pba->has_scf, pba->index_bg_phi_prime_scf);
   class_define_index(pba->index_bg_V_scf,pba->has_scf,index_bg,1);
   class_define_index(pba->index_bg_dV_scf,pba->has_scf,index_bg,1);
   class_define_index(pba->index_bg_ddV_scf,pba->has_scf,index_bg,1);
@@ -1497,10 +1502,12 @@ int background_indices(
   class_define_index(pba->index_bg_ddw_scf,pba->has_scf,index_bg,1);
 
   /* - indices for many scalar fields. 
-     We only define the indices for the first scf, 
-     the other ncdm indices are contiguous */ 
+     We only define the indices for the first of mscf, 
+     the other scf indices are contiguous */ 
   class_define_index(pba->index_bg_phi_mscf,pba->has_mscf,index_bg,pba->N_mscf);
+  printf("background_indices: pba->has_mscf = %d, index_bg_phi_mscf = %d", pba->has_mscf, pba->index_bg_phi_mscf);
   class_define_index(pba->index_bg_phi_prime_mscf,pba->has_mscf,index_bg,pba->N_mscf);
+  printf("background_indices: pba->has_mscf = %d, index_bg_phi_mscf = %d", pba->has_mscf, pba->index_bg_phi_prime_mscf);
   class_define_index(pba->index_bg_V_mscf,pba->has_mscf,index_bg,pba->N_mscf);
   class_define_index(pba->index_bg_dV_mscf,pba->has_mscf,index_bg,pba->N_mscf);
   class_define_index(pba->index_bg_ddV_mscf,pba->has_mscf,index_bg,pba->N_mscf);
@@ -3507,7 +3514,7 @@ if (pba->has_mscf == _TRUE_){
     /** - Scalar field equation: \f$ \phi'' + 2 a H \phi' + a^2 dV = 0 \f$  (note H is wrt cosmic time) */
     /*COComment - add if statement, dependent on flag, to either use KG equation or fluid equation  */
     // printf("inside SF evolution call\n");
-    if (pba->mscf_kg_eq == _TRUE_) {
+//    if (pba->mscf_kg_eq == _TRUE_) {
     for (int k = 0; k < pba->N_mscf; k++){
       /* VP: OLD AXICLASS: derivative with respect to conformal time */
       // dy[pba->index_bi_phi_scf] = y[pba->index_bi_phi_prime_scf];
@@ -3526,10 +3533,10 @@ if (pba->has_mscf == _TRUE_){
       // printf("dV %e \n", dV_scf(pba,y[pba->index_bi_phi_scf])  );
       // if(pba->background_verbose > 11) printf("Evolving scalar field using KG equation. phi %e phi prime %e \n", y[pba->index_bi_phi_scf],dy[pba->index_bi_phi_scf]  );
       }
-    }
-    else if(pba->mscf_kg_eq == _FALSE_) {
-      printf("not implemented");
-    }
+ //   }
+ //   else if(pba->mscf_kg_eq == _FALSE_) {
+   //   printf("not implemented");
+  //  }
     //else if (pba->scf_evolve_as_fluid == _FALSE_ && pba->scf_kg_eq == _FALSE_) {
       ///*COComment Throw an error code if neither KG nor fluid equations apply - this should never happen */
       //class_stop(pba->error_message,"We are not evolving scalar field as KG nor fluid eq, something has gone wrong!\n");
