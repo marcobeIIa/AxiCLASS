@@ -1395,7 +1395,7 @@ int background_indices(
 //  pba->mscf_kg_eq = _FALSE_; //VP: in AxiCLASS we can solve for the Klein Gordon equations or for the fluid variables
 
 
-  if (pba->Omega0_cdm != 0.)
+  if (pba->Omega0_cdm != 0.) 
     pba->has_cdm = _TRUE_;
 
   if (pba->Omega0_idm != 0.)
@@ -3295,19 +3295,19 @@ int background_output_data(
 
     if (pba->has_mscf == _TRUE_){
       for (int k = 0 ; k < pba->N_mscf; k++){
-      printf("3183 reached background.c, storing outputs (again?)");
-      class_store_double(dataptr,pvecback[pba->index_bg_rho_mscf+k],_TRUE_,storeidx);
-      class_store_double(dataptr,pvecback[pba->index_bg_Omega_mscf+k],_TRUE_,storeidx);
-      // printf("a %e pvecback[pba->index_bg_w_scf] %e\n",a,pvecback[pba->index_bg_w_scf]);
-      class_store_double(dataptr,pvecback[pba->index_bg_p_mscf+k],_TRUE_,storeidx);
-      class_store_double(dataptr,pvecback[pba->index_bg_p_prime_mscf+k],_TRUE_,storeidx);
-      class_store_double(dataptr,pvecback[pba->index_bg_w_mscf+k],_TRUE_,storeidx);
-      class_store_double(dataptr,pvecback[pba->index_bg_dw_mscf+k],_TRUE_,storeidx);
-      class_store_double(dataptr,pvecback[pba->index_bg_phi_mscf+k],_TRUE_,storeidx);
-      class_store_double(dataptr,pvecback[pba->index_bg_phi_prime_mscf+k],_TRUE_,storeidx);
-      class_store_double(dataptr,pvecback[pba->index_bg_V_mscf+k],_TRUE_,storeidx);
-      class_store_double(dataptr,pvecback[pba->index_bg_dV_mscf+k],_TRUE_,storeidx);
-      class_store_double(dataptr,pvecback[pba->index_bg_ddV_mscf+k],_TRUE_,storeidx);
+        printf("3183 reached background.c, storing outputs (again?)");
+        class_store_double(dataptr,pvecback[pba->index_bg_rho_mscf+k],_TRUE_,storeidx);
+        class_store_double(dataptr,pvecback[pba->index_bg_Omega_mscf+k],_TRUE_,storeidx);
+        // printf("a %e pvecback[pba->index_bg_w_scf] %e\n",a,pvecback[pba->index_bg_w_scf]);
+        class_store_double(dataptr,pvecback[pba->index_bg_p_mscf+k],_TRUE_,storeidx);
+        class_store_double(dataptr,pvecback[pba->index_bg_p_prime_mscf+k],_TRUE_,storeidx);
+        class_store_double(dataptr,pvecback[pba->index_bg_w_mscf+k],_TRUE_,storeidx);
+        class_store_double(dataptr,pvecback[pba->index_bg_dw_mscf+k],_TRUE_,storeidx);
+        class_store_double(dataptr,pvecback[pba->index_bg_phi_mscf+k],_TRUE_,storeidx);
+        class_store_double(dataptr,pvecback[pba->index_bg_phi_prime_mscf+k],_TRUE_,storeidx);
+        class_store_double(dataptr,pvecback[pba->index_bg_V_mscf+k],_TRUE_,storeidx);
+        class_store_double(dataptr,pvecback[pba->index_bg_dV_mscf+k],_TRUE_,storeidx);
+        class_store_double(dataptr,pvecback[pba->index_bg_ddV_mscf+k],_TRUE_,storeidx);
       }
     }
 
