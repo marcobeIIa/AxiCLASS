@@ -1346,10 +1346,8 @@ int background_free_input(
   if (pba->Omega0_mscf_tot != 0.){
     printf("1344 reached background.c, freeing memory\n");
     free(pba->m_mscf);
-    free(pba->m_mscf);
     free(pba->phi_ini_mscf);
     free(pba->phi_prime_ini_mscf);
-    free(pba->m_mscf);
     free(pba->f_axion_mscf);
     free(pba->n_axion_mscf);
   }
@@ -1366,6 +1364,7 @@ int background_free_input(
 int background_indices(
                        struct background *pba
                        ) {
+  printf("background_indices reached ...\n");
 
   /** Summary: */
   /** - define local variables */
@@ -1518,9 +1517,6 @@ int background_indices(
   class_define_index(pba->index_bg_w_mscf,pba->has_mscf,index_bg,pba->N_mscf);
   class_define_index(pba->index_bg_dw_mscf,pba->has_mscf,index_bg,pba->N_mscf);
   class_define_index(pba->index_bg_ddw_mscf,pba->has_mscf,index_bg,pba->N_mscf);
-  class_define_index(pba->index_bi_rho_mscf,pba->has_mscf,index_bi,pba->N_mscf);
-  class_define_index(pba->index_bi_phi_mscf,pba->has_mscf,index_bi,pba->N_mscf);
-  class_define_index(pba->index_bi_phi_prime_mscf,pba->has_mscf,index_bi,pba->N_mscf);
 
   /* - index for Lambda */
   class_define_index(pba->index_bg_rho_lambda,pba->has_lambda,index_bg,1);
@@ -1618,9 +1614,11 @@ int background_indices(
   /* -> scalar field and its derivative wrt conformal time (Zuma) */
   class_define_index(pba->index_bi_phi_scf,pba->has_scf,index_bi,1);
   class_define_index(pba->index_bi_phi_prime_scf,pba->has_scf,index_bi,1);
+  class_define_index(pba->index_bi_phi_mscf,pba->has_mscf,index_bi,pba->N_mscf);
+  class_define_index(pba->index_bi_phi_prime_mscf,pba->has_mscf,index_bi,pba->N_mscf);
   /* -> energy density in scf */ //necessary when we switch to the fluid equation
   class_define_index(pba->index_bi_rho_scf,pba->has_scf,index_bi,1);
-
+  class_define_index(pba->index_bi_rho_mscf,pba->has_scf,index_bi,pba->N_mscf);
 
   /* End of {B} variables */
   pba->bi_B_size = index_bi;
@@ -1660,6 +1658,7 @@ int background_ncdm_distribution(
                                  double q,
                                  double * f0
                                  ) {
+  printf("background_ncdm_distribution reached ...\n");
   struct background * pba;
   struct background_parameters_for_distributions * pbadist_local;
   int n_ncdm,lastidx;
@@ -1797,6 +1796,7 @@ int background_ncdm_test_function(
                                   double q,
                                   double * test
                                   ) {
+  printf("background_ncdm_test_function reached ...\n");
 
   double c = 2.0/(3.0*_zeta3_);
   double d = 120.0/(7.0*pow(_PI_,4));
@@ -1821,6 +1821,7 @@ int background_ncdm_init(
                          struct precision *ppr,
                          struct background *pba
                          ) {
+  printf("background_ncdm_init reached ...\n");
 
   int index_q, k,tolexp,row,status,filenum;
   double f0m2,f0m1,f0,f0p1,f0p2,dq,q,df0dq,tmp1,tmp2;
@@ -2064,6 +2065,7 @@ int background_ncdm_momenta(
                             double * drho_dM,  // d rho / d M used in next function
                             double * pseudo_p  // pseudo-p used in ncdm fluid approx
                             ) {
+  printf("background_ncdm_momenta reached ...\n");
 
   int index_q;
   double epsilon;
@@ -2123,6 +2125,7 @@ int background_ncdm_M_from_Omega(
                                  struct background *pba,
                                  int n_ncdm
                                  ) {
+  printf("background_ncdm_M_from_Omega reached ...\n");
   double rho0,rho,n,M,deltaM,drhodM;
   int iter,maxiter=50;
 
@@ -2190,6 +2193,7 @@ int background_checks(
                       struct precision* ppr,
                       struct background* pba
                       ) {
+  printf("background_checks reached ...\n");
 
   /** - define local variables */
   int n_ncdm;
@@ -2326,6 +2330,7 @@ int background_solve(
                      struct precision *ppr,
                      struct background *pba
                      ) {
+  printf("background_solve reached ...\n");
 
   /** Summary: */
 
@@ -2780,7 +2785,7 @@ int background_initial_conditions(
                                   double * pvecback_integration, /* vector with argument pvecback_integration[index_bi] (must be already allocated with size pba->bi_size) */
                                   double * loga_ini
                                   ) {
-
+  printf("background_initial_conditions reached ...\n");
   /** Summary: */
 
   /** - define local variables */
@@ -2971,17 +2976,23 @@ int background_initial_conditions(
   }
   // printf("Calling background functions.\n");//print_trigger
   /* Infer pvecback from pvecback_integration */
+  printf("2984 reached background.c, ready to roll\n");
   if (pba->has_mscf == _TRUE_) {
-  printf("2966 reached background.c, doing stuff");
+  printf("2986 reached background.c, doing stuff\n");
     //if (pba->attractor_ic_scf == _TRUE_) {
       //printf("not implemented");
     //}
    // else {
       // printf("Not using attractor initial conditions\n");
       /** - --> If no attractor initial conditions are assigned, gets the provided ones. */
+    //print("index_bi_phi_prime_mscf is %e",pba->index_bi_phi_prime_mscf);
       for(int k = 0; k<pba->N_mscf; k++){
-        pvecback_integration[pba->index_bi_phi_mscf+k] = pba->phi_ini_mscf[k];
-        pvecback_integration[pba->index_bi_phi_prime_mscf+k] = pba->phi_prime_ini_mscf[k];
+        //print("2992 reached background.c, doing stuff\n");
+        //print("index_bi_phi_mscf = %e", pba->index_bi_phi_mscf);
+        //pvecback_integration[pba->index_bi_phi_mscf+k] = pba->phi_ini_mscf[k];
+        //pvecback_integration[pba->index_bi_phi_prime_mscf+k] = pba->phi_prime_ini_mscf[k];
+        pvecback_integration[pba->index_bi_phi_mscf+k] =2.82;
+        pvecback_integration[pba->index_bi_phi_prime_mscf+k] = 0;
     //  }
     }
 
@@ -3063,6 +3074,7 @@ int background_find_equality(
                              struct background *pba
                              ) {
 
+  //print("background_find_equality reached ...\n");
   double Omega_m_over_Omega_r=0.;
   int index_tau_minus = 0;
   int index_tau_plus = pba->bt_size-1;
@@ -3139,6 +3151,7 @@ int background_output_titles(
                              struct background * pba,
                              char titles[_MAXTITLESTRINGLENGTH_]
                              ) {
+  //print("background_output_titles reached ...\n");
 
   /** - Length of the column title should be less than _OUTPUTPRECISION_+6
       to be indented correctly, but it can be as long as . */
@@ -3189,7 +3202,7 @@ int background_output_titles(
   class_store_columntitle(titles,"V'_scf",pba->has_scf);
   class_store_columntitle(titles,"V''_scf",pba->has_scf);
   if (pba->has_mscf == _TRUE_){
-    printf("3183 reached background.c, storing outputs");
+    //print("3183 reached background.c, storing outputs");
     class_sprintf(tmp,"(.)rho_rho_mscf[%d]",n);
     class_store_columntitle(titles,tmp,_TRUE_);
     class_sprintf(tmp,"(.)Omega_mscf[%d]",n);
@@ -3241,6 +3254,7 @@ int background_output_data(
                            int number_of_titles,
                            double *data
                            ) {
+  printf("background_output_data reached ...\n");
 
   int index_tau, storeidx, n;
   double *dataptr, *pvecback;
@@ -3360,6 +3374,7 @@ int background_derivs(
                       void * parameters_and_workspace,
                       ErrorMsg error_message
                       ) {
+  printf("background_derivs reached ...\n");
 
   /** Summary: */
 
@@ -3400,7 +3415,6 @@ int background_derivs(
    if(pba->has_scf == _TRUE_ && pba->scf_evolve_as_fluid == _TRUE_ ){
      if(pba->m_scf*pba->H0/H >= pba->threshold_scf_fluid_m_over_H){ //We switch for fluid equations at m > 3H by default.
        pba->scf_kg_eq = _FALSE_;
-       // if(pba->scf_potential==axionquad &&  pba->a_c==1.0 ){
        if(pba->a_c==1.0 ){
          pba->a_c = a; //we defined a_c as the time at which the transition occurs. this is necessary for the perts.
          //for other potentials, a_c was already defined.
@@ -3442,10 +3456,6 @@ int background_derivs(
   if (pba->has_mscf == _TRUE_ && pba->include_mscf_in_growth_factor == _TRUE_) {
     for (int k = 0; k<pba->N_mscf; k++){
       printf("3435 reached background.c, storing outputs (again?)");
-      /*VP: add the scf contribution if the user wants to, e.g., for axion-like dark matter */
-      //if(pba->mscf_potential==axionquad)
-      //printf("not implemented");
-      //if(pba->mscf_potential==axion_mscf && pba->n_axion_mscf[k] ==1){
       if(pba->n_axion_mscf[k] ==1){
           rho_M += pvecback[pba->index_bg_rho_mscf+k];
       }
@@ -3508,8 +3518,8 @@ int background_derivs(
       /*COComment Throw an error code if neither KG nor fluid equations apply - this should never happen */
       class_stop(pba->error_message,"We are not evolving scalar field as KG nor fluid eq, something has gone wrong!\n");
     }
-} 
-if (pba->has_mscf == _TRUE_){
+  }
+  if (pba->has_mscf == _TRUE_){
     /*<VP: Main modifications to SCF in AxiCLASS: we can seither solve using KG equations or fluid variables.*/
     /** - Scalar field equation: \f$ \phi'' + 2 a H \phi' + a^2 dV = 0 \f$  (note H is wrt cosmic time) */
     /*COComment - add if statement, dependent on flag, to either use KG equation or fluid equation  */
@@ -3580,7 +3590,7 @@ int background_sources(
                        void * parameters_and_workspace,
                        ErrorMsg error_message
                        ) {
-
+  printf("background_sources reached ...\n");
   struct background_parameters_and_workspace * pbpaw;
   struct background * pba;
   double a;
@@ -3647,6 +3657,7 @@ int background_timescale(
                          double * timescale,
                          ErrorMsg error_message
                          ) {
+  printf("background_timescale reached ...\n");
 
   *timescale = 1.;
   return _SUCCESS_;
@@ -3666,7 +3677,7 @@ int background_timescale(
 int background_output_budget(
                              struct background* pba
                              ) {
-
+  printf("background_output_budget reached ...\n");
   double budget_matter, budget_radiation, budget_other,budget_neutrino;
   int index_ncdm;
 
@@ -3750,7 +3761,6 @@ int background_output_budget(
       }
     } if (pba->has_mscf == _TRUE_){
       for (int k = 0; k < pba->N_mscf; k++){
-//       if (!(pba->mscf_potential == axion_mscf && pba->n_axion_mscf[k] == 1) ){
      if (!(pba->n_axion_mscf[k] == 1) ){
         class_print_species("Many scalar Fields",scf);
         budget_other+=pba->Omega0_mscf[k];
@@ -3814,6 +3824,7 @@ int background_output_budget(
 double V_e_scf(struct background *pba,
                double phi
                ) {
+  printf("V_e_scf reached ...\n");
   double scf_lambda = pba->scf_parameters[0];
   //  double scf_alpha  = pba->scf_parameters[1];
   //  double scf_A      = pba->scf_parameters[2];
@@ -3825,6 +3836,7 @@ double V_e_scf(struct background *pba,
 double dV_e_scf(struct background *pba,
                 double phi
                 ) {
+  printf("dV_e_scf reached ...\n");
   double scf_lambda = pba->scf_parameters[0];
   //  double scf_alpha  = pba->scf_parameters[1];
   //  double scf_A      = pba->scf_parameters[2];
@@ -3836,6 +3848,7 @@ double dV_e_scf(struct background *pba,
 double ddV_e_scf(struct background *pba,
                  double phi
                  ) {
+  printf("ddV_e_scf reached ...\n");
   double scf_lambda = pba->scf_parameters[0];
   //  double scf_alpha  = pba->scf_parameters[1];
   //  double scf_A      = pba->scf_parameters[2];
@@ -3858,6 +3871,7 @@ double ddV_e_scf(struct background *pba,
 double V_p_scf(
                struct background *pba,
                double phi) {
+  printf("V_p_scf reached ...\n");
   //  double scf_lambda = pba->scf_parameters[0];
   double scf_alpha  = pba->scf_parameters[1];
   double scf_A      = pba->scf_parameters[2];
@@ -3869,7 +3883,7 @@ double V_p_scf(
 double dV_p_scf(
                 struct background *pba,
                 double phi) {
-
+  printf("dV_p_scf reached ...\n");
   //  double scf_lambda = pba->scf_parameters[0];
   double scf_alpha  = pba->scf_parameters[1];
   //  double scf_A      = pba->scf_parameters[2];
@@ -3881,6 +3895,7 @@ double dV_p_scf(
 double ddV_p_scf(
                  struct background *pba,
                  double phi) {
+  printf("ddV_p_scf reached ...\n");
   //  double scf_lambda = pba->scf_parameters[0];
   double scf_alpha  = pba->scf_parameters[1];
   //  double scf_A      = pba->scf_parameters[2];
@@ -3896,6 +3911,7 @@ double ddV_p_scf(
 double V_double_exp_scf(
                   struct background *pba,
                   double phi){
+    printf("V_double_exp_scf reached ...\n");
     return pow(pba->scf_parameters[2],4)*exp(-pba->scf_parameters[0]*phi)+pow(pba->scf_parameters[3],4)*exp(-pba->scf_parameters[1]*phi);
 
 }
@@ -3903,6 +3919,7 @@ double V_double_exp_scf(
 double dV_double_exp_scf(
                   struct background *pba,
                   double phi){
+    printf("dV_double_exp_scf reached ...\n");
 
     return -pba->scf_parameters[0]*pow(pba->scf_parameters[2],4)*exp(-pba->scf_parameters[0]*phi)-pba->scf_parameters[1]*pow(pba->scf_parameters[3],4)*exp(-pba->scf_parameters[1]*phi);
 
@@ -3911,7 +3928,7 @@ double dV_double_exp_scf(
 double ddV_double_exp_scf(
                   struct background *pba,
                   double phi){
-
+    printf("ddV_double_exp_scf reached ...\n");
     // printf("1 %e 2 %e \n", exp(-pba->scf_parameters[0]*phi),pow(pba->scf_parameters[0],4));
     return pow(pba->scf_parameters[0],2)*pow(pba->scf_parameters[2],4)*exp(-pba->scf_parameters[0]*phi)+pow(pba->scf_parameters[1],2)*pow(pba->scf_parameters[3],4)*exp(-pba->scf_parameters[1]*phi);
 
@@ -3923,6 +3940,7 @@ double ddV_double_exp_scf(
 double V_axion_scf(
                   struct background *pba,
                   double phi){
+    printf("V_axion_scf reached ...\n");
     // int n = pba->scf_parameters[0];
     double n = pba->n_axion;
     // double fa = pba->scf_parameters[2];
@@ -3940,6 +3958,7 @@ double V_axion_scf(
 double dV_axion_scf(
                   struct background *pba,
                   double phi){
+    printf("dV_axion_scf reached ...\n");
     // int n = pba->scf_parameters[0];
     double n = pba->n_axion;
     // double fa = pba->scf_parameters[2];
@@ -3956,6 +3975,7 @@ double dV_axion_scf(
 double ddV_axion_scf(
                   struct background *pba,
                   double phi){
+    printf("ddV_axion_scf reached ...\n");
 
      // int n = pba->scf_parameters[0];
      double n = pba->n_axion;
@@ -3975,6 +3995,7 @@ double ddV_axion_scf(
 double V_phi_2n_scf(
                   struct background *pba,
                   double phi){
+    printf("V_phi_2n_scf reached ...\n");
     // int n = pba->scf_parameters[0];
     double n = pba->n_axion;
     double result;
@@ -3988,6 +4009,7 @@ double V_phi_2n_scf(
 double dV_phi_2n_scf(
                   struct background *pba,
                   double phi){
+    printf("dV_phi_2n_scf reached ...\n");
     // int n = pba->scf_parameters[0];
     double n = pba->n_axion;
     double result;
@@ -4001,6 +4023,7 @@ double dV_phi_2n_scf(
 double ddV_phi_2n_scf(
                   struct background *pba,
                   double phi){
+    printf("ddV_phi_2n_scf reached ...\n");
 
      // int n = pba->scf_parameters[0];
      double n = pba->n_axion;
@@ -4015,6 +4038,7 @@ double ddV_phi_2n_scf(
 double V_axionquad_scf(
                   struct background *pba,
                   double phi){
+    printf("V_axionquad_scf reached ...\n");
 
     // printf("Pot = %e %e %e\n", phi,pba->scf_parameters[1]*pba->H0,pow(pba->scf_parameters[1]*pba->H0,2)*pow(phi,2)/2);
     return pow(pba->m_scf*pba->H0,2)*pow(phi,2)/2; //pba->scf_parameters[0] is given in units of H0 and then converted in input.c
@@ -4024,6 +4048,7 @@ double V_axionquad_scf(
 double dV_axionquad_scf(
                   struct background *pba,
                   double phi){
+    printf("dV_axionquad_scf reached ...\n");
 
     // return pow(pba->scf_parameters[0]*pba->H0,2)*phi;
     return pow(pba->m_scf*pba->H0,2)*phi;
@@ -4033,6 +4058,7 @@ double dV_axionquad_scf(
 double ddV_axionquad_scf(
                   struct background *pba,
                   double phi){
+    printf("ddV_axionquad_scf reached ...\n");
 
     // printf("1 %e 2 %e \n", exp(-pba->scf_parameters[0]*pba->H0*phi),pow(pba->scf_parameters[0]*pba->H0,4));
     // return pow(pba->scf_parameters[0]*pba->H0,2);
@@ -4045,6 +4071,7 @@ double ddV_axionquad_scf(
 double V_scf(
              struct background *pba,
              double phi) {
+    printf("V_scf reached ...\n");
   /** we check first which potential should be considered */
   double result = 0.;
   if(pba->scf_potential == pol_times_exp){
@@ -4070,6 +4097,7 @@ double V_scf(
 double dV_scf(
               struct background *pba,
 	      double phi) {
+    printf("dV_scf reached ...\n");
   /** we check first which potential should be considered */
   double result = 0.;
   if(pba->scf_potential == pol_times_exp){
@@ -4097,6 +4125,7 @@ double dV_scf(
 double ddV_scf(
                struct background *pba,
                double phi) {
+    printf("ddV_scf reached ...\n");
   /** we check first which potential should be considered */
   double result = 0.;
 
@@ -4127,6 +4156,7 @@ double V_axion_mscf(
                   struct background *pba,
                   int k, 
                   double phi){
+    printf("V_axion_mscf reached ...\n");
     // int n = pba->mscf_parameters[0];
     double n = pba->n_axion_mscf[k];
     // double fa = pba->mscf_parameters[2];
@@ -4145,6 +4175,7 @@ double dV_axion_mscf(
                   struct background *pba,
                   int k, 
                   double phi){
+    printf("dV_axion_mscf reached ...\n");
     // int n = pba->mscf_parameters[0];
     double n = pba->n_axion_mscf[k];
     // double fa = pba->mscf_parameters[2];
@@ -4162,6 +4193,7 @@ double ddV_axion_mscf(
                   struct background *pba,
                   int k, 
                   double phi){
+    printf("ddV_axion_mscf reached ...\n");
     // int n = pba->mscf_parameters[0];
     double n = pba->n_axion_mscf[k];
     // double fa = pba->mscf_parameters[2];
@@ -4179,6 +4211,7 @@ double V_mscf(
              struct background *pba,
              int k, 
              double phi) {
+    printf("V_mscf reached ...\n");
   /** we check first which potential should be considered */
   double result = 0.;
 //  if(pba->mscf_potential == axion_mscf){
@@ -4195,6 +4228,7 @@ double dV_mscf(
              struct background *pba,
              int k, 
              double phi) {
+    printf("V_mscf reached ...\n");
   /** we check first which potential should be considered */
   double result = 0.;
 //  if(pba->mscf_potential == axion_mscf){
@@ -4211,6 +4245,7 @@ double ddV_mscf(
              struct background *pba,
              int k, 
              double phi) {
+    printf("ddV_mscf reached ...\n");
   /** we check first which potential should be considered */
   double result = 0.;
  // if(pba->mscf_potential == axion_mscf){
