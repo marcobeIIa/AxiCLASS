@@ -396,7 +396,7 @@ int background_functions(
   /* background ncdm quantities */
   double rho_ncdm,p_ncdm,pseudo_p_ncdm;
   /* index for n_ncdm species */
-  int n_ncdm;
+  int n_ncdm, k;
   /* fluid's time-dependent equation of state parameter */
   double w_fld, dw_over_da, integral_fld;
   // short kg_fld_switch;
@@ -547,24 +547,28 @@ int background_functions(
   //printf("Scalar field? %f \n", pba->has_scf); //print_trigger
 
   if (pba->has_mscf == _TRUE_) {
-    for (int k = 0; k < pba->N_mscf; k++) {
-      printf("551 reached background.c, phi and potential update\n");
+    for (k = 0; k < pba->N_mscf; k++) {
+      // printf("551 reached background.c, phi and potential update\n");
       //pba->kg_fld_switch = _FALSE_;
       //printf("Inside scf table update\n"); //print_trigger
       phi = pvecback_B[pba->index_bi_phi_mscf+k];
+      // printf("phi %e \n", phi);
       phi_prime = pvecback_B[pba->index_bi_phi_prime_mscf+k];
+      // printf("phi' %e \n", phi_prime);
       //At this point phi and phi prime have already been updated, from their evolution equations, rho_scf is still from the last step,
       //The next few lines then calculate the new values for the density etc... from the new values of phi and phi prime
       pvecback[pba->index_bg_phi_mscf+k] = phi; // value of the scalar field phi
       pvecback[pba->index_bg_phi_prime_mscf+k] = phi_prime; // value of the scalar field phi derivative wrt conformal time
       pvecback[pba->index_bg_V_mscf+k] = V_mscf(pba,k,phi); //V_scf(pba,phi); //write here potential as function of phi
+      // printf("V_mscf %e \n", V_mscf(pba,k,phi));
       pvecback[pba->index_bg_dV_mscf+k] = dV_mscf(pba,k,phi); // dV_scf(pba,phi); //potential' as function of phi
+      // printf("dV_mscf %e \n", dV_mscf(pba,k,phi));
       pvecback[pba->index_bg_ddV_mscf+k] = ddV_mscf(pba,k,phi); // ddV_scf(pba,phi); //potential'' as function of phi
+      // printf("ddV_mscf %e \n", ddV_mscf(pba,k,phi));
       pvecback[pba->index_bg_rho_mscf+k] = (phi_prime*phi_prime/(2*a*a) + V_mscf(pba,k,phi))/3.; // energy of the scalar field. The field units are set automatically by setting the initial conditions
       pvecback[pba->index_bg_p_mscf+k] = (phi_prime*phi_prime/(2*a*a) - V_mscf(pba,k,phi))/3.; // pressure of the scalar field
-
       pvecback[pba->index_bg_w_mscf+k] =pvecback[pba->index_bg_p_mscf+k]/pvecback[pba->index_bg_rho_mscf+k]; // e.o.s of the scalar field, only used for outputs
-      pvecback_B[pba->index_bi_rho_mscf+k] = pvecback[pba->index_bg_rho_mscf+k];
+      // pvecback_B[pba->index_bi_rho_mscf+k] = pvecback[pba->index_bg_rho_mscf+k];
 
       rho_tot += pvecback[pba->index_bg_rho_mscf+k];
       p_tot += pvecback[pba->index_bg_p_mscf+k];
@@ -573,7 +577,7 @@ int background_functions(
       rho_r += 3.*pvecback[pba->index_bg_p_mscf+k]; //field pressure contributes radiation
       rho_m += pvecback[pba->index_bg_rho_mscf+k] - 3.* pvecback[pba->index_bg_p_mscf+k]; //the rest contributes matter
 
-      if(pba->background_verbose>11) printf("here KG equation, for %e -th field, a %e phi: %e, phi': %e rho_mscf: %e \n", k, a, pvecback_B[pba->index_bi_phi_mscf+k], pvecback_B[pba->index_bi_phi_prime_mscf+k], pvecback[pba->index_bg_rho_mscf+k]);
+      if(pba->background_verbose>11) printf("here KG equation, for %d -th field, a %e phi: %e, phi': %e, V: %e, rho_mscf: %e \n", k, a, pvecback_B[pba->index_bi_phi_mscf+k], pvecback_B[pba->index_bi_phi_prime_mscf+k], pvecback[pba->index_bg_V_mscf+k], pvecback[pba->index_bg_rho_mscf+k]);
     }
   }
 
@@ -678,12 +682,12 @@ int background_functions(
   pvecback[pba->index_bg_H_prime] = - (3./2.) * (rho_tot + p_tot) * a + pba->K/a;
 
   if(pba->has_scf == _TRUE_){
-    printf("has_scf==TRUE 681 reached background.c, Omega_mscf\n");
+    // printf("has_scf==TRUE 681 reached background.c, Omega_scf\n");
     pvecback[pba->index_bg_Omega_scf] = pvecback[pba->index_bg_rho_scf] / rho_tot;
   }
   if(pba->has_mscf == _TRUE_){
-    printf("683 reached background.c, Omega_mscf\n");
-    for (int k = 0; k < pba->N_mscf; k++) {
+    // printf("683 reached background.c, Omega_mscf\n");
+    for (k = 0; k < pba->N_mscf; k++) {
       pvecback[pba->index_bg_Omega_mscf+k] = pvecback[pba->index_bg_rho_mscf+k] / rho_tot;
     }
   }
@@ -704,7 +708,7 @@ int background_functions(
   }
   if (pba->has_mscf == _TRUE_) {
     /** The contribution of mscf was not added to dp_dloga, add p_mscf_prime here: */
-    for (int k = 0; k < pba->N_mscf; k++) {
+    for (k = 0; k < pba->N_mscf; k++) {
       pvecback[pba->index_bg_p_prime_mscf+k] = pvecback[pba->index_bg_phi_prime_mscf+k]*
         (-pvecback[pba->index_bg_phi_prime_mscf+k]*pvecback[pba->index_bg_H]/a-2./3.*pvecback[pba->index_bg_dV_mscf+k]);
       pvecback[pba->index_bg_p_tot_prime] += pvecback[pba->index_bg_p_prime_mscf+k];
@@ -1344,7 +1348,7 @@ int background_free_input(
       free(pba->scf_parameters);
   }
   if (pba->Omega0_mscf_tot != 0.){
-    printf("1344 reached background.c, freeing memory\n");
+    // printf("1344 reached background.c, freeing memory\n");
     free(pba->m_mscf);
     free(pba->phi_ini_mscf);
     free(pba->phi_prime_ini_mscf);
@@ -1364,7 +1368,7 @@ int background_free_input(
 int background_indices(
                        struct background *pba
                        ) {
-  printf("background_indices reached ...\n");
+  // printf("background_indices reached ...\n");
 
   /** Summary: */
   /** - define local variables */
@@ -1418,9 +1422,10 @@ int background_indices(
   }
 
   if (pba->N_mscf != 0){
-    printf("1417 reached background.c, updating has_mscf\n");
+    // printf("1417 reached background.c, updating has_mscf\n");
     pba->has_mscf = _TRUE_;
-//    pba->mscf_kg_eq = _TRUE_; //In case of multiple scalar fields, we always solve the KG equation.
+    pba->Omega0_mscf_tot = 0;
+    //    pba->mscf_kg_eq = _TRUE_; //In case of multiple scalar fields, we always solve the KG equation.
   }
 
 
@@ -1472,9 +1477,9 @@ int background_indices(
      (density, pressure, pseudo-pressure), the other ncdm indices
      are contiguous */
   class_define_index(pba->index_bg_rho_ncdm1,pba->has_ncdm,index_bg,pba->N_ncdm);
-  printf("background_indices: pba->has_scf = %d, index_bg_rho_ncdm1 = %d\n", pba->has_scf, pba->index_bg_rho_ncdm1);
+  // printf("background_indices: pba->has_scf = %d, index_bg_rho_ncdm1 = %d\n", pba->has_scf, pba->index_bg_rho_ncdm1);
   class_define_index(pba->index_bg_p_ncdm1,pba->has_ncdm,index_bg,pba->N_ncdm);
-  printf("background_indices: pba->has_scf = %d, index_bg_p_ncdm1 = %d\n", pba->has_scf, pba->index_bg_p_ncdm1);
+  // printf("background_indices: pba->has_scf = %d, index_bg_p_ncdm1 = %d\n", pba->has_scf, pba->index_bg_p_ncdm1);
   class_define_index(pba->index_bg_pseudo_p_ncdm1,pba->has_ncdm,index_bg,pba->N_ncdm);
 
   /* - index for dcdm */
@@ -1482,13 +1487,13 @@ int background_indices(
 
   /* - index for dr */
   class_define_index(pba->index_bg_rho_dr,pba->has_dr,index_bg,1);
-  printf("background_indices: pba->has_scf = %d, index_bg_rho_dr = %d\n", pba->has_scf, pba->index_bg_rho_dr);
+  // printf("background_indices: pba->has_scf = %d, index_bg_rho_dr = %d\n", pba->has_scf, pba->index_bg_rho_dr);
 
   /* - indices for scalar field */
   class_define_index(pba->index_bg_phi_scf,pba->has_scf,index_bg,1);
-  printf("background_indices: pba->has_scf = %d, index_bg_phi_scf = %d\n", pba->has_scf, pba->index_bg_phi_scf);
+  // printf("background_indices: pba->has_scf = %d, index_bg_phi_scf = %d\n", pba->has_scf, pba->index_bg_phi_scf);
   class_define_index(pba->index_bg_phi_prime_scf,pba->has_scf,index_bg,1);
-  printf("background_indices: pba->has_scf = %d, index_bg_phi_prime_scf = %d\n", pba->has_scf, pba->index_bg_phi_prime_scf);
+  // printf("background_indices: pba->has_scf = %d, index_bg_phi_prime_scf = %d\n", pba->has_scf, pba->index_bg_phi_prime_scf);
   class_define_index(pba->index_bg_V_scf,pba->has_scf,index_bg,1);
   class_define_index(pba->index_bg_dV_scf,pba->has_scf,index_bg,1);
   class_define_index(pba->index_bg_ddV_scf,pba->has_scf,index_bg,1);
@@ -1504,9 +1509,7 @@ int background_indices(
      We only define the indices for the first of mscf, 
      the other scf indices are contiguous */ 
   class_define_index(pba->index_bg_phi_mscf,pba->has_mscf,index_bg,pba->N_mscf);
-  printf("background_indices: pba->has_mscf = %d, index_bg_phi_mscf = %d", pba->has_mscf, pba->index_bg_phi_mscf);
   class_define_index(pba->index_bg_phi_prime_mscf,pba->has_mscf,index_bg,pba->N_mscf);
-  printf("background_indices: pba->has_mscf = %d, index_bg_phi_mscf = %d", pba->has_mscf, pba->index_bg_phi_prime_mscf);
   class_define_index(pba->index_bg_V_mscf,pba->has_mscf,index_bg,pba->N_mscf);
   class_define_index(pba->index_bg_dV_mscf,pba->has_mscf,index_bg,pba->N_mscf);
   class_define_index(pba->index_bg_ddV_mscf,pba->has_mscf,index_bg,pba->N_mscf);
@@ -1515,8 +1518,8 @@ int background_indices(
   class_define_index(pba->index_bg_p_mscf,pba->has_mscf,index_bg,pba->N_mscf);
   class_define_index(pba->index_bg_p_prime_mscf,pba->has_mscf,index_bg,pba->N_mscf);
   class_define_index(pba->index_bg_w_mscf,pba->has_mscf,index_bg,pba->N_mscf);
-  class_define_index(pba->index_bg_dw_mscf,pba->has_mscf,index_bg,pba->N_mscf);
-  class_define_index(pba->index_bg_ddw_mscf,pba->has_mscf,index_bg,pba->N_mscf);
+  // class_define_index(pba->index_bg_dw_mscf,pba->has_mscf,index_bg,pba->N_mscf);
+  // class_define_index(pba->index_bg_ddw_mscf,pba->has_mscf,index_bg,pba->N_mscf);
 
   /* - index for Lambda */
   class_define_index(pba->index_bg_rho_lambda,pba->has_lambda,index_bg,1);
@@ -1618,7 +1621,7 @@ int background_indices(
   class_define_index(pba->index_bi_phi_prime_mscf,pba->has_mscf,index_bi,pba->N_mscf);
   /* -> energy density in scf */ //necessary when we switch to the fluid equation
   class_define_index(pba->index_bi_rho_scf,pba->has_scf,index_bi,1);
-  class_define_index(pba->index_bi_rho_mscf,pba->has_scf,index_bi,pba->N_mscf);
+  // class_define_index(pba->index_bi_rho_mscf,pba->has_scf,index_bi,pba->N_mscf);
 
   /* End of {B} variables */
   pba->bi_B_size = index_bi;
@@ -1658,7 +1661,7 @@ int background_ncdm_distribution(
                                  double q,
                                  double * f0
                                  ) {
-  printf("background_ncdm_distribution reached ...\n");
+  // printf("background_ncdm_distribution reached ...\n");
   struct background * pba;
   struct background_parameters_for_distributions * pbadist_local;
   int n_ncdm,lastidx;
@@ -1796,7 +1799,7 @@ int background_ncdm_test_function(
                                   double q,
                                   double * test
                                   ) {
-  printf("background_ncdm_test_function reached ...\n");
+  // printf("background_ncdm_test_function reached ...\n");
 
   double c = 2.0/(3.0*_zeta3_);
   double d = 120.0/(7.0*pow(_PI_,4));
@@ -1821,7 +1824,7 @@ int background_ncdm_init(
                          struct precision *ppr,
                          struct background *pba
                          ) {
-  printf("background_ncdm_init reached ...\n");
+  // printf("background_ncdm_init reached ...\n");
 
   int index_q, k,tolexp,row,status,filenum;
   double f0m2,f0m1,f0,f0p1,f0p2,dq,q,df0dq,tmp1,tmp2;
@@ -2065,7 +2068,7 @@ int background_ncdm_momenta(
                             double * drho_dM,  // d rho / d M used in next function
                             double * pseudo_p  // pseudo-p used in ncdm fluid approx
                             ) {
-  printf("background_ncdm_momenta reached ...\n");
+  // printf("background_ncdm_momenta reached ...\n");
 
   int index_q;
   double epsilon;
@@ -2125,7 +2128,7 @@ int background_ncdm_M_from_Omega(
                                  struct background *pba,
                                  int n_ncdm
                                  ) {
-  printf("background_ncdm_M_from_Omega reached ...\n");
+  // printf("background_ncdm_M_from_Omega reached ...\n");
   double rho0,rho,n,M,deltaM,drhodM;
   int iter,maxiter=50;
 
@@ -2193,7 +2196,7 @@ int background_checks(
                       struct precision* ppr,
                       struct background* pba
                       ) {
-  printf("background_checks reached ...\n");
+  // printf("background_checks reached ...\n");
 
   /** - define local variables */
   int n_ncdm;
@@ -2330,7 +2333,7 @@ int background_solve(
                      struct precision *ppr,
                      struct background *pba
                      ) {
-  printf("background_solve reached ...\n");
+  // printf("background_solve reached ...\n");
 
   /** Summary: */
 
@@ -2373,7 +2376,7 @@ int background_solve(
   int * used_in_output;
 
   /* index of ncdm species */
-  int n_ncdm;
+  int n_ncdm, k;
 
   /** - setup background workspace */
   bpaw.pba = pba;
@@ -2441,6 +2444,7 @@ class_call(background_initial_conditions(ppr,pba,pvecback,pvecback_integration,&
 
   // is_axion_converged = _TRUE_;
   /** - perform the integration */
+  // printf("..integrating background\n");
   class_call(generic_evolver(background_derivs,
                              loga_ini,
                              loga_final,
@@ -2459,7 +2463,7 @@ class_call(background_initial_conditions(ppr,pba,pvecback,pvecback_integration,&
                              pba->error_message),
              pba->error_message,
              pba->error_message);
-
+// printf("..done integrating background\n");
 
              /* VP: loop over background to ensure the closure relation, to be updated*/
      //
@@ -2702,9 +2706,10 @@ class_call(background_initial_conditions(ppr,pba,pvecback,pvecback_integration,&
     }
     if (pba->has_mscf == _TRUE_) {
       printf("    Many scalar fields details:\n");
-      for (int k=0; k<pba->N_mscf; k++){
-        printf("     -> Omega_mscf = %g, wished %g\n",
-        pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_mscf+k]/pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_crit], pba->Omega0_mscf[k]);
+      for (k=0; k<pba->N_mscf; k++){
+        pba->Omega0_mscf[k]=pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_mscf+k]/pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_crit];      
+        pba->Omega0_mscf_tot+=pba->Omega0_mscf[k];      
+        printf("     -> Omega_mscf = %g\n",pba->Omega0_mscf[k]);
       }
       printf("     -> Omega_mscf_tot = %g\n",pba->Omega0_mscf_tot);
       //if(pba->mscf_potential == axionquad_mscf){
@@ -2712,15 +2717,15 @@ class_call(background_initial_conditions(ppr,pba,pvecback,pvecback_integration,&
       ////// printf("m_a = %g eV\n",(pba->scf_parameters[0]*pba->H0/1.5638e29));
       ////printf("m_a = %g eV\n",(pba->scf_parameters[0]));
       ////printf("H_0 = %g eV\n",pba->H0/_eV_over_Mpc_);
-      ////if (pba->has_cdm == _TRUE_) printf("     -> scf fraction of cdm today = %g \n", (pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_scf]) / (pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_scf] + pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_cdm]) );
+      ////if (pba->has_cdm == _TRUE_) printf("     -> scf fraction of cdm today = %g \n", (pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_scf]) / (pba->background_table[(pba->t_size-1)*pba->bg_size+pba->index_bg_rho_scf] + pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_cdm]) );
       ////// printf("     -> for reference, rho_crit today = %g \n",pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_crit]);
       //printf("wait for implem");
       //}
 //      if(pba->mscf_potential == axion_mscf){
         printf("Additional scf parameters used: \n");
-        for (int k=0; k<pba->N_mscf; k++){
+        for (k=0; k<pba->N_mscf; k++){
           printf("n = %e m_a = %e eV, f_a/mpl = %e\n",pba->n_axion_mscf[k],(pba->m_mscf[k]*pba->H0/1.5638e29),pba->f_axion_mscf[k]);
-          printf("  phi_ini = %e \n", pba->phi_ini_mscf[k]);
+          printf("  phi_ini = %e, phi_prime_ini %e\n", pba->phi_ini_mscf[k], pba->phi_prime_ini_mscf[k]);
  //     }
       }
       //if(pba->mscf_potential ==phi_2n){
@@ -2785,7 +2790,7 @@ int background_initial_conditions(
                                   double * pvecback_integration, /* vector with argument pvecback_integration[index_bi] (must be already allocated with size pba->bi_size) */
                                   double * loga_ini
                                   ) {
-  printf("background_initial_conditions reached ...\n");
+  // printf("background_initial_conditions reached ...\n");
   /** Summary: */
 
   /** - define local variables */
@@ -2795,7 +2800,7 @@ int background_initial_conditions(
 
   double rho_ncdm, p_ncdm, rho_ncdm_rel_tot=0.;
   double f,Omega_rad, rho_rad;
-  int counter,is_early_enough,n_ncdm;
+  int counter,is_early_enough,n_ncdm,k;
   double scf_lambda;
   double rho_fld_today;
   double w_fld,dw_over_da_fld,integral_fld;
@@ -2976,9 +2981,9 @@ int background_initial_conditions(
   }
   // printf("Calling background functions.\n");//print_trigger
   /* Infer pvecback from pvecback_integration */
-  printf("2984 reached background.c, ready to roll\n");
+  // printf("2984 reached background.c, ready to roll\n");
   if (pba->has_mscf == _TRUE_) {
-  printf("2986 reached background.c, doing stuff\n");
+  // printf("2986 reached background.c, doing stuff\n");
     //if (pba->attractor_ic_scf == _TRUE_) {
       //printf("not implemented");
     //}
@@ -2986,13 +2991,13 @@ int background_initial_conditions(
       // printf("Not using attractor initial conditions\n");
       /** - --> If no attractor initial conditions are assigned, gets the provided ones. */
     //print("index_bi_phi_prime_mscf is %e",pba->index_bi_phi_prime_mscf);
-      for(int k = 0; k<pba->N_mscf; k++){
+      for(k = 0; k<pba->N_mscf; k++){
         //print("2992 reached background.c, doing stuff\n");
         //print("index_bi_phi_mscf = %e", pba->index_bi_phi_mscf);
-        //pvecback_integration[pba->index_bi_phi_mscf+k] = pba->phi_ini_mscf[k];
-        //pvecback_integration[pba->index_bi_phi_prime_mscf+k] = pba->phi_prime_ini_mscf[k];
-        pvecback_integration[pba->index_bi_phi_mscf+k] =2.82;
-        pvecback_integration[pba->index_bi_phi_prime_mscf+k] = 0;
+        pvecback_integration[pba->index_bi_phi_mscf+k] = pba->phi_ini_mscf[k];
+        pvecback_integration[pba->index_bi_phi_prime_mscf+k] = pba->phi_prime_ini_mscf[k];
+        // pvecback_integration[pba->index_bi_phi_mscf+k] =2.82;
+        // pvecback_integration[pba->index_bi_phi_prime_mscf+k] = 0;
     //  }
     }
 
@@ -3000,13 +3005,13 @@ int background_initial_conditions(
       //printf("not implemented");
       //}else{
         //// printf("phi_i %e pba->V0_phi2n %e \n",pba->phi_ini_scf,pba->V0_phi2n); //check that the 2 ways of calculating V0 agrees.
-      //for(int k = 0; k<pba->N_mscf; k++){
+      //for(k = 0; k<pba->N_mscf; k++){
           //pvecback_integration[pba->index_bi_phi_mscf+k] = pba->phi_ini_mscf[k];
           //pvecback_integration[pba->index_bi_phi_prime_mscf+k] =  pba->phi_prime_ini_mscf[k];
         //}
       //}
 
-    for(int k = 0; k<pba->N_mscf; k++){
+    for(k = 0; k<pba->N_mscf; k++){
       class_test(!isfinite(pvecback_integration[pba->index_bi_phi_mscf+k]) ||
                 !isfinite(pvecback_integration[pba->index_bi_phi_mscf+k]),
                 pba->error_message,
@@ -3014,7 +3019,7 @@ int background_initial_conditions(
                 pvecback_integration[pba->index_bi_phi_mscf+k],
                 pvecback_integration[pba->index_bi_phi_mscf+k]);
 
-      pvecback_integration[pba->index_bi_rho_mscf+k] = 0; //vp: in axiclass we initialise the fluid scf variable to 0, we will update its value when needed at the time of the switch.
+      // pvecback_integration[pba->index_bi_rho_mscf+k] = 0; //vp: in axiclass we initialise the fluid scf variable to 0, we will update its value when needed at the time of the switch.
     }
   }
   // printf("calling background functions.\n");//print_trigger
@@ -3155,7 +3160,7 @@ int background_output_titles(
 
   /** - Length of the column title should be less than _OUTPUTPRECISION_+6
       to be indented correctly, but it can be as long as . */
-  int n;
+  int n,k;
   char tmp[40];
 
   class_store_columntitle(titles,"z",_TRUE_);
@@ -3202,29 +3207,32 @@ int background_output_titles(
   class_store_columntitle(titles,"V'_scf",pba->has_scf);
   class_store_columntitle(titles,"V''_scf",pba->has_scf);
   if (pba->has_mscf == _TRUE_){
-    //print("3183 reached background.c, storing outputs");
-    class_sprintf(tmp,"(.)rho_rho_mscf[%d]",n);
-    class_store_columntitle(titles,tmp,_TRUE_);
-    class_sprintf(tmp,"(.)Omega_mscf[%d]",n);
-    class_store_columntitle(titles,tmp,_TRUE_);
-    class_sprintf(tmp,"(.)p_mscf[%d]",n);
-    class_store_columntitle(titles,tmp,_TRUE_);
-    class_sprintf(tmp,"(.)p_prime_mscf[%d]",n);
-    class_store_columntitle(titles,tmp,_TRUE_);
-    class_sprintf(tmp,"(.)w_mscf[%d]",n);
-    class_store_columntitle(titles,tmp,_TRUE_);
-    class_sprintf(tmp,"(.)dw_mscf[%d]",n);
-    class_store_columntitle(titles,tmp,_TRUE_);
-    class_sprintf(tmp,"phi_mscf[%d]",n);
-    class_store_columntitle(titles,tmp,_TRUE_);
-    class_sprintf(tmp,"phi'_mscf[%d]",n);
-    class_store_columntitle(titles,tmp,_TRUE_);
-    class_sprintf(tmp,"V_mscf[%d]",n);
-    class_store_columntitle(titles,tmp,_TRUE_);
-    class_sprintf(tmp,"V'_mscf[%d]",n);
-    class_store_columntitle(titles,tmp,_TRUE_);
-    class_sprintf(tmp,"V''_mscf[%d]",n);
-    class_store_columntitle(titles,tmp,_TRUE_);
+    printf("3183 reached background.c, storing output titles");
+    for (k = 0; k < pba->N_mscf; k++){
+      printf("storing titles for mscf %d\n",k);
+      class_sprintf(tmp,"(.)rho_mscf[%d]",k);
+      class_store_columntitle(titles,tmp,_TRUE_);
+      class_sprintf(tmp,"(.)Omega_mscf[%d]",k);
+      class_store_columntitle(titles,tmp,_TRUE_);
+      class_sprintf(tmp,"(.)p_mscf[%d]",k);
+      class_store_columntitle(titles,tmp,_TRUE_);
+      class_sprintf(tmp,"(.)p_prime_mscf[%d]",k);
+      class_store_columntitle(titles,tmp,_TRUE_);
+      class_sprintf(tmp,"(.)w_mscf[%d]",k);
+      class_store_columntitle(titles,tmp,_TRUE_);
+      // class_sprintf(tmp,"(.)dw_mscf[%d]",k);
+      // class_store_columntitle(titles,tmp,_TRUE_);
+      class_sprintf(tmp,"phi_mscf[%d]",k);
+      class_store_columntitle(titles,tmp,_TRUE_);
+      class_sprintf(tmp,"phi'_mscf[%d]",k);
+      class_store_columntitle(titles,tmp,_TRUE_);
+      class_sprintf(tmp,"V_mscf[%d]",k);
+      class_store_columntitle(titles,tmp,_TRUE_);
+      class_sprintf(tmp,"V'_mscf[%d]",k);
+      class_store_columntitle(titles,tmp,_TRUE_);
+      class_sprintf(tmp,"V''_mscf[%d]",k);
+      class_store_columntitle(titles,tmp,_TRUE_);
+    }
   }
 
   class_store_columntitle(titles,"(.)rho_tot",_TRUE_);
@@ -3236,6 +3244,8 @@ int background_output_titles(
 
   class_store_columntitle(titles,"rel. alpha",pba->has_varconst);
   class_store_columntitle(titles,"rel. m_e",pba->has_varconst);
+
+  printf(titles);
 
   return _SUCCESS_;
 }
@@ -3254,9 +3264,9 @@ int background_output_data(
                            int number_of_titles,
                            double *data
                            ) {
-  printf("background_output_data reached ...\n");
+  // printf("background_output_data reached ...\n");
 
-  int index_tau, storeidx, n;
+  int index_tau, storeidx, n, k;
   double *dataptr, *pvecback;
 
   /** Stores quantities */
@@ -3264,7 +3274,6 @@ int background_output_data(
     dataptr = data + index_tau*number_of_titles;
     pvecback = pba->background_table + index_tau*pba->bg_size;
     storeidx = 0;
-
     class_store_double(dataptr,1./pvecback[pba->index_bg_a]-1.,_TRUE_,storeidx);
     class_store_double(dataptr,pvecback[pba->index_bg_time]/_Gyr_over_Mpc_,_TRUE_,storeidx);
     class_store_double(dataptr,pba->conformal_age-pvecback[pba->index_bg_conf_distance],_TRUE_,storeidx);
@@ -3296,7 +3305,6 @@ int background_output_data(
 
     class_store_double(dataptr,pvecback[pba->index_bg_rho_scf],pba->has_scf,storeidx);
     class_store_double(dataptr,pvecback[pba->index_bg_Omega_scf],pba->has_scf,storeidx);
-    // printf("a %e pvecback[pba->index_bg_w_scf] %e\n",a,pvecback[pba->index_bg_w_scf]);
     class_store_double(dataptr,pvecback[pba->index_bg_p_scf],pba->has_scf,storeidx);
     class_store_double(dataptr,pvecback[pba->index_bg_p_prime_scf],pba->has_scf,storeidx);
     class_store_double(dataptr,pvecback[pba->index_bg_w_scf],pba->has_scf,storeidx);
@@ -3308,15 +3316,15 @@ int background_output_data(
     class_store_double(dataptr,pvecback[pba->index_bg_ddV_scf],pba->has_scf,storeidx);
 
     if (pba->has_mscf == _TRUE_){
-      for (int k = 0 ; k < pba->N_mscf; k++){
-        printf("3183 reached background.c, storing outputs (again?)");
+      for (k = 0 ; k < pba->N_mscf; k++){
+        // printf("3344 reached background.c, storing outputs for mscf %d\n",k);
         class_store_double(dataptr,pvecback[pba->index_bg_rho_mscf+k],_TRUE_,storeidx);
         class_store_double(dataptr,pvecback[pba->index_bg_Omega_mscf+k],_TRUE_,storeidx);
         // printf("a %e pvecback[pba->index_bg_w_scf] %e\n",a,pvecback[pba->index_bg_w_scf]);
         class_store_double(dataptr,pvecback[pba->index_bg_p_mscf+k],_TRUE_,storeidx);
         class_store_double(dataptr,pvecback[pba->index_bg_p_prime_mscf+k],_TRUE_,storeidx);
         class_store_double(dataptr,pvecback[pba->index_bg_w_mscf+k],_TRUE_,storeidx);
-        class_store_double(dataptr,pvecback[pba->index_bg_dw_mscf+k],_TRUE_,storeidx);
+        // class_store_double(dataptr,pvecback[pba->index_bg_dw_mscf+k],_TRUE_,storeidx);
         class_store_double(dataptr,pvecback[pba->index_bg_phi_mscf+k],_TRUE_,storeidx);
         class_store_double(dataptr,pvecback[pba->index_bg_phi_prime_mscf+k],_TRUE_,storeidx);
         class_store_double(dataptr,pvecback[pba->index_bg_V_mscf+k],_TRUE_,storeidx);
@@ -3328,7 +3336,6 @@ int background_output_data(
     class_store_double(dataptr,pvecback[pba->index_bg_rho_tot],_TRUE_,storeidx);
     class_store_double(dataptr,pvecback[pba->index_bg_p_tot],_TRUE_,storeidx);
     class_store_double(dataptr,pvecback[pba->index_bg_p_tot_prime],_TRUE_,storeidx);
-
     class_store_double(dataptr,pvecback[pba->index_bg_D],_TRUE_,storeidx);
     class_store_double(dataptr,pvecback[pba->index_bg_f],_TRUE_,storeidx);
 
@@ -3374,7 +3381,7 @@ int background_derivs(
                       void * parameters_and_workspace,
                       ErrorMsg error_message
                       ) {
-  printf("background_derivs reached ...\n");
+  // printf("background_derivs reached ...\n");
 
   /** Summary: */
 
@@ -3388,6 +3395,7 @@ int background_derivs(
   pba =  pbpaw->pba;
   pvecback = pbpaw->pvecback;
   double cos_initial,sin_initial,n,Gac;
+  int k;
   /** - scale factor a (in fact, given our normalisation conventions, this stands for a/a_0) */
   a = exp(loga);
 
@@ -3453,9 +3461,9 @@ int background_derivs(
       /*ignore contribution*/
     }
   }
-  if (pba->has_mscf == _TRUE_ && pba->include_mscf_in_growth_factor == _TRUE_) {
-    for (int k = 0; k<pba->N_mscf; k++){
-      printf("3435 reached background.c, storing outputs (again?)");
+  if (pba->has_mscf == _TRUE_) {
+    for (k = 0; k<pba->N_mscf; k++){
+      // printf("3435 reached background.c, storing outputs (again?)");
       if(pba->n_axion_mscf[k] ==1){
           rho_M += pvecback[pba->index_bg_rho_mscf+k];
       }
@@ -3525,7 +3533,7 @@ int background_derivs(
     /*COComment - add if statement, dependent on flag, to either use KG equation or fluid equation  */
     // printf("inside SF evolution call\n");
 //    if (pba->mscf_kg_eq == _TRUE_) {
-    for (int k = 0; k < pba->N_mscf; k++){
+    for (k = 0; k < pba->N_mscf; k++){
       /* VP: OLD AXICLASS: derivative with respect to conformal time */
       // dy[pba->index_bi_phi_scf] = y[pba->index_bi_phi_prime_scf];
       // dy[pba->index_bi_phi_prime_scf] = - y[pba->index_bi_a]*
@@ -3536,9 +3544,12 @@ int background_derivs(
       /** - Scalar field equation: \f$ \phi'' + 2 a H \phi' + a^2 dV = 0 \f$  (note H is wrt cosmological time)
           written as \f$ d\phi/dlna = phi' / (aH) \f$ and \f$ d\phi'/dlna = -2*phi' - (a/H) dV \f$ */
       dy[pba->index_bi_phi_mscf+k] = y[pba->index_bi_phi_prime_mscf+k]/a/H;
+      // printf("the guy is %e \n", dy[pba->index_bi_phi_mscf+k]);
       dy[pba->index_bi_phi_prime_mscf+k] = - 2*y[pba->index_bi_phi_prime_mscf+k] - a*dV_mscf(pba,k,y[pba->index_bi_phi_mscf+k])/H ;
+      // printf("the other guy is %e \n", dy[pba->index_bi_phi_prime_mscf+k]);
 
-      dy[pba->index_bi_rho_mscf+k] = 0; //Update the scf density until the fluid equation starts.
+//      dy[pba->index_bi_rho_mscf+k] = 0; //Update the scf density until the fluid equation starts.
+      // dy[pba->index_bi_rho_mscf+k] = 0; //Update the scf density until the fluid equation starts.
       // printf("aEvolving scalar field using KG equation. phi %e phi prime %e \n", y[pba->index_bi_phi_scf],y[pba->index_bi_phi_prime_scf]);
       // printf("dV %e \n", dV_scf(pba,y[pba->index_bi_phi_scf])  );
       // if(pba->background_verbose > 11) printf("Evolving scalar field using KG equation. phi %e phi prime %e \n", y[pba->index_bi_phi_scf],dy[pba->index_bi_phi_scf]  );
@@ -3590,7 +3601,7 @@ int background_sources(
                        void * parameters_and_workspace,
                        ErrorMsg error_message
                        ) {
-  printf("background_sources reached ...\n");
+  // printf("background_sources reached ...\n");
   struct background_parameters_and_workspace * pbpaw;
   struct background * pba;
   double a;
@@ -3657,7 +3668,7 @@ int background_timescale(
                          double * timescale,
                          ErrorMsg error_message
                          ) {
-  printf("background_timescale reached ...\n");
+  // printf("background_timescale reached ...\n");
 
   *timescale = 1.;
   return _SUCCESS_;
@@ -3677,9 +3688,9 @@ int background_timescale(
 int background_output_budget(
                              struct background* pba
                              ) {
-  printf("background_output_budget reached ...\n");
+  // printf("background_output_budget reached ...\n");
   double budget_matter, budget_radiation, budget_other,budget_neutrino;
-  int index_ncdm;
+  int index_ncdm, k;
 
   budget_matter = 0;
   budget_radiation = 0;
@@ -3710,7 +3721,6 @@ int background_output_budget(
       class_print_species("Axion DM",scf);
       budget_matter+=pba->Omega0_scf;
     }
-
 
 
     if (pba->N_ncdm > 0) {
@@ -3760,13 +3770,13 @@ int background_output_budget(
         budget_other+=pba->Omega0_axion;
       }
     } if (pba->has_mscf == _TRUE_){
-      for (int k = 0; k < pba->N_mscf; k++){
-     if (!(pba->n_axion_mscf[k] == 1) ){
-        class_print_species("Many scalar Fields",scf);
-        budget_other+=pba->Omega0_mscf[k];
+      // for (k = 0; k < pba->N_mscf; k++){
+    //  if (!(pba->n_axion_mscf[k] == 1) ){
+        class_print_species("Many scalar Fields",mscf_tot);
+        budget_other+=pba->Omega0_mscf_tot;
         // printf("pba->Omega0_axion %e\n", pba->Omega0_axion);
-        }
-      }
+        // }
+      // }
     }
     // if(pba->has_scf && (pba->scf_potential == axion || pba->scf_potential == phi_2n)){
     //   _class_print_species_("Axion",axion);
@@ -3824,7 +3834,7 @@ int background_output_budget(
 double V_e_scf(struct background *pba,
                double phi
                ) {
-  printf("V_e_scf reached ...\n");
+  // printf("V_e_scf reached ...\n");
   double scf_lambda = pba->scf_parameters[0];
   //  double scf_alpha  = pba->scf_parameters[1];
   //  double scf_A      = pba->scf_parameters[2];
@@ -3836,7 +3846,7 @@ double V_e_scf(struct background *pba,
 double dV_e_scf(struct background *pba,
                 double phi
                 ) {
-  printf("dV_e_scf reached ...\n");
+  // printf("dV_e_scf reached ...\n");
   double scf_lambda = pba->scf_parameters[0];
   //  double scf_alpha  = pba->scf_parameters[1];
   //  double scf_A      = pba->scf_parameters[2];
@@ -3848,7 +3858,7 @@ double dV_e_scf(struct background *pba,
 double ddV_e_scf(struct background *pba,
                  double phi
                  ) {
-  printf("ddV_e_scf reached ...\n");
+  // printf("ddV_e_scf reached ...\n");
   double scf_lambda = pba->scf_parameters[0];
   //  double scf_alpha  = pba->scf_parameters[1];
   //  double scf_A      = pba->scf_parameters[2];
@@ -3871,7 +3881,7 @@ double ddV_e_scf(struct background *pba,
 double V_p_scf(
                struct background *pba,
                double phi) {
-  printf("V_p_scf reached ...\n");
+  // printf("V_p_scf reached ...\n");
   //  double scf_lambda = pba->scf_parameters[0];
   double scf_alpha  = pba->scf_parameters[1];
   double scf_A      = pba->scf_parameters[2];
@@ -3883,7 +3893,7 @@ double V_p_scf(
 double dV_p_scf(
                 struct background *pba,
                 double phi) {
-  printf("dV_p_scf reached ...\n");
+  // printf("dV_p_scf reached ...\n");
   //  double scf_lambda = pba->scf_parameters[0];
   double scf_alpha  = pba->scf_parameters[1];
   //  double scf_A      = pba->scf_parameters[2];
@@ -3895,7 +3905,7 @@ double dV_p_scf(
 double ddV_p_scf(
                  struct background *pba,
                  double phi) {
-  printf("ddV_p_scf reached ...\n");
+  // printf("ddV_p_scf reached ...\n");
   //  double scf_lambda = pba->scf_parameters[0];
   double scf_alpha  = pba->scf_parameters[1];
   //  double scf_A      = pba->scf_parameters[2];
@@ -3911,7 +3921,7 @@ double ddV_p_scf(
 double V_double_exp_scf(
                   struct background *pba,
                   double phi){
-    printf("V_double_exp_scf reached ...\n");
+    // printf("V_double_exp_scf reached ...\n");
     return pow(pba->scf_parameters[2],4)*exp(-pba->scf_parameters[0]*phi)+pow(pba->scf_parameters[3],4)*exp(-pba->scf_parameters[1]*phi);
 
 }
@@ -3919,7 +3929,7 @@ double V_double_exp_scf(
 double dV_double_exp_scf(
                   struct background *pba,
                   double phi){
-    printf("dV_double_exp_scf reached ...\n");
+    // printf("dV_double_exp_scf reached ...\n");
 
     return -pba->scf_parameters[0]*pow(pba->scf_parameters[2],4)*exp(-pba->scf_parameters[0]*phi)-pba->scf_parameters[1]*pow(pba->scf_parameters[3],4)*exp(-pba->scf_parameters[1]*phi);
 
@@ -3928,7 +3938,7 @@ double dV_double_exp_scf(
 double ddV_double_exp_scf(
                   struct background *pba,
                   double phi){
-    printf("ddV_double_exp_scf reached ...\n");
+    // printf("ddV_double_exp_scf reached ...\n");
     // printf("1 %e 2 %e \n", exp(-pba->scf_parameters[0]*phi),pow(pba->scf_parameters[0],4));
     return pow(pba->scf_parameters[0],2)*pow(pba->scf_parameters[2],4)*exp(-pba->scf_parameters[0]*phi)+pow(pba->scf_parameters[1],2)*pow(pba->scf_parameters[3],4)*exp(-pba->scf_parameters[1]*phi);
 
@@ -3940,7 +3950,7 @@ double ddV_double_exp_scf(
 double V_axion_scf(
                   struct background *pba,
                   double phi){
-    printf("V_axion_scf reached ...\n");
+    // printf("V_axion_scf reached ...\n");
     // int n = pba->scf_parameters[0];
     double n = pba->n_axion;
     // double fa = pba->scf_parameters[2];
@@ -3958,7 +3968,7 @@ double V_axion_scf(
 double dV_axion_scf(
                   struct background *pba,
                   double phi){
-    printf("dV_axion_scf reached ...\n");
+    // printf("dV_axion_scf reached ...\n");
     // int n = pba->scf_parameters[0];
     double n = pba->n_axion;
     // double fa = pba->scf_parameters[2];
@@ -3975,7 +3985,7 @@ double dV_axion_scf(
 double ddV_axion_scf(
                   struct background *pba,
                   double phi){
-    printf("ddV_axion_scf reached ...\n");
+    // printf("ddV_axion_scf reached ...\n");
 
      // int n = pba->scf_parameters[0];
      double n = pba->n_axion;
@@ -3995,7 +4005,7 @@ double ddV_axion_scf(
 double V_phi_2n_scf(
                   struct background *pba,
                   double phi){
-    printf("V_phi_2n_scf reached ...\n");
+    // printf("V_phi_2n_scf reached ...\n");
     // int n = pba->scf_parameters[0];
     double n = pba->n_axion;
     double result;
@@ -4009,7 +4019,7 @@ double V_phi_2n_scf(
 double dV_phi_2n_scf(
                   struct background *pba,
                   double phi){
-    printf("dV_phi_2n_scf reached ...\n");
+    // printf("dV_phi_2n_scf reached ...\n");
     // int n = pba->scf_parameters[0];
     double n = pba->n_axion;
     double result;
@@ -4023,7 +4033,7 @@ double dV_phi_2n_scf(
 double ddV_phi_2n_scf(
                   struct background *pba,
                   double phi){
-    printf("ddV_phi_2n_scf reached ...\n");
+    // printf("ddV_phi_2n_scf reached ...\n");
 
      // int n = pba->scf_parameters[0];
      double n = pba->n_axion;
@@ -4038,7 +4048,7 @@ double ddV_phi_2n_scf(
 double V_axionquad_scf(
                   struct background *pba,
                   double phi){
-    printf("V_axionquad_scf reached ...\n");
+    // printf("V_axionquad_scf reached ...\n");
 
     // printf("Pot = %e %e %e\n", phi,pba->scf_parameters[1]*pba->H0,pow(pba->scf_parameters[1]*pba->H0,2)*pow(phi,2)/2);
     return pow(pba->m_scf*pba->H0,2)*pow(phi,2)/2; //pba->scf_parameters[0] is given in units of H0 and then converted in input.c
@@ -4048,7 +4058,7 @@ double V_axionquad_scf(
 double dV_axionquad_scf(
                   struct background *pba,
                   double phi){
-    printf("dV_axionquad_scf reached ...\n");
+    // printf("dV_axionquad_scf reached ...\n");
 
     // return pow(pba->scf_parameters[0]*pba->H0,2)*phi;
     return pow(pba->m_scf*pba->H0,2)*phi;
@@ -4058,7 +4068,7 @@ double dV_axionquad_scf(
 double ddV_axionquad_scf(
                   struct background *pba,
                   double phi){
-    printf("ddV_axionquad_scf reached ...\n");
+    // printf("ddV_axionquad_scf reached ...\n");
 
     // printf("1 %e 2 %e \n", exp(-pba->scf_parameters[0]*pba->H0*phi),pow(pba->scf_parameters[0]*pba->H0,4));
     // return pow(pba->scf_parameters[0]*pba->H0,2);
@@ -4071,7 +4081,7 @@ double ddV_axionquad_scf(
 double V_scf(
              struct background *pba,
              double phi) {
-    printf("V_scf reached ...\n");
+    // printf("V_scf reached ...\n");
   /** we check first which potential should be considered */
   double result = 0.;
   if(pba->scf_potential == pol_times_exp){
@@ -4097,7 +4107,7 @@ double V_scf(
 double dV_scf(
               struct background *pba,
 	      double phi) {
-    printf("dV_scf reached ...\n");
+    // printf("dV_scf reached ...\n");
   /** we check first which potential should be considered */
   double result = 0.;
   if(pba->scf_potential == pol_times_exp){
@@ -4125,7 +4135,7 @@ double dV_scf(
 double ddV_scf(
                struct background *pba,
                double phi) {
-    printf("ddV_scf reached ...\n");
+    // printf("ddV_scf reached ...\n");
   /** we check first which potential should be considered */
   double result = 0.;
 
@@ -4156,14 +4166,14 @@ double V_axion_mscf(
                   struct background *pba,
                   int k, 
                   double phi){
-    printf("V_axion_mscf reached ...\n");
+    // printf("V_axion_mscf reached ...\n");
     // int n = pba->mscf_parameters[0];
     double n = pba->n_axion_mscf[k];
     // double fa = pba->mscf_parameters[2];
     double fa = pba->f_axion_mscf[k];
     double m = pba->m_mscf[k]*pba->H0;
     double result;
-    // printf("n %d fa %e V %e phi/fa %e \n",n,fa,m*m/pow(2,n),phi/fa);
+    // printf("n %f fa %f V %f phi/fa %f \n",n,fa,m*m/pow(2,n),phi/fa);
     if(n>1)result = pow(m,2)*pow(fa,2)*pow(1 - cos(phi/fa),n);
     else result = pow(m,2)*pow(fa,2)*(1 - cos(phi/fa));
     // printf("result %e phi %e m^2 %e\n",result,phi,m*m);
@@ -4175,7 +4185,7 @@ double dV_axion_mscf(
                   struct background *pba,
                   int k, 
                   double phi){
-    printf("dV_axion_mscf reached ...\n");
+    // printf("dV_axion_mscf reached ...\n");
     // int n = pba->mscf_parameters[0];
     double n = pba->n_axion_mscf[k];
     // double fa = pba->mscf_parameters[2];
@@ -4193,7 +4203,7 @@ double ddV_axion_mscf(
                   struct background *pba,
                   int k, 
                   double phi){
-    printf("ddV_axion_mscf reached ...\n");
+    // printf("ddV_axion_mscf reached ...\n");
     // int n = pba->mscf_parameters[0];
     double n = pba->n_axion_mscf[k];
     // double fa = pba->mscf_parameters[2];
@@ -4211,7 +4221,7 @@ double V_mscf(
              struct background *pba,
              int k, 
              double phi) {
-    printf("V_mscf reached ...\n");
+    // printf("V_mscf reached ...\n");
   /** we check first which potential should be considered */
   double result = 0.;
 //  if(pba->mscf_potential == axion_mscf){
@@ -4221,6 +4231,7 @@ double V_mscf(
    // exit(0);
   //}
     // printf("result Vf %e\n", result);
+  // printf("dV=%e phi=%e\n",result,phi);
   return result;
 }
 
@@ -4228,7 +4239,7 @@ double dV_mscf(
              struct background *pba,
              int k, 
              double phi) {
-    printf("V_mscf reached ...\n");
+    // printf("V_mscf reached ...\n");
   /** we check first which potential should be considered */
   double result = 0.;
 //  if(pba->mscf_potential == axion_mscf){
@@ -4238,6 +4249,7 @@ double dV_mscf(
    // exit(0);
   //}
     // printf("result Vf %e\n", result);
+  // printf("dV=%e phi=%e\n",result,phi);
   return result;
 }
 
@@ -4245,7 +4257,7 @@ double ddV_mscf(
              struct background *pba,
              int k, 
              double phi) {
-    printf("ddV_mscf reached ...\n");
+    // printf("ddV_mscf reached ...\n");
   /** we check first which potential should be considered */
   double result = 0.;
  // if(pba->mscf_potential == axion_mscf){
@@ -4255,6 +4267,7 @@ double ddV_mscf(
   //  exit(0);
  // }
     // printf("result Vf %e\n", result);
+  // printf("ddV=%e phi=%e\n",result,phi);
   return result;
 }
 

@@ -108,7 +108,7 @@ int input_find_file(int argc,
                     ErrorMsg errmsg){
 
   /** Summary: */
-  printf("entering input_find_file... \n");
+  // printf("entering input_find_file... \n");
   /** Define local variables */
   struct file_content fc_input;       // Temporary structure with all input parameters
   struct file_content fc_precision;   // Temporary structure with all precision parameters
@@ -221,7 +221,7 @@ int input_set_root(char* input_file,
                    struct file_content * pfc_setroot,
                    ErrorMsg errmsg) {
 
-  printf("entering input_set_root... \n");
+  // printf("entering input_set_root... \n");
   /** Define local variables */
   int flag1, filenum, iextens;
   int index_root_in_fc_input = -1;
@@ -395,7 +395,7 @@ int input_read_from_file(struct file_content * pfc,
                          struct output *pop,
                          ErrorMsg errmsg) {
 
-  printf("entering input_read_from_file... \n");
+  // printf("entering input_read_from_file... \n");
 
   /** Summary: */
 
@@ -432,7 +432,7 @@ int input_read_from_file(struct file_content * pfc,
                                     errmsg),
               errmsg,
               errmsg);
-  printf("starting to read input parameters...\n");
+  // printf("starting to read input parameters...\n");
   if (has_shooting == _TRUE_ && pba->shooting_failed == _TRUE_) {
     // Shooting failed, but error must be thrown in background in order to trigger a
     // runtime error, so here we skip the rest and go straight to background
@@ -515,9 +515,9 @@ int input_shooting(struct file_content * pfc,
                    int * has_shooting,
                    ErrorMsg errmsg){
 
-  printf("entering input_shooting... \n");
+  // printf("entering input_shooting... \n");
   /** Summary: */
-  printf("entered input_shooting...\n");
+  // printf("entered input_shooting...\n");
   int flag1,flag2;
   int int1,int2;
 
@@ -1166,7 +1166,7 @@ int input_needs_shooting_for_target(struct file_content * pfc,
                                     int * needs_shooting,
                                     ErrorMsg errmsg){
 
-  printf("entering input_needs_shooting_for_target... \n");
+  // printf("entering input_needs_shooting_for_target... \n");
   *needs_shooting = _TRUE_;
   switch (target_name){
   case Omega_dcdmdr:
@@ -1210,7 +1210,7 @@ int input_find_root(double *xzero,
                     double tol_x_rel,
                     struct fzerofun_workspace *pfzw,
                     ErrorMsg errmsg){
-  printf("entering input_find_root... \n");
+  // printf("entering input_find_root... \n");
 
   /** Summary: */
 
@@ -1293,7 +1293,7 @@ int input_fzerofun_1d(double input,
                       void* pfzw,
                       double *output,
                       ErrorMsg error_message){
-  printf("entering input_fzerofun_1d... \n");
+  // printf("entering input_fzerofun_1d... \n");
 
   class_call(input_try_unknown_parameters(&input,
                                           1,
@@ -1341,7 +1341,7 @@ int input_fzero_ridder(int (*func)(double x,
                        int *fevals,
                        ErrorMsg error_message){
 
-  printf("entering input_fzero_ridder... \n");
+  // printf("entering input_fzero_ridder... \n");
   /** Summary: */
 
   /** Define local variables */
@@ -1442,7 +1442,7 @@ int input_get_guess(double *xguess,
                     struct fzerofun_workspace * pfzw,
                     ErrorMsg errmsg){
 
-  printf("entering input_get_guess... \n");
+  // printf("entering input_get_guess... \n");
   /** Summary: */
 
   /** Define local variables */
@@ -1877,7 +1877,7 @@ int input_try_unknown_parameters(double * unknown_parameter,
                                  double * output,
                                  ErrorMsg errmsg){
   /** Summary */
-  printf("entering input_try_unknown_parameters... \n");
+  // printf("entering input_try_unknown_parameters... \n");
 
   /** Define local variables */
   struct precision pr;        /* for precision parameters */
@@ -2197,7 +2197,7 @@ int input_read_precisions(struct file_content * pfc,
                           struct distortions *psd,
                           struct output *pop,
                           ErrorMsg errmsg){
-  printf("entering input_read_precisions... \n");
+  // printf("entering input_read_precisions... \n");
 
   /** Summary: */
 
@@ -2265,7 +2265,7 @@ int input_read_parameters(struct file_content * pfc,
                           struct output *pop,
                           ErrorMsg errmsg){
 
-  printf("entering input_read_parameters... \n");
+  // printf("entering input_read_parameters... \n");
   /** Summary: */
 
   /** Define local variables */
@@ -2377,7 +2377,7 @@ int input_read_parameters_general(struct file_content * pfc,
                                   ErrorMsg errmsg){
 
   /** Summary: */
-  printf("entering input_read_parameters_general... \n");
+  // printf("entering input_read_parameters_general... \n");
 
   /** - Define local variables */
   int flag1,flag2;
@@ -2987,7 +2987,7 @@ int input_read_parameters_species(struct file_content * pfc,
                                   int input_verbose,
                                   ErrorMsg errmsg){
 
-  printf("entering input_read_parameters_species... \n");
+  // printf("entering input_read_parameters_species... \n");
   /** Summary: */
 
   /** - Define local variables */
@@ -3015,15 +3015,15 @@ int input_read_parameters_species(struct file_content * pfc,
   class_call(parser_read_double(pfc,"T_cmb",&param1,&flag1,errmsg),
              errmsg,
              errmsg);
-  printf("entering T_cmb... \n");
+  // printf("entering T_cmb... \n");
   class_call(parser_read_double(pfc,"Omega_g",&param2,&flag2,errmsg),
              errmsg,
              errmsg);
-  printf("entering Omega_g... \n");
+  // printf("entering Omega_g... \n");
   class_call(parser_read_double(pfc,"omega_g",&param3,&flag3,errmsg),
              errmsg,
              errmsg);
-  printf("entering omega_g... \n");
+  // printf("entering omega_g... \n");
   class_test(class_at_least_two_of_three(flag1,flag2,flag3),
              errmsg,
              "You can only enter one of 'T_cmb', 'Omega_g' or 'omega_g'.");
@@ -4929,20 +4929,20 @@ class_call(parser_read_double(pfc,"Omega_scf_shoot_fa",&param4,&flag4,errmsg),
 // 1. Read the number of scalar fields (N_mscf)
   class_read_int("N_mscf",pba->N_mscf);
   /* Complete set of parameters */
-  printf("line 4917 reached. allocating\n");
+  // printf("line 4917 reached. allocating\n");
   if (pba->N_mscf > 0){
-    printf("N_mscf > 0 and yadda yadda ... \n");
+    // printf("N_mscf > 0 and yadda yadda ... \n");
     // Allocate memory for arrays related to multiple scalar fields
-    class_alloc(pba->Omega0_mscf, pba->N_mscf * sizeof(double), errmsg);
+    // class_alloc(pba->Omega0_mscf, pba->N_mscf * sizeof(double), errmsg);
     class_alloc(pba->phi_ini_mscf, pba->N_mscf * sizeof(double), errmsg);
     class_alloc(pba->phi_prime_ini_mscf, pba->N_mscf * sizeof(double), errmsg);
     class_alloc(pba->m_mscf, pba->N_mscf * sizeof(double), errmsg);
     class_alloc(pba->f_axion_mscf, pba->N_mscf * sizeof(double), errmsg);
     class_alloc(pba->n_axion_mscf, pba->N_mscf * sizeof(double), errmsg);
 
-    printf("read lists ... \n");
+    // printf("read lists ... \n");
     // Read parameters for each scalar field
-    class_read_list_of_doubles_or_default("Omega_mscf",pba->Omega0_mscf,0.0,pba->N_mscf);
+    // class_read_list_of_doubles_or_default("Omega_mscf",pba->Omega0_mscf,0.0,pba->N_mscf);
     class_read_list_of_doubles_or_default("phi_ini_mscf",pba->phi_ini_mscf,0.0,pba->N_mscf);
     class_read_list_of_doubles_or_default("phi_prime_ini_mscf",pba->phi_prime_ini_mscf,0.0,pba->N_mscf);
     class_read_list_of_doubles_or_default("m_mscf",pba->m_mscf,0.0,pba->N_mscf);
@@ -4951,7 +4951,7 @@ class_call(parser_read_double(pfc,"Omega_scf_shoot_fa",&param4,&flag4,errmsg),
   } else {
     // If N_mscf is 0 or negative, ensure all pointers are NULL.
     printf("no mSCF \n");
-    pba->Omega0_mscf = NULL;
+    // pba->Omega0_mscf = NULL;
     pba->phi_ini_mscf = NULL;
     pba->phi_prime_ini_mscf = NULL;
     pba->m_mscf = NULL;
@@ -5170,7 +5170,7 @@ int input_read_parameters_injection(struct file_content * pfc,
                                     struct precision * ppr,
                                     struct thermodynamics * pth,
                                     ErrorMsg errmsg){
-  printf("entering input_read_parameters_injection... \n");
+  // printf("entering input_read_parameters_injection... \n");
 
   /** Summary: */
 
@@ -5460,7 +5460,7 @@ int input_read_parameters_nonlinear(struct file_content * pfc,
                                     struct fourier * pfo,
                                     int input_verbose,
                                     ErrorMsg errmsg){
-  printf("entering input_read_parameters_nonlinear... \n");
+  // printf("entering input_read_parameters_nonlinear... \n");
 
   /** Define local variables */
   int flag1,flag2,flag3;
@@ -5697,7 +5697,7 @@ int input_prepare_pk_eq(struct precision * ppr,
                         struct fourier *pfo,
                         int input_verbose,
                         ErrorMsg errmsg) {
-  printf("entering input_prepare_pk_eq... \n");
+  // printf("entering input_prepare_pk_eq... \n");
 
   /** Summary: */
 
@@ -5895,7 +5895,7 @@ int input_read_parameters_primordial(struct file_content * pfc,
                                      struct perturbations * ppt,
                                      struct primordial * ppm,
                                      ErrorMsg errmsg){
-  printf("entering input_read_parameters_primordial... \n");
+  // printf("entering input_read_parameters_primordial... \n");
 
   /** Summary: */
 
@@ -6548,7 +6548,7 @@ int input_read_parameters_spectra(struct file_content * pfc,
                                   struct harmonic *phr,
                                   struct output * pop,
                                   ErrorMsg errmsg){
-  printf("entering input_read_parameters_spectra... \n");
+  // printf("entering input_read_parameters_spectra... \n");
 
   /** Summary: */
 
@@ -6893,7 +6893,7 @@ int input_read_parameters_lensing(struct file_content * pfc,
                                   struct lensing *ple,
                                   ErrorMsg errmsg){
 
-  printf("entering input_read_parameters_lensing... \n");
+  // printf("entering input_read_parameters_lensing... \n");
   /** Summary: */
 
   /** Define local variables */
@@ -6973,7 +6973,7 @@ int input_read_parameters_distortions(struct file_content * pfc,
                                       struct distortions * psd,
                                       ErrorMsg errmsg){
 
-  printf("entering input_read_parameters_distortions... \n");
+  // printf("entering input_read_parameters_distortions... \n");
   /** Summary: */
 
   /** Define local variables */
@@ -7181,7 +7181,7 @@ int input_read_parameters_additional(struct file_content* pfc,
                                      struct thermodynamics* pth,
                                      ErrorMsg errmsg){
 
-  printf("entering input_read_parameters_additional... \n");
+  // printf("entering input_read_parameters_additional... \n");
   /** Summary: */
 
   /** Define local variables */
@@ -7313,7 +7313,7 @@ int input_read_parameters_additional(struct file_content* pfc,
                                   struct output *pop,
                                   ErrorMsg errmsg){
 
-  printf("entering input_read_parameters_output... \n");
+  // printf("entering input_read_parameters_output... \n");
    /** Summary: */
 
    /** Define local variables */
@@ -7437,7 +7437,7 @@ int input_write_info(struct file_content * pfc,
                      ErrorMsg errmsg){
 
   /** Summary: */
-  printf("entering input_write_info... \n");
+  // printf("entering input_write_info... \n");
 
   /** Define local variables */
   int i;
@@ -7524,7 +7524,7 @@ int input_default_params(struct background *pba,
                          struct lensing *ple,
                          struct distortions *psd,
                          struct output *pop) {
-  printf("entering input_default_params... \n");
+  // printf("entering input_default_params... \n");
 
   /** Summary: */
 
@@ -7840,6 +7840,10 @@ int input_default_params(struct background *pba,
   pba->phi_prime_ini_scf = 1;          //     factors of the radiation attractor values
   /** 9.b.3) Tuning parameter */
   pba->scf_tuning_index = 0;
+
+  /** new: many scf */
+  pba->N_mscf = 0;
+
 
   /**
    * Deafult to input_read_parameters_heating
