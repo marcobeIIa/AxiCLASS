@@ -213,6 +213,7 @@ struct background
   short kg_fld_switch;    /**< evolve scalar field with KG equations */
   short scf_fluid_eq;    /**< evolve scalar field with KG equations */
   short scf_evolve_like_axionCAMB; /**< evolve scalar field perturbations like axionCAMB */
+  short mscf_evolve_like_axionCAMB; /**< evolve scalar field perturbations like axionCAMB */
   short scf_has_perturbations; /** do scalar field perts */
   short mscf_has_perturbations; /** do many scalar field perts */
   short loop_over_background_for_closure_relation; /** do we want to loop over background?*/

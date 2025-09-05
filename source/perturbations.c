@@ -437,6 +437,7 @@ int perturbations_output_data(
                               ) {
 
   int n_ncdm,n_mscf;
+  int n_ncdm,n_mscf;
   double k, k_over_h, k2;
   double *tk;
   double *dataptr;
@@ -559,6 +560,7 @@ int perturbations_output_titles(
                                 char titles[_MAXTITLESTRINGLENGTH_]
                                 ){
   int n_ncdm,n_mscf;
+  int n_ncdm,n_mscf;
   char tmp[40];
 
   if (output_format == class_format) {
@@ -583,6 +585,18 @@ int perturbations_output_titles(
       class_store_columntitle(titles,"delta_phi_scf",ppt->has_scf);
       class_store_columntitle(titles,"delta_phi_over_phi_scf",ppt->has_scf);
       class_store_columntitle(titles,"delta_phi_prime_scf",ppt->has_scf);
+      if (pba->has_mscf == _TRUE_) {
+        for (n_mscf=0; n_ncdm < pba->N_ncdm; n_ncdm++) {
+          class_sprintf(tmp,"d_mscf[%d]",n_mscf);
+          class_store_columntitle(titles,tmp,_TRUE_);
+          class_sprintf(tmp,"delta_phi_mscf[%d]",n_mscf);
+          class_store_columntitle(titles,tmp,_TRUE_);
+          class_sprintf(tmp,"delta_phi_over_phi_mscf[%d]",n_mscf);
+          class_store_columntitle(titles,tmp,_TRUE_);
+          class_sprintf(tmp,"delta_phi_prime_mscf[%d]",n_mscf);
+          class_store_columntitle(titles,tmp,_TRUE_);
+        }
+      }
       if (pba->has_mscf == _TRUE_) {
         for (n_mscf=0; n_ncdm < pba->N_ncdm; n_ncdm++) {
           class_sprintf(tmp,"d_mscf[%d]",n_mscf);
@@ -628,6 +642,12 @@ int perturbations_output_titles(
       class_store_columntitle(titles,"t_dcdm",pba->has_dcdm);
       class_store_columntitle(titles,"t_dr",pba->has_dr);
       class_store_columntitle(titles,"t_scf",pba->has_scf);
+      if (pba->has_mscf == _TRUE_) {
+        for (n_mscf=0; n_mscf < pba->N_mscf; n_mscf++) {
+          class_sprintf(tmp,"t_mscf[%d]",n_mscf);
+          class_store_columntitle(titles,tmp,_TRUE_);
+        }
+      }
       if (pba->has_mscf == _TRUE_) {
         for (n_mscf=0; n_mscf < pba->N_mscf; n_mscf++) {
           class_sprintf(tmp,"t_mscf[%d]",n_mscf);
@@ -844,6 +864,16 @@ int perturbations_init(
     ppt->scf_has_perturbations = _TRUE_;
   }else{
     ppt->scf_has_perturbations = _FALSE_;
+  }
+  if(pba->has_mscf == _TRUE_){
+    ppt->has_mscf = _TRUE_;
+  }else{
+    ppt->has_mscf = _FALSE_;
+  }
+  if(pba->mscf_has_perturbations == _TRUE_){
+    ppt->mscf_has_perturbations = _TRUE_;
+  }else{
+    ppt->mscf_has_perturbations = _FALSE_;
   }
   if(pba->has_mscf == _TRUE_){
     ppt->has_mscf = _TRUE_;
@@ -1393,6 +1423,8 @@ int perturbations_indices(
           ppt->has_source_delta_scf = _TRUE_;
         if (ppt->has_mscf == _TRUE_)
           ppt->has_source_delta_mscf = _TRUE_;
+        if (ppt->has_mscf == _TRUE_)
+          ppt->has_source_delta_mscf = _TRUE_;
         if (pba->has_ur == _TRUE_)
           ppt->has_source_delta_ur = _TRUE_;
         if (pba->has_idr == _TRUE_)
@@ -1424,6 +1456,8 @@ int perturbations_indices(
           ppt->has_source_theta_fld = _TRUE_;
         if (ppt->has_scf == _TRUE_)
           ppt->has_source_theta_scf = _TRUE_;
+        if (ppt->has_mscf == _TRUE_)
+          ppt->has_source_theta_mscf = _TRUE_;
         if (ppt->has_mscf == _TRUE_)
           ppt->has_source_theta_mscf = _TRUE_;
         if (pba->has_ur == _TRUE_)
@@ -1507,6 +1541,10 @@ int perturbations_indices(
       class_define_index(ppt->index_tp_delta_phi_mscf,  ppt->has_mscf, index_type,pba->N_mscf);
       class_define_index(ppt->index_tp_delta_phi_over_phi_mscf,  ppt->has_mscf, index_type,pba->N_mscf);
       class_define_index(ppt->index_tp_delta_phi_prime_mscf,  ppt->has_mscf, index_type,pba->N_mscf);
+      class_define_index(ppt->index_tp_delta_mscf,  ppt->has_source_delta_mscf, index_type,pba->N_mscf);
+      class_define_index(ppt->index_tp_delta_phi_mscf,  ppt->has_mscf, index_type,pba->N_mscf);
+      class_define_index(ppt->index_tp_delta_phi_over_phi_mscf,  ppt->has_mscf, index_type,pba->N_mscf);
+      class_define_index(ppt->index_tp_delta_phi_prime_mscf,  ppt->has_mscf, index_type,pba->N_mscf);
       class_define_index(ppt->index_tp_delta_dr,   ppt->has_source_delta_dr,  index_type,1);
       class_define_index(ppt->index_tp_delta_ur,   ppt->has_source_delta_ur,  index_type,1);
       class_define_index(ppt->index_tp_delta_idr,  ppt->has_source_delta_idr, index_type,1);
@@ -1521,6 +1559,7 @@ int perturbations_indices(
       class_define_index(ppt->index_tp_theta_dcdm, ppt->has_source_theta_dcdm,index_type,1);
       class_define_index(ppt->index_tp_theta_fld,  ppt->has_source_theta_fld, index_type,1);
       class_define_index(ppt->index_tp_theta_scf,  ppt->has_source_theta_scf, index_type,1);
+      class_define_index(ppt->index_tp_theta_mscf,  ppt->has_source_theta_mscf, index_type,pba->N_mscf);
       class_define_index(ppt->index_tp_theta_mscf,  ppt->has_source_theta_mscf, index_type,pba->N_mscf);
       class_define_index(ppt->index_tp_theta_dr,   ppt->has_source_theta_dr,  index_type,1);
       class_define_index(ppt->index_tp_theta_ur,   ppt->has_source_theta_ur,  index_type,1);
@@ -3422,6 +3461,7 @@ int perturbations_prepare_k_output(struct background * pba,
                                    struct perturbations * ppt
                                    ){
   int n_ncdm,n_mscf;
+  int n_ncdm,n_mscf;
   char tmp[40];
 
   ppt->scalar_titles[0]='\0';
@@ -4010,6 +4050,7 @@ int perturbations_vector_init(
 
   int index_pt;
   int l;
+  int n_ncdm,n_mscf,index_q,ncdm_l_size;
   int n_ncdm,n_mscf,index_q,ncdm_l_size;
   double rho_plus_p_ncdm,q,q2,epsilon,a,factor;
 
@@ -5553,6 +5594,7 @@ int perturbations_initial_conditions(struct precision * ppr,
   double delta_dr=0;
   double q,epsilon,k2;
   int index_q,n_ncdm,n_mscf,idx;
+  int index_q,n_ncdm,n_mscf,idx;
   double rho_r,rho_m,rho_nu,rho_m_over_rho_r, rho_cdm =0.;
   double fracnu,fracg,fracb,fraccdm = 0.,fracidm = 0.;
   double om;
@@ -5939,29 +5981,29 @@ int perturbations_initial_conditions(struct precision * ppr,
         }
       }
 
-      /* all relativistic relics: ur, early ncdm, dr */
+        /* all relativistic relics: ur, early ncdm, dr */
 
-      if ((pba->has_ur == _TRUE_) || (pba->has_ncdm == _TRUE_) || (pba->has_dr == _TRUE_) || (pba->has_idr == _TRUE_)) {
+        if ((pba->has_ur == _TRUE_) || (pba->has_ncdm == _TRUE_) || (pba->has_dr == _TRUE_) || (pba->has_idr == _TRUE_)) {
 
-        delta_ur = ppw->pv->y[ppw->pv->index_pt_delta_g]; /* density of ultra-relativistic neutrinos/relics */
+          delta_ur = ppw->pv->y[ppw->pv->index_pt_delta_g]; /* density of ultra-relativistic neutrinos/relics */
 
-        /* velocity of ultra-relativistic neutrinos/relics */ //TBC
-        theta_ur = - k*ktau_three/36./(4.*fracnu+15.) * (4.*fracnu+11.+12.*s2_squared-3.*(8.*fracnu*fracnu+50.*fracnu+275.)/20./(2.*fracnu+15.)*tau*om) * ppr->curvature_ini * s2_squared;
+          /* velocity of ultra-relativistic neutrinos/relics */ //TBC
+          theta_ur = - k*ktau_three/36./(4.*fracnu+15.) * (4.*fracnu+11.+12.*s2_squared-3.*(8.*fracnu*fracnu+50.*fracnu+275.)/20./(2.*fracnu+15.)*tau*om) * ppr->curvature_ini * s2_squared;
 
-        shear_ur = ktau_two/(45.+12.*fracnu) * (3.*s2_squared-1.) * (1.+(4.*fracnu-5.)/4./(2.*fracnu+15.)*tau*om) * ppr->curvature_ini;//TBC /s2_squared; /* shear of ultra-relativistic neutrinos/relics */  //TBC:0
-        // shear_ur = 0;//TBC /s2_squared; /* shear of ultra-relativistic neutrinos/relics */  //TBC:0
+          shear_ur = ktau_two/(45.+12.*fracnu) * (3.*s2_squared-1.) * (1.+(4.*fracnu-5.)/4./(2.*fracnu+15.)*tau*om) * ppr->curvature_ini;//TBC /s2_squared; /* shear of ultra-relativistic neutrinos/relics */  //TBC:0
+          // shear_ur = 0;//TBC /s2_squared; /* shear of ultra-relativistic neutrinos/relics */  //TBC:0
 
-        l3_ur = ktau_three*2./7./(12.*fracnu+45.)* ppr->curvature_ini;//TBC
-        // l3_ur = 0;//TBC
+          l3_ur = ktau_three*2./7./(12.*fracnu+45.)* ppr->curvature_ini;//TBC
+          // l3_ur = 0;//TBC
 
-        if (pba->has_dr == _TRUE_) delta_dr = delta_ur;
+          if (pba->has_dr == _TRUE_) delta_dr = delta_ur;
+        }
+
+        /* synchronous metric perturbation eta */
+        //eta = ppr->curvature_ini * (1.-ktau_two/12./(15.+4.*fracnu)*(5.+4.*fracnu - (16.*fracnu*fracnu+280.*fracnu+325)/10./(2.*fracnu+15.)*tau*om)) /  s2_squared;
+        //eta = ppr->curvature_ini * s2_squared * (1.-ktau_two/12./(15.+4.*fracnu)*(15.*s2_squared-10.+4.*s2_squared*fracnu - (16.*fracnu*fracnu+280.*fracnu+325)/10./(2.*fracnu+15.)*tau*om));
+        eta = ppr->curvature_ini * (1.-ktau_two/12./(15.+4.*fracnu)*(5.+4.*s2_squared*fracnu - (16.*fracnu*fracnu+280.*fracnu+325)/10./(2.*fracnu+15.)*tau*om));
       }
-
-      /* synchronous metric perturbation eta */
-      //eta = ppr->curvature_ini * (1.-ktau_two/12./(15.+4.*fracnu)*(5.+4.*fracnu - (16.*fracnu*fracnu+280.*fracnu+325)/10./(2.*fracnu+15.)*tau*om)) /  s2_squared;
-      //eta = ppr->curvature_ini * s2_squared * (1.-ktau_two/12./(15.+4.*fracnu)*(15.*s2_squared-10.+4.*s2_squared*fracnu - (16.*fracnu*fracnu+280.*fracnu+325)/10./(2.*fracnu+15.)*tau*om));
-      eta = ppr->curvature_ini * (1.-ktau_two/12./(15.+4.*fracnu)*(5.+4.*s2_squared*fracnu - (16.*fracnu*fracnu+280.*fracnu+325)/10./(2.*fracnu+15.)*tau*om));
-
     }
 
     /* isocurvature initial conditions taken from Bucher, Moodely,
