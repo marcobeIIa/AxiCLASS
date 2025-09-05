@@ -88,9 +88,9 @@ enum scf_pot{
   phi_2n, /** scf_potential set to axion: V equals V0((phi)^2n) */
   axionquad /* scf_potential set to axion quadratic form: V = m^2phi^2/2 */
 };
-enum mscf_pot{
-  axion_mscf /** scf_potential set to axion: V equals m^2f^2(1-cos(phi/f)) */
-};
+// enum mscf_pot{
+//   axion_mscf /** scf_potential set to axion: V equals m^2f^2(1-cos(phi/f)) */
+// };
 struct background
 {
   /** @name - input parameters initialized by user in input module
@@ -213,10 +213,12 @@ struct background
   short kg_fld_switch;    /**< evolve scalar field with KG equations */
   short scf_fluid_eq;    /**< evolve scalar field with KG equations */
   short scf_evolve_like_axionCAMB; /**< evolve scalar field perturbations like axionCAMB */
+  short mscf_evolve_like_axionCAMB; /**< evolve scalar field perturbations like axionCAMB */
   short scf_has_perturbations; /** do scalar field perts */
+  short mscf_has_perturbations; /** do many scalar field perts */
   short loop_over_background_for_closure_relation; /** do we want to loop over background?*/
   short include_scf_in_growth_factor; /** do we want to include the scf cntribution to the growth factor? useful for axion for instance. default=false*/
-  short include_mscf_in_growth_factor; /** do we want to include the mscf cntribution to the growth factor? useful for axion for instance. default=false*/
+  // short include_mscf_in_growth_factor; /** do we want to include the mscf cntribution to the growth factor? useful for axion for instance. default=false*/
 
   double precision_loop_over_background;
   //double scf_lambda; /**< \f$ \lambda \f$ : scalar field exponential potential slope */
@@ -332,8 +334,6 @@ struct background
   int index_bg_p_mscf;         /**< scalar field pressure */
   int index_bg_p_prime_mscf;         /**< scalar field pressure */
   int index_bg_w_mscf;         /**< scalar field e.o.s. */
-  int index_bg_dw_mscf;         /**< scalar field derivative of e.o.s. w/r to tau */
-  int index_bg_ddw_mscf;         /**< scalar field double derivative of e.o.s. w/r to tau*/
 
   int index_bg_rho_ncdm1;     /**< density of first ncdm species (others contiguous) */
   int index_bg_p_ncdm1;       /**< pressure of first ncdm species (others contiguous) */
@@ -411,7 +411,7 @@ struct background
   int index_bi_rho_scf; /**< {B} scf density */
   int index_bi_phi_scf;       /**< {B} scalar field value */
   int index_bi_phi_prime_scf; /**< {B} scalar field derivative wrt conformal time */
-  int index_bi_rho_mscf; /**< {B} scf density */
+  // int index_bi_rho_mscf; /**< {B} scf density */
   int index_bi_phi_mscf;       /**< {B} scalar field value */
   int index_bi_phi_prime_mscf; /**< {B} scalar field derivative wrt conformal time */
 

@@ -436,7 +436,7 @@ int perturbations_output_data(
                               double *data
                               ) {
 
-  int n_ncdm;
+  int n_ncdm,n_mscf;
   double k, k_over_h, k2;
   double *tk;
   double *dataptr;
@@ -483,6 +483,13 @@ int perturbations_output_data(
           class_store_double(dataptr,tk[ppt->index_tp_delta_phi_scf],ppt->has_scf,storeidx);
           class_store_double(dataptr,tk[ppt->index_tp_delta_phi_over_phi_scf],ppt->has_scf,storeidx);
           class_store_double(dataptr,tk[ppt->index_tp_delta_phi_prime_scf],ppt->has_scf,storeidx);
+          if (pba->has_mscf == _TRUE_){
+            for (n_mscf = 0 ; n_mscf < ppt->N_mscf ; n_mscf++){
+              class_store_double(dataptr,tk[ppt->index_tp_delta_mscf+n_mscf],ppt->has_source_delta_mscf,storeidx);
+              class_store_double(dataptr,tk[ppt->index_tp_delta_phi_mscf+n_mscf],_TRUE_,storeidx);
+              class_store_double(dataptr,tk[ppt->index_tp_delta_phi_over_phi_scf+n_mscf],_TRUE_,storeidx);
+              class_store_double(dataptr,tk[ppt->index_tp_delta_phi_prime_scf+n_mscf],_TRUE_,storeidx);
+          }
           // class_store_double(dataptr,tk[ppt->index_tp_delta_m],ppt->has_source_delta_m,storeidx);
           class_store_double(dataptr,tk[ppt->index_tp_delta_tot],ppt->has_source_delta_tot,storeidx);
           class_store_double(dataptr,tk[ppt->index_tp_phi],ppt->has_source_phi,storeidx);
@@ -550,7 +557,7 @@ int perturbations_output_titles(
                                 enum file_format output_format,
                                 char titles[_MAXTITLESTRINGLENGTH_]
                                 ){
-  int n_ncdm;
+  int n_ncdm,n_mscf;
   char tmp[40];
 
   if (output_format == class_format) {
@@ -575,6 +582,18 @@ int perturbations_output_titles(
       class_store_columntitle(titles,"delta_phi_scf",ppt->has_scf);
       class_store_columntitle(titles,"delta_phi_over_phi_scf",ppt->has_scf);
       class_store_columntitle(titles,"delta_phi_prime_scf",ppt->has_scf);
+      if (pba->has_mscf == _TRUE_) {
+        for (n_mscf=0; n_ncdm < pba->N_ncdm; n_ncdm++) {
+          class_sprintf(tmp,"d_mscf[%d]",n_mscf);
+          class_store_columntitle(titles,tmp,_TRUE_);
+          class_sprintf(tmp,"delta_phi_mscf[%d]",n_mscf);
+          class_store_columntitle(titles,tmp,_TRUE_);
+          class_sprintf(tmp,"delta_phi_over_phi_mscf[%d]",n_mscf);
+          class_store_columntitle(titles,tmp,_TRUE_);
+          class_sprintf(tmp,"delta_phi_prime_mscf[%d]",n_mscf);
+          class_store_columntitle(titles,tmp,_TRUE_);
+        }
+      }
       class_store_columntitle(titles,"d_tot",_TRUE_);
       class_store_columntitle(titles,"phi",ppt->has_source_phi);
       class_store_columntitle(titles,"psi",ppt->has_source_psi);
@@ -608,6 +627,12 @@ int perturbations_output_titles(
       class_store_columntitle(titles,"t_dcdm",pba->has_dcdm);
       class_store_columntitle(titles,"t_dr",pba->has_dr);
       class_store_columntitle(titles,"t_scf",pba->has_scf);
+      if (pba->has_mscf == _TRUE_) {
+        for (n_mscf=0; n_mscf < pba->N_mscf; n_mscf++) {
+          class_sprintf(tmp,"t_mscf[%d]",n_mscf);
+          class_store_columntitle(titles,tmp,_TRUE_);
+        }
+      }
       class_store_columntitle(titles,"t_tot",_TRUE_);
     }
   }
@@ -818,6 +843,16 @@ int perturbations_init(
     ppt->scf_has_perturbations = _TRUE_;
   }else{
     ppt->scf_has_perturbations = _FALSE_;
+  }
+  if(pba->has_mscf == _TRUE_){
+    ppt->has_mscf = _TRUE_;
+  }else{
+    ppt->has_mscf = _FALSE_;
+  }
+  if(pba->mscf_has_perturbations == _TRUE_){
+    ppt->mscf_has_perturbations = _TRUE_;
+  }else{
+    ppt->mscf_has_perturbations = _FALSE_;
   }
 
 
@@ -1355,6 +1390,8 @@ int perturbations_indices(
           ppt->has_source_delta_fld = _TRUE_;
         if (ppt->has_scf == _TRUE_)
           ppt->has_source_delta_scf = _TRUE_;
+        if (ppt->has_mscf == _TRUE_)
+          ppt->has_source_delta_mscf = _TRUE_;
         if (pba->has_ur == _TRUE_)
           ppt->has_source_delta_ur = _TRUE_;
         if (pba->has_idr == _TRUE_)
@@ -1386,6 +1423,8 @@ int perturbations_indices(
           ppt->has_source_theta_fld = _TRUE_;
         if (ppt->has_scf == _TRUE_)
           ppt->has_source_theta_scf = _TRUE_;
+        if (ppt->has_mscf == _TRUE_)
+          ppt->has_source_theta_mscf = _TRUE_;
         if (pba->has_ur == _TRUE_)
           ppt->has_source_theta_ur = _TRUE_;
         if (pba->has_idr == _TRUE_)
@@ -1463,6 +1502,10 @@ int perturbations_indices(
       class_define_index(ppt->index_tp_delta_phi_scf,  ppt->has_scf, index_type,1);
       class_define_index(ppt->index_tp_delta_phi_over_phi_scf,  ppt->has_scf, index_type,1);
       class_define_index(ppt->index_tp_delta_phi_prime_scf,  ppt->has_scf, index_type,1);
+      class_define_index(ppt->index_tp_delta_mscf,  ppt->has_source_delta_mscf, index_type,pba->N_mscf);
+      class_define_index(ppt->index_tp_delta_phi_mscf,  ppt->has_mscf, index_type,pba->N_mscf);
+      class_define_index(ppt->index_tp_delta_phi_over_phi_mscf,  ppt->has_mscf, index_type,pba->N_mscf);
+      class_define_index(ppt->index_tp_delta_phi_prime_mscf,  ppt->has_mscf, index_type,pba->N_mscf);
       class_define_index(ppt->index_tp_delta_dr,   ppt->has_source_delta_dr,  index_type,1);
       class_define_index(ppt->index_tp_delta_ur,   ppt->has_source_delta_ur,  index_type,1);
       class_define_index(ppt->index_tp_delta_idr,  ppt->has_source_delta_idr, index_type,1);
@@ -1477,6 +1520,7 @@ int perturbations_indices(
       class_define_index(ppt->index_tp_theta_dcdm, ppt->has_source_theta_dcdm,index_type,1);
       class_define_index(ppt->index_tp_theta_fld,  ppt->has_source_theta_fld, index_type,1);
       class_define_index(ppt->index_tp_theta_scf,  ppt->has_source_theta_scf, index_type,1);
+      class_define_index(ppt->index_tp_theta_mscf,  ppt->has_source_theta_mscf, index_type,pba->N_mscf);
       class_define_index(ppt->index_tp_theta_dr,   ppt->has_source_theta_dr,  index_type,1);
       class_define_index(ppt->index_tp_theta_ur,   ppt->has_source_theta_ur,  index_type,1);
       class_define_index(ppt->index_tp_theta_idr,  ppt->has_source_theta_idr, index_type,1);
@@ -3376,7 +3420,7 @@ int perturbations_solve(
 int perturbations_prepare_k_output(struct background * pba,
                                    struct perturbations * ppt
                                    ){
-  int n_ncdm;
+  int n_ncdm,n_mscf;
   char tmp[40];
 
   ppt->scalar_titles[0]='\0';
@@ -3453,7 +3497,26 @@ int perturbations_prepare_k_output(struct background * pba,
         class_store_columntitle(ppt->scalar_titles, "theta_scf", pba->has_scf);
       }
       }
-
+      if (pba->has_mscf == _TRUE_){
+        for (n_mscf=0; n_mscf < pba->N_mscf; n_mscf++){
+          class_sprintf(tmp,"delta_phi_mscf[%d]", n_mscf);
+          class_store_columntitle(ppt->scalar_titles,tmp,_TRUE_);
+          class_sprintf(tmp,"delta_phi_over_phi_mscf[%d]", n_mscf);
+          class_store_columntitle(ppt->scalar_titles,tmp,_TRUE_);
+          class_sprintf(tmp,"delta_phi_prime_mscf[%d]", n_mscf);
+          class_store_columntitle(ppt->scalar_titles,tmp,_TRUE_);
+          class_sprintf(tmp,"delta_mscf[%d]", n_mscf);
+          class_store_columntitle(ppt->scalar_titles,tmp,_TRUE_);
+        if(ppt->use_big_theta_mscf == _TRUE_){
+          class_sprintf(tmp,"big_theta_mscf[%d]", n_mscf);
+          class_store_columntitle(ppt->scalar_titles,tmp, _TRUE_);
+          }
+        else {
+          class_sprintf(tmp,"theta_mscf[%d]", n_mscf);
+          class_store_columntitle(ppt->scalar_titles,tmp, _TRUE_);
+          }
+        }
+      }
       class_store_columntitle(ppt->scalar_titles,"phase_shift_A",ppt->compute_phase_shift);
       class_store_columntitle(ppt->scalar_titles,"phase_shift_B",ppt->compute_phase_shift);
       class_store_columntitle(ppt->scalar_titles,"phase_shift_total",ppt->compute_phase_shift);
@@ -3946,7 +4009,7 @@ int perturbations_vector_init(
 
   int index_pt;
   int l;
-  int n_ncdm,index_q,ncdm_l_size;
+  int n_ncdm,n_mscf,index_q,ncdm_l_size;
   double rho_plus_p_ncdm,q,q2,epsilon,a,factor;
 
   /** - allocate a new perturbations_vector structure to which ppw-->pv will point at the end of the routine */
@@ -4078,6 +4141,23 @@ int perturbations_vector_init(
           }
         }
     }
+    if (pba->has_mscf == _TRUE_){
+      if (pba->mscf_has_perturbations == _TRUE_){
+          if(pba->mscf_evolve_like_axionCAMB == _FALSE_){
+            class_define_index(ppv->index_pt_phi_mscf,_TRUE_,index_pt,N_mscf); /* scalar field density */
+            class_define_index(ppv->index_pt_phi_prime_mscf,_TRUE_,index_pt,N_mscf); /* scalar field velocity */
+          }
+          // if(pba->scf_evolve_as_fluid == _TRUE_){
+          //   class_define_index(ppv->index_pt_delta_scf,pba->has_scf,index_pt,1); /* scf density (velocity zero in synchronous gauge)*/ //COpertchange
+          //   if(ppt->use_big_theta_scf == _TRUE_){
+          //     class_define_index(ppv->index_pt_big_theta_scf,pba->has_scf,index_pt,1); /* fluid velocity */
+          //   }
+          //   else {
+          //     class_define_index(ppv->index_pt_theta_scf,pba->has_scf,index_pt,1); /* fluid velocity */
+          //   }
+          // }
+        }
+      }
 
     if(ppt->compute_phase_shift == _TRUE_){
       class_define_index(ppv->index_pt_phase_shift_A,_TRUE_,index_pt,1); /* scf density (velocity zero in synchronous gauge)*/ //COpertchange
@@ -4578,6 +4658,31 @@ int perturbations_vector_init(
             ppw->pv->y[ppw->pv->index_pt_theta_scf];
           }
 
+        }
+      }
+      if (pba->has_mscf == _TRUE_&& pba->mscf_has_perturbations == _TRUE_) {
+        for (n_mscf = 0; n_mscf < pba->N_mscf; n_mscf++){
+          if (pba->mscf_evolve_like_axionCAMB == _FALSE_){
+            ppv->y[ppv->index_pt_phi_mscf+n_mscf] =
+              ppw->pv->y[ppw->pv->index_pt_phi_mscf+n_mscf];
+
+            ppv->y[ppv->index_pt_phi_prime_mscf+n_mscf] =
+              ppw->pv->y[ppw->pv->index_pt_phi_prime_scf+n_mscf];
+          }
+          // if (pba->scf_evolve_as_fluid == _TRUE_){ //CO 23.01.18
+
+          //   ppv->y[ppv->index_pt_delta_scf] =
+          // ppw->pv->y[ppw->pv->index_pt_delta_scf];
+
+          // if(ppt->use_big_theta_scf == _TRUE_){
+          //   ppv->y[ppv->index_pt_big_theta_scf] =
+          //     ppw->pv->y[ppw->pv->index_pt_big_theta_scf];
+          //   }
+          // else {
+          //   ppv->y[ppv->index_pt_theta_scf] =
+          //     ppw->pv->y[ppw->pv->index_pt_theta_scf];
+          //   }
+          // }
         }
       }
 
@@ -5446,7 +5551,7 @@ int perturbations_initial_conditions(struct precision * ppr,
   double delta_ur=0.,theta_ur=0.,shear_ur=0.,l3_ur=0.,eta=0.,delta_cdm=0.,delta_scf=0.,alpha, alpha_prime; //COpertchange
   double delta_dr=0;
   double q,epsilon,k2;
-  int index_q,n_ncdm,idx;
+  int index_q,n_ncdm,n_mscf,idx;
   double rho_r,rho_m,rho_nu,rho_m_over_rho_r, rho_cdm =0.;
   double fracnu,fracg,fracb,fraccdm = 0.,fracidm = 0.;
   double om;
@@ -5760,30 +5865,101 @@ int perturbations_initial_conditions(struct precision * ppr,
         }
         //CO 22.01.18 If we intend to use fluid eqs, we need delta and theta. Technically only theta because here we are in the synchronous gauge, but both for ease. Always need phi and phi prime.
       }
+      if (pba->has_mscf == _TRUE_ && pba->mscf_has_perturbations == _TRUE_) {
+        for (n_mscf = 0; n_mscf < pba->N_mscf; n_mscf++){
+          /** - ---> Canonical field (solving for the perturbations):
+           *  initial perturbations set to zero, they should reach the attractor soon enough.
+           *  - --->  TODO: Incorporate the attractor IC from 1004.5509.
+           *  delta_phi \f$ = -(a/k)^2/\phi'(\rho + p)\theta \f$,
+           *  delta_phi_prime \f$ = a^2/\phi' \f$ (delta_rho_phi + V'delta_phi),
+           *  and assume theta, delta_rho as for perfect fluid
+           *  with \f$ c_s^2 = 1 \f$ and w = 1/3 (ASSUMES radiation TRACKING)
+          */
+          //COpertchange - initialise the new delta we have created to zero (or same value cdm took). Does not need fluid if statement because we initialise before fluid regime.
+          // at this point synchronous gauge is presumed. Will never be applicable for delta.
+          // CO 23.01.18 Initialised to zero if will be used at a later point in the code, so needs the evolve as fluid flag not the potential.
+          // if(pba->scf_evolve_as_fluid == _TRUE_){
 
-      /* all relativistic relics: ur, early ncdm, dr */
+          //       if(pba->scf_potential == axion){
+          //           // pba->m_scf = pba->scf_parameters[1]*pba->H0;
+          //           a_over_ac = a/pow(10,pba->log10_axion_ac);
+          //           ca2 = (pow(a,3)*pow(a_over_ac,3*pba->n_axion/(1+pba->n_axion))*(-1+pba->n_axion)-pow(a_over_ac,3/(1+pba->n_axion))*pow(pba->a_c,3)*(1+3*pba->n_axion))
+          //                 /(pow(a,3)*pow(a_over_ac,3*pba->n_axion/(1+pba->n_axion))+pow(a_over_ac,3/(1+pba->n_axion))*pow(pba->a_c,3))/(1+pba->n_axion);
+          //           w_scf_f = (pba->n_axion-1)/(pba->n_axion+1) ;
+          //           cs2_scf = (2*a*a*(pba->n_axion-1)*pow(pba->omega_axion*pow(a,-3*(pba->n_axion-1)/(pba->n_axion+1)),2)+k*k)/(2*a*a*(pba->n_axion+1)*pow(pba->omega_axion*pow(a,-3*(pba->n_axion-1)/(pba->n_axion+1)),2)+k*k);
 
-      if ((pba->has_ur == _TRUE_) || (pba->has_ncdm == _TRUE_) || (pba->has_dr == _TRUE_) || (pba->has_idr == _TRUE_)) {
+          //         }
+          //         else if(pba->scf_potential == axionquad){
+          //           // pba->m_scf = pba->scf_parameters[0]*_eV_over_Mpc_/pba->H0; //from eV to Mpc^-1 to unit of H0
+          //           // pba->w_scf = ppw->pvecback[pba->index_bg_w_scf]; //
+          //           w_scf_f = 0;
+          //           cs2_scf = k*k/(4*pba->m_scf*pba->H0*pba->m_scf*pba->H0*a*a)/(1+k*k/(4*pba->m_scf*pba->H0*pba->m_scf*pba->H0*a*a));
+          //         }
+          //         else{
+          //           pba->m_scf = 0;
+          //           pba->w_scf = 0; //default to 0 but never used in that case
+          //         }
 
-        delta_ur = ppw->pv->y[ppw->pv->index_pt_delta_g]; /* density of ultra-relativistic neutrinos/relics */
 
-        /* velocity of ultra-relativistic neutrinos/relics */ //TBC
-        theta_ur = - k*ktau_three/36./(4.*fracnu+15.) * (4.*fracnu+11.+12.*s2_squared-3.*(8.*fracnu*fracnu+50.*fracnu+275.)/20./(2.*fracnu+15.)*tau*om) * ppr->curvature_ini * s2_squared;
 
-        shear_ur = ktau_two/(45.+12.*fracnu) * (3.*s2_squared-1.) * (1.+(4.*fracnu-5.)/4./(2.*fracnu+15.)*tau*om) * ppr->curvature_ini;//TBC /s2_squared; /* shear of ultra-relativistic neutrinos/relics */  //TBC:0
-        // shear_ur = 0;//TBC /s2_squared; /* shear of ultra-relativistic neutrinos/relics */  //TBC:0
+          //   /*VP: NEW AXICLASS INITIAL CONDITIONS */
+          //   // if (pba->use_ppf == _FALSE_) {
+          //     // printf("here?\n");
+          //     /* the equations are more stable if we solve for delta/(1+w) and (1+w)*theta */
+          //     // printf("1+ppw->pvecback[pba->index_bg_w_scf] %e\n", 1+ppw->pvecback[pba->index_bg_w_scf]);
 
-        l3_ur = ktau_three*2./7./(12.*fracnu+45.)* ppr->curvature_ini;//TBC
-        // l3_ur = 0;//TBC
+          //     if(ppt->use_delta_scf_over_1plusw == _TRUE_){
+          //       ppw->pv->y[ppw->pv->index_pt_delta_scf] = 0.5*ktau_two*(-4.+3.*cs2_scf)/(32.+6.*cs2_scf+12.*w_scf_f)* ppr->curvature_ini * s2_squared;
+          //     }
+          //     else{
+          //       ppw->pv->y[ppw->pv->index_pt_delta_scf] = 0.5*ktau_two*(1.+ppw->pvecback[pba->index_bg_w_scf])*(-4.+3.*cs2_scf)/(32.+6.*cs2_scf+12.*w_scf_f)* ppr->curvature_ini * s2_squared;
+          //     }
+          //     if (ppt->use_big_theta_scf == _TRUE_){
+          //         ppw->pv->y[ppw->pv->index_pt_big_theta_scf] = -0.5*k*ktau_three*cs2_scf/(32.+6.*cs2_scf+12.*w_scf_f)* ppr->curvature_ini * s2_squared*(1+ppw->pvecback[pba->index_bg_w_scf]);
+          //     }
+          //     else{
+          //       ppw->pv->y[ppw->pv->index_pt_theta_scf] = -0.5*k*ktau_three*cs2_scf/(32.+6.*cs2_scf+12.*w_scf_f)* ppr->curvature_ini * s2_squared;
 
-        if (pba->has_dr == _TRUE_) delta_dr = delta_ur;
+          //     }
+          //   // }
+
+
+
+          // }
+
+          // printf("m_scf is %e pba->w_scf %e ca2 %e cs2 %e\n", pba->m_scf,pba->w_scf,ca2,pba->cs2_scf);
+
+          if(pba->mscf_evolve_like_axionCAMB == _FALSE_) {
+            ppw->pv->y[ppw->pv->index_pt_phi_mscf+n_mscf] = 0.;//a*a/k/k/ppw->pvecback[pba->index_bg_phi_prime_scf]*k*ktau_three/4.*1./(4.-6.*(1./3.)+3.*1.) * (ppw->pvecback[pba->index_bg_rho_scf] + ppw->pvecback[pba->index_bg_p_scf])* ppr->curvature_ini * s2_squared;
+            ppw->pv->y[ppw->pv->index_pt_phi_prime_mscf+n_mscf] = 0.;//a*a/ppw->pvecback[pba->index_bg_phi_prime_scf]*( - ktau_two/4.*(1.+1./3.)*(4.-3.*1.)/(4.-6.*(1/3.)+3.*1.)*ppw->pvecback[pba->index_bg_rho_scf] - ppw->pvecback[pba->index_bg_dV_scf]*ppw->pv->y[ppw->pv->index_pt_phi_scf])* ppr->curvature_ini * s2_squared;
+
+          }
+          //CO 22.01.18 If we intend to use fluid eqs, we need delta and theta. Technically only theta because here we are in the synchronous gauge, but both for ease. Always need phi and phi prime.
+        }
+
+        /* all relativistic relics: ur, early ncdm, dr */
+
+        if ((pba->has_ur == _TRUE_) || (pba->has_ncdm == _TRUE_) || (pba->has_dr == _TRUE_) || (pba->has_idr == _TRUE_)) {
+
+          delta_ur = ppw->pv->y[ppw->pv->index_pt_delta_g]; /* density of ultra-relativistic neutrinos/relics */
+
+          /* velocity of ultra-relativistic neutrinos/relics */ //TBC
+          theta_ur = - k*ktau_three/36./(4.*fracnu+15.) * (4.*fracnu+11.+12.*s2_squared-3.*(8.*fracnu*fracnu+50.*fracnu+275.)/20./(2.*fracnu+15.)*tau*om) * ppr->curvature_ini * s2_squared;
+
+          shear_ur = ktau_two/(45.+12.*fracnu) * (3.*s2_squared-1.) * (1.+(4.*fracnu-5.)/4./(2.*fracnu+15.)*tau*om) * ppr->curvature_ini;//TBC /s2_squared; /* shear of ultra-relativistic neutrinos/relics */  //TBC:0
+          // shear_ur = 0;//TBC /s2_squared; /* shear of ultra-relativistic neutrinos/relics */  //TBC:0
+
+          l3_ur = ktau_three*2./7./(12.*fracnu+45.)* ppr->curvature_ini;//TBC
+          // l3_ur = 0;//TBC
+
+          if (pba->has_dr == _TRUE_) delta_dr = delta_ur;
+        }
+
+        /* synchronous metric perturbation eta */
+        //eta = ppr->curvature_ini * (1.-ktau_two/12./(15.+4.*fracnu)*(5.+4.*fracnu - (16.*fracnu*fracnu+280.*fracnu+325)/10./(2.*fracnu+15.)*tau*om)) /  s2_squared;
+        //eta = ppr->curvature_ini * s2_squared * (1.-ktau_two/12./(15.+4.*fracnu)*(15.*s2_squared-10.+4.*s2_squared*fracnu - (16.*fracnu*fracnu+280.*fracnu+325)/10./(2.*fracnu+15.)*tau*om));
+        eta = ppr->curvature_ini * (1.-ktau_two/12./(15.+4.*fracnu)*(5.+4.*s2_squared*fracnu - (16.*fracnu*fracnu+280.*fracnu+325)/10./(2.*fracnu+15.)*tau*om));
       }
-
-      /* synchronous metric perturbation eta */
-      //eta = ppr->curvature_ini * (1.-ktau_two/12./(15.+4.*fracnu)*(5.+4.*fracnu - (16.*fracnu*fracnu+280.*fracnu+325)/10./(2.*fracnu+15.)*tau*om)) /  s2_squared;
-      //eta = ppr->curvature_ini * s2_squared * (1.-ktau_two/12./(15.+4.*fracnu)*(15.*s2_squared-10.+4.*s2_squared*fracnu - (16.*fracnu*fracnu+280.*fracnu+325)/10./(2.*fracnu+15.)*tau*om));
-      eta = ppr->curvature_ini * (1.-ktau_two/12./(15.+4.*fracnu)*(5.+4.*s2_squared*fracnu - (16.*fracnu*fracnu+280.*fracnu+325)/10./(2.*fracnu+15.)*tau*om));
-
     }
 
     /* isocurvature initial conditions taken from Bucher, Moodely,
@@ -5979,6 +6155,18 @@ int perturbations_initial_conditions(struct precision * ppr,
 
       }//VP: scf is cdm
 
+      if (pba->has_mscf == _TRUE_ ) {
+        for (n_mscf = 0; n_mscf < pba->n_mscf; n_mscf++){
+        // if(pba->scf_potential == axionquad || (pba->scf_potential==axion && pba->n_axion == 1)){
+        if(pba->n_axion_mscf ==1){
+          delta_cdm += ppw->pvecback[pba->index_bg_rho_mscf+n_mscf] * ppw->pv->y[ppw->pv->index_pt_delta_mscf+n_mscf];
+          rho_cdm += ppw->pvecback[pba->index_bg_rho_mscf+n_mscf];
+        // }
+          }
+        }
+
+      }//VP: scf is cdm
+
       if (rho_cdm > 0 ) {
         delta_cdm /= rho_cdm;
         fraccdm = rho_cdm/rho_m;
@@ -6035,6 +6223,24 @@ int perturbations_initial_conditions(struct precision * ppr,
       /* scalar field: check */
       if (pba->has_scf == _TRUE_&& pba->scf_has_perturbations == _TRUE_) {
         if (pba->scf_evolve_like_axionCAMB == _FALSE_){
+        alpha_prime = 0.0;
+          /* - 2. * a_prime_over_a * alpha + eta
+             - 4.5 * (a2/k2) * ppw->rho_plus_p_shear; */
+          ppw->pv->y[ppw->pv->index_pt_phi_scf] += alpha*ppw->pvecback[pba->index_bg_phi_prime_scf];
+          ppw->pv->y[ppw->pv->index_pt_phi_prime_scf] +=
+          (-2.*a_prime_over_a*alpha*ppw->pvecback[pba->index_bg_phi_prime_scf]
+           -a*a* dV_scf(pba,ppw->pvecback[pba->index_bg_phi_scf])*alpha
+           +ppw->pvecback[pba->index_bg_phi_prime_scf]*alpha_prime);
+         }
+         if (pba->scf_evolve_as_fluid == _TRUE_){
+            if(ppt->use_delta_scf_over_1plusw==_TRUE_)ppw->pv->y[ppw->pv->index_pt_delta_scf] -= 3.*a_prime_over_a*alpha;
+            else ppw->pv->y[ppw->pv->index_pt_delta_scf] -= 3.*(1+ppw->pvecback[pba->index_bg_w_scf])*a_prime_over_a*alpha;
+            if(ppt->use_big_theta_scf == _TRUE_) ppw->pv->y[ppw->pv->index_pt_big_theta_scf] += (1+ppw->pvecback[pba->index_bg_w_scf])*k*k*alpha;
+            else ppw->pv->y[ppw->pv->index_pt_theta_scf] += k*k*alpha;
+          }
+      }
+      if (pba->has_mscf == _TRUE_&& pba->mscf_has_perturbations == _TRUE_) {
+        if (pba->mscf_evolve_like_axionCAMB == _FALSE_){
         alpha_prime = 0.0;
           /* - 2. * a_prime_over_a * alpha + eta
              - 4.5 * (a2/k2) * ppw->rho_plus_p_shear; */
@@ -7105,6 +7311,8 @@ int perturbations_total_stress_energy(
   double rho_relativistic;
   double rho_dr_over_f;
   double delta_rho_scf, delta_p_scf, psi;
+  double * delta_rho_mscf;
+  double * delta_p_mscf;
   /** Variables used for FLD and PPF */
   double c_gamma_k_H_square;
   double Gamma_prime_plus_a_prime_over_a_Gamma, s2sq=1.;
@@ -7624,6 +7832,186 @@ int perturbations_total_stress_energy(
 
 
 
+    /* add your extra species here */
+
+    if (pba->has_mscf == _TRUE_){
+      if (pba->N_mscf > 0) {
+        class_alloc(pba->delta_rho_mscf, pba->N_mscf * sizeof(double), pba->error_message);
+        class_alloc(pba->delta_p_mscf,   pba->N_mscf * sizeof(double), pba->error_message);
+      }
+    if(pba->mscf_has_perturbations == _TRUE_) {
+      if (ppt->perturbations_verbose>10)
+        fprintf(stdout,"Inside mscf if statement. pba->mscf_has_perturbations = %d. \n", pba->mscf_has_perturbations);
+
+      if(ppt->gauge == synchronous){
+          for (k = 0; k < pba->N_mscf; k++){
+            delta_rho_mscf[k] =  1./3.*
+            (1./a2*ppw->pvecback[pba->index_bg_phi_prime_mscf+k]*y[ppw->pv->index_pt_phi_prime_mscf+k]
+             + ppw->pvecback[pba->index_bg_dV_scf]*y[ppw->pv->index_pt_phi_scf]);
+            delta_p_scf = 1./3.*
+            (1./a2*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_phi_prime_scf]
+             - ppw->pvecback[pba->index_bg_dV_scf]*y[ppw->pv->index_pt_phi_scf]);
+             if(pba->n_axion < pba->n_axion_security && ppw->pvecback[pba->index_bg_Omega_scf]<pba->security_small_Omega_scf && a>pow(10,pba->log10_axion_ac)){
+               /*at late times, for small values of n, when the field becomes negligible we ignore its impact to avoid numerical bug */
+               delta_rho_scf=0;
+               delta_p_scf=0;
+             }
+             if(pba->scf_evolve_as_fluid == _TRUE_){
+               y[ppw->pv->index_pt_delta_scf] = delta_rho_scf/ppw->pvecback[pba->index_bg_rho_scf];
+             }
+          else {
+            if(pba->scf_potential == axionquad){
+              cs2_scf = k2/(4*pba->m_scf*pba->H0*pba->m_scf*pba->H0*a2)/(1+k2/(4*pba->m_scf*pba->H0*pba->m_scf*pba->H0*a2));
+              a_over_ac = a/pba->a_c;
+              ca2_scf = -4*pow(a_over_ac,3/2)*pow(pba->a_c,3)
+                    /(pow(a,3)*pow(a_over_ac,3/2)+pow(a_over_ac,3/2)*pow(pba->a_c,3))/2;
+              // printf("a %e a_c %e ca2_scf %e\n", a,pba->a_c,ca2_scf);
+              // cs2_scf = (a*pba->m_scf*pba->H0)/k*(pow(1+pow(k/a/(pba->m_scf*pba->H0),2),0.5)-1)+5./4.*pow(ppw->pvecback[pba->index_bg_H]/(pba->m_scf*pba->H0),2);
+              // printf("old cs2 %e new cs2 %e \n", k2/(4*pba->m_scf*pba->H0*pba->m_scf*pba->H0*a2)/(1+k2/(4*pba->m_scf*pba->H0*pba->m_scf*pba->H0*a2)), cs2_scf);
+            }
+            else if(pba->scf_potential == axion){
+              cs2_scf = (2*a*a*(pba->n_axion-1)*pow(pba->omega_axion*pow(a,-3*(pba->n_axion-1)/(pba->n_axion+1)),2)+k*k)/(2*a*a*(pba->n_axion+1)*pow(pba->omega_axion*pow(a,-3*(pba->n_axion-1)/(pba->n_axion+1)),2)+k*k);
+              a_over_ac = a/pba->a_c;
+              // printf("pba->log10_axion_ac %e\n", pba->log10_axion_ac);
+              ca2_scf = (pow(a,3)*pow(a_over_ac,3*pba->n_axion/(1+pba->n_axion))*(-1+pba->n_axion)-pow(a_over_ac,3/(1+pba->n_axion))*pow(pba->a_c,3)*(1+3*pba->n_axion))
+                    /(pow(a,3)*pow(a_over_ac,3*pba->n_axion/(1+pba->n_axion))+pow(a_over_ac,3/(1+pba->n_axion))*pow(pba->a_c,3))/(1+pba->n_axion);
+            }
+
+            if(ppt->use_delta_scf_over_1plusw) delta_rho_scf = (1+ppw->pvecback[pba->index_bg_w_scf])*ppw->pvecback[pba->index_bg_rho_scf]*y[ppw->pv->index_pt_delta_scf];
+            else delta_rho_scf = ppw->pvecback[pba->index_bg_rho_scf]*y[ppw->pv->index_pt_delta_scf]; //identical to fld above
+            // delta_p_scf = cs2_scf * delta_rho_scf;
+            if(ppt->use_big_theta_scf == _TRUE_){
+               rho_plus_p_theta_scf = ppw->pvecback[pba->index_bg_rho_scf]*y[ppw->pv->index_pt_big_theta_scf];
+            }
+            else  rho_plus_p_theta_scf = (1.+ppw->pvecback[pba->index_bg_w_scf])*ppw->pvecback[pba->index_bg_rho_scf]*y[ppw->pv->index_pt_theta_scf];
+            // printf("cs2_scf %e ca2_scf %e rho_plus_p_theta_scf %e \n",cs2_scf, ca2_scf,rho_plus_p_theta_scf);
+            delta_p_scf = cs2_scf * delta_rho_scf  + (cs2_scf-ca2_scf)*(3*a_prime_over_a*rho_plus_p_theta_scf/k/k);
+
+        }
+      }
+      }
+    else{ //if newtonian gauge, equation for psi */
+        if (ppt->scf_kg_eq[index_md][index_k] == 1){ //evolving via KG
+          psi = y[ppw->pv->index_pt_phi] - 4.5 * (a2/k/k) * ppw->rho_plus_p_shear;
+
+          delta_rho_scf =  1./3.*
+            (1./a2*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_phi_prime_scf]
+             + ppw->pvecback[pba->index_bg_dV_scf]*y[ppw->pv->index_pt_phi_scf]
+             - 1./a2*pow(ppw->pvecback[pba->index_bg_phi_prime_scf],2)*psi);
+          delta_p_scf =  1./3.*
+            (1./a2*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_phi_prime_scf]
+             - ppw->pvecback[pba->index_bg_dV_scf]*y[ppw->pv->index_pt_phi_scf]
+             - 1./a2*pow(ppw->pvecback[pba->index_bg_phi_prime_scf],2)*psi);
+             // printf("delta_rho_scf KG %e rho+p shear %e delta_p_scf %e phi %e psi %e phi_scf' %e V' %e\n", delta_rho_scf,delta_p_scf,ppw->rho_plus_p_shear,y[ppw->pv->index_pt_phi],psi,ppw->pvecback[pba->index_bg_phi_prime_scf],ppw->pvecback[pba->index_bg_dV_scf]);
+        }
+        else{ //evolving as fluid
+              if(pba->scf_potential == axionquad){
+                cs2_scf = k2/(4*pba->m_scf*pba->H0*pba->m_scf*pba->H0*a2)/(1+k2/(4*pba->m_scf*pba->H0*pba->m_scf*pba->H0*a2));
+                // cs2_scf = (a*pba->m_scf*pba->H0)/k*(pow(1+pow(k/a/(pba->m_scf*pba->H0),2),0.5)-1)+5./4.*pow(ppw->pvecback[pba->index_bg_H]/(pba->m_scf*pba->H0),2);
+                a_over_ac = a/pba->a_c;
+                ca2_scf = -4*pow(a_over_ac,3/2)*pow(pba->a_c,3)
+                      /(pow(a,3)*pow(a_over_ac,3/2)+pow(a_over_ac,3/2)*pow(pba->a_c,3))/2;
+                // printf("a %e a_c %e ca2_scf %e\n", a,pba->a_c,ca2_scf);
+                }
+              else if(pba->scf_potential == axion){
+                cs2_scf = (2*a*a*(pba->n_axion-1)*pow(pba->omega_axion*pow(a,-3*(pba->n_axion-1)/(pba->n_axion+1)),2)+k*k)/(2*a*a*(pba->n_axion+1)*pow(pba->omega_axion*pow(a,-3*(pba->n_axion-1)/(pba->n_axion+1)),2)+k*k);
+                a_over_ac = a/pba->a_c;
+                ca2_scf = (pow(a,3)*pow(a_over_ac,3*pba->n_axion/(1+pba->n_axion))*(-1+pba->n_axion)-pow(a_over_ac,3/(1+pba->n_axion))*pow(pba->a_c,3)*(1+3*pba->n_axion))
+                      /(pow(a,3)*pow(a_over_ac,3*pba->n_axion/(1+pba->n_axion))+pow(a_over_ac,3/(1+pba->n_axion))*pow(pba->a_c,3))/(1+pba->n_axion);
+              }
+              if(ppt->use_delta_scf_over_1plusw) delta_rho_scf = (1+ppw->pvecback[pba->index_bg_w_scf])*ppw->pvecback[pba->index_bg_rho_scf]*y[ppw->pv->index_pt_delta_scf];
+              else delta_rho_scf = ppw->pvecback[pba->index_bg_rho_scf]*y[ppw->pv->index_pt_delta_scf]; //identical to fld above
+              delta_p_scf = cs2_scf * delta_rho_scf;
+
+              if(ppt->use_big_theta_scf == _TRUE_){
+                 rho_plus_p_theta_scf = ppw->pvecback[pba->index_bg_rho_scf]*y[ppw->pv->index_pt_big_theta_scf];
+              }
+              else  rho_plus_p_theta_scf = (1.+ppw->pvecback[pba->index_bg_w_scf])*ppw->pvecback[pba->index_bg_rho_scf]*y[ppw->pv->index_pt_theta_scf];
+
+              delta_p_scf = cs2_scf * delta_rho_scf  + (cs2_scf-ca2_scf)*(3*a_prime_over_a*rho_plus_p_theta_scf/k/k);
+
+
+              // printf("delta_rho_scf FL %e delta_p_scf %e\n", delta_rho_scf,delta_p_scf);
+              // printf("delta_rho_scf FL %e\n", delta_rho_scf);
+        }
+    }
+
+      // delta_rho_scf=0;
+      // delta_p_scf=0;
+      ppw->delta_rho += delta_rho_scf;
+
+      ppw->delta_p += delta_p_scf; // an important difference from CDM because if SCF evolving via KG then pressure is not necessarily zero.
+
+      if (ppt->scf_kg_eq[index_md][index_k] == 1){ //evolving via KG
+        // if(pow(delta_rho_scf/ppw->pvecback[pba->index_bg_rho_scf],2)<1){
+        if(pba->n_axion < pba->n_axion_security && ppw->pvecback[pba->index_bg_Omega_scf]<pba->security_small_Omega_scf && a>pba->a_c){
+          //do nothing
+        }
+        else{
+          rho_plus_p_theta_scf =  1./3.*
+            k*k/a2*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_phi_scf];
+        }
+        if(pba->scf_evolve_as_fluid == _TRUE_){
+          if(ppt->use_big_theta_scf == _TRUE_){
+            y[ppw->pv->index_pt_big_theta_scf] = (1./3.*k*k/a2*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_phi_scf])/ppw->pvecback[pba->index_bg_rho_scf];
+          }
+          else{
+            y[ppw->pv->index_pt_theta_scf] = (1./3.*k*k/a2*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_phi_scf]) / (ppw->pvecback[pba->index_bg_rho_scf]+ppw->pvecback[pba->index_bg_p_scf]);
+          }
+        }
+
+
+      }
+      else { //evolving via fluid mimicking fld
+        if(ppt->use_big_theta_scf == _TRUE_){
+          rho_plus_p_theta_scf =  ppw->pvecback[pba->index_bg_rho_scf]*y[ppw->pv->index_pt_big_theta_scf];
+        }
+        else {
+          rho_plus_p_theta_scf =  (1.+ppw->pvecback[pba->index_bg_w_scf])*ppw->pvecback[pba->index_bg_rho_scf]*y[ppw->pv->index_pt_theta_scf];
+        }
+      }
+
+
+      ppw->rho_plus_p_theta += rho_plus_p_theta_scf;
+      ppw->rho_plus_p_tot += ppw->pvecback[pba->index_bg_rho_scf]+ppw->pvecback[pba->index_bg_p_scf];
+
+      if(ppt->include_scf_in_delta_cb == _TRUE_){
+        /* if we want to include scf contribution to delta_cb, we have to do it now!
+        if we only want to include it inside of delta_m, it will be done later */
+        if (ppt->has_source_delta_m == _TRUE_) {
+            delta_rho_m += delta_rho_scf; // contribution to delta rho_matter
+            rho_m += ppw->pvecback[pba->index_bg_rho_scf];
+        }
+        if ((ppt->has_source_delta_m == _TRUE_) || (ppt->has_source_theta_m == _TRUE_)) {
+            rho_plus_p_theta_m += rho_plus_p_theta_scf; // contribution to [(rho+p)theta]_matter
+            rho_plus_p_m += (ppw->pvecback[pba->index_bg_rho_scf]+ppw->pvecback[pba->index_bg_p_scf]);
+        }
+      }
+
+    }
+
+
+
+    /* infer delta_cb abd theta_cb (perturbations from CDM and baryons) before adding ncdm */
+    if ((ppt->has_source_delta_m == _TRUE_) && (ppt->has_source_delta_cb == _TRUE_))
+      ppw->delta_cb = delta_rho_m/rho_m;
+
+    if (((ppt->has_source_delta_m == _TRUE_) || (ppt->has_source_theta_m == _TRUE_)) &&
+        ((ppt->has_source_delta_cb == _TRUE_) || (ppt->has_source_theta_cb == _TRUE_)))
+      ppw->theta_cb = rho_plus_p_theta_m/rho_plus_p_m;
+
+
+    /*VP: if we have not included delta_scf to delta_cb, do we want to add the scf contribution to delta_m?*/
+    if(pba->has_scf == _TRUE_ && ppt->include_scf_in_delta_m == _TRUE_ && ppt->include_scf_in_delta_cb == _FALSE_){
+        if (ppt->has_source_delta_m == _TRUE_) {
+            delta_rho_m += delta_rho_scf; // contribution to delta rho_matter
+            rho_m += ppw->pvecback[pba->index_bg_rho_scf];
+        }
+        if ((ppt->has_source_delta_m == _TRUE_) || (ppt->has_source_theta_m == _TRUE_)) {
+            rho_plus_p_theta_m += rho_plus_p_theta_scf; // contribution to [(rho+p)theta]_matter
+            rho_plus_p_m += (ppw->pvecback[pba->index_bg_rho_scf]+ppw->pvecback[pba->index_bg_p_scf]);
+        }
+    }
     /* add your extra species here */
 
     /* fluid contribution */

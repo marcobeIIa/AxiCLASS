@@ -3207,9 +3207,7 @@ int background_output_titles(
   class_store_columntitle(titles,"V'_scf",pba->has_scf);
   class_store_columntitle(titles,"V''_scf",pba->has_scf);
   if (pba->has_mscf == _TRUE_){
-    printf("3183 reached background.c, storing output titles");
     for (k = 0; k < pba->N_mscf; k++){
-      printf("storing titles for mscf %d\n",k);
       class_sprintf(tmp,"(.)rho_mscf[%d]",k);
       class_store_columntitle(titles,tmp,_TRUE_);
       class_sprintf(tmp,"(.)Omega_mscf[%d]",k);
@@ -3244,8 +3242,6 @@ int background_output_titles(
 
   class_store_columntitle(titles,"rel. alpha",pba->has_varconst);
   class_store_columntitle(titles,"rel. m_e",pba->has_varconst);
-
-  printf(titles);
 
   return _SUCCESS_;
 }

@@ -4933,7 +4933,7 @@ class_call(parser_read_double(pfc,"Omega_scf_shoot_fa",&param4,&flag4,errmsg),
   if (pba->N_mscf > 0){
     // printf("N_mscf > 0 and yadda yadda ... \n");
     // Allocate memory for arrays related to multiple scalar fields
-    // class_alloc(pba->Omega0_mscf, pba->N_mscf * sizeof(double), errmsg);
+    class_alloc(pba->Omega0_mscf, pba->N_mscf * sizeof(double), errmsg);
     class_alloc(pba->phi_ini_mscf, pba->N_mscf * sizeof(double), errmsg);
     class_alloc(pba->phi_prime_ini_mscf, pba->N_mscf * sizeof(double), errmsg);
     class_alloc(pba->m_mscf, pba->N_mscf * sizeof(double), errmsg);
