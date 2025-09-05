@@ -110,8 +110,10 @@ struct perturbations
 
   short scf_fluid_flag_perts; /** how do we evolve scalar perts? */
   short scf_has_perturbations; /** how do we evolve scalar perts? */
+  short mscf_has_perturbations; /** mscf has perturbations? */
   short compute_phase_shift; /** do we want to compute the phase shift a la Baumann? */
   short has_scf; /** how do we evolve scalar perts? */
+  short has_mscf; /** has many scalar fields */
   short scf_KG_switch_to_fluid;
   short has_cls; /**< do we need any harmonic space spectrum \f$ C_l \f$ (and hence Bessel functions, transfer functions, ...)? */
 
@@ -268,6 +270,7 @@ struct perturbations
   short has_source_delta_dcdm; /**< do we need source for delta of DCDM? */
   short has_source_delta_fld;  /**< do we need source for delta of dark energy? */
   short has_source_delta_scf;  /**< do we need source for delta from scalar field? */
+  short has_source_delta_mscf;  /**< do we need source for delta from many scalar fields? */
   short has_source_delta_dr;   /**< do we need source for delta of decay radiation? */
   short has_source_delta_ur;   /**< do we need source for delta of ultra-relativistic neutrinos/relics? */
   short has_source_delta_ncdm; /**< do we need source for delta of all non-cold dark matter species (e.g. massive neutrinos)? */
@@ -282,6 +285,7 @@ struct perturbations
   short has_source_theta_dcdm; /**< do we need source for theta of DCDM? */
   short has_source_theta_fld;  /**< do we need source for theta of dark energy? */
   short has_source_theta_scf;  /**< do we need source for theta of scalar field? */
+  short has_source_theta_mscf;  /**< do we need source for theta of many scalar fields? */
   short has_source_theta_dr;   /**< do we need source for theta of ultra-relativistic neutrinos/relics? */
   short has_source_theta_ur;   /**< do we need source for theta of ultra-relativistic neutrinos/relics? */
   short has_source_theta_ncdm; /**< do we need source for theta of all non-cold dark matter species (e.g. massive neutrinos)? */
@@ -318,6 +322,10 @@ struct perturbations
   int index_tp_delta_phi_scf;  /**< index value  */
   int index_tp_delta_phi_over_phi_scf;  /**< index value  */
   int index_tp_delta_phi_prime_scf;  /**< index value  */
+  int index_tp_delta_mscf;  /**< index value for delta of many scalar fields, only first index we define; the others are contiguous */
+  int index_tp_delta_phi_mscf;  /**< index value  */
+  int index_tp_delta_phi_over_phi_mscf;  /**< index value  */
+  int index_tp_delta_phi_prime_mscf;  /**< index value  */
   int index_tp_phase_shift;  /**< index value for phase shift a la Baumann */
   int index_tp_phase_shift_A;  /**< index value for phase shift a la Baumann */
   int index_tp_phase_shift_B;  /**< index value for phase shift a la Baumann */
@@ -338,6 +346,7 @@ struct perturbations
   int index_tp_theta_dcdm;  /**< index value for theta of DCDM */
   int index_tp_theta_fld;   /**< index value for theta of dark energy */
   int index_tp_theta_scf;   /**< index value for theta of scalar field */
+  int index_tp_theta_mscf;   /**< index value for theta of many scalar fields */
   int index_tp_theta_ur;    /**< index value for theta of ultra-relativistic neutrinos/relics */
   int index_tp_theta_idr;   /**< index value for theta of interacting dark radiation */
   int index_tp_theta_idm;   /**< index value for theta of interacting dark matter */
@@ -369,6 +378,8 @@ struct perturbations
                                 So we redefine delta_fld == delta_fld / (1+w) */
   short include_scf_in_delta_m; /* do we include scf contribution to delta_m ? default is false, unless the potential is axionquad or axion with n=1 */
   short include_scf_in_delta_cb; /* do we include scf contribution to delta_cb ? default is false*/
+  short include_mscf_in_delta_m; /* do we include mscf contribution to delta_m ? default is false, unless the potential is axionquad or axion with n=1 */
+  short include_mscf_in_delta_cb; /* do we include mscf contribution to delta_cb ? default is false*/
   short use_new_fld_IC; /* do we use the new IC from 2302.09032? in AxiCLASS, default is true*/
 
 
@@ -528,6 +539,8 @@ struct perturbations_vector
   int index_pt_Gamma_fld;  /**< unique dark energy dynamical variable in PPF case */
   int index_pt_phi_scf;  /**< scalar field density */
   int index_pt_phi_prime_scf;  /**< scalar field velocity */
+  int index_pt_phi_mscf;  /**<many scalar field density */
+  int index_pt_phi_prime_mscf;  /**<many scalar field velocity */
   int index_pt_delta_scf; /**< scf density for fluid */
   int index_pt_theta_scf; /**< scf velocity */
   int index_pt_big_theta_scf;  /**< dark energy velocity divided by (1+w_fld) in true fluid case */
@@ -556,6 +569,7 @@ struct perturbations_vector
   int l_max_dr;          /**< max momentum in Boltzmann hierarchy for dr) */
   int index_pt_psi0_ncdm1; /**< first multipole of perturbation of first ncdm species, Psi_0 */
   int N_ncdm;		/**< number of distinct non-cold-dark-matter (ncdm) species */
+  int N_mscf;		/**< number of distinct many-scalar-field (mscf) species */
   int* l_max_ncdm;	/**< mutipole l at which Boltzmann hierarchy is truncated (for each ncdm species) */
   int* q_size_ncdm;	/**< number of discrete momenta (for each ncdm species) */
 
