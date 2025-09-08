@@ -437,7 +437,6 @@ int perturbations_output_data(
                               ) {
 
   int n_ncdm,n_mscf;
-  int n_ncdm,n_mscf;
   double k, k_over_h, k2;
   double *tk;
   double *dataptr;
@@ -488,8 +487,8 @@ int perturbations_output_data(
             for (n_mscf = 0 ; n_mscf < pba->N_mscf ; n_mscf++){
               class_store_double(dataptr,tk[ppt->index_tp_delta_mscf+n_mscf],ppt->has_source_delta_mscf,storeidx);
               class_store_double(dataptr,tk[ppt->index_tp_delta_phi_mscf+n_mscf],_TRUE_,storeidx);
-              class_store_double(dataptr,tk[ppt->index_tp_delta_phi_over_phi_scf+n_mscf],_TRUE_,storeidx);
-              class_store_double(dataptr,tk[ppt->index_tp_delta_phi_prime_scf+n_mscf],_TRUE_,storeidx);
+              class_store_double(dataptr,tk[ppt->index_tp_delta_phi_over_phi_mscf+n_mscf],_TRUE_,storeidx);
+              class_store_double(dataptr,tk[ppt->index_tp_delta_phi_prime_mscf+n_mscf],_TRUE_,storeidx);
             }
           }
           // class_store_double(dataptr,tk[ppt->index_tp_delta_m],ppt->has_source_delta_m,storeidx);
@@ -560,7 +559,6 @@ int perturbations_output_titles(
                                 char titles[_MAXTITLESTRINGLENGTH_]
                                 ){
   int n_ncdm,n_mscf;
-  int n_ncdm,n_mscf;
   char tmp[40];
 
   if (output_format == class_format) {
@@ -585,18 +583,6 @@ int perturbations_output_titles(
       class_store_columntitle(titles,"delta_phi_scf",ppt->has_scf);
       class_store_columntitle(titles,"delta_phi_over_phi_scf",ppt->has_scf);
       class_store_columntitle(titles,"delta_phi_prime_scf",ppt->has_scf);
-      if (pba->has_mscf == _TRUE_) {
-        for (n_mscf=0; n_ncdm < pba->N_ncdm; n_ncdm++) {
-          class_sprintf(tmp,"d_mscf[%d]",n_mscf);
-          class_store_columntitle(titles,tmp,_TRUE_);
-          class_sprintf(tmp,"delta_phi_mscf[%d]",n_mscf);
-          class_store_columntitle(titles,tmp,_TRUE_);
-          class_sprintf(tmp,"delta_phi_over_phi_mscf[%d]",n_mscf);
-          class_store_columntitle(titles,tmp,_TRUE_);
-          class_sprintf(tmp,"delta_phi_prime_mscf[%d]",n_mscf);
-          class_store_columntitle(titles,tmp,_TRUE_);
-        }
-      }
       if (pba->has_mscf == _TRUE_) {
         for (n_mscf=0; n_ncdm < pba->N_ncdm; n_ncdm++) {
           class_sprintf(tmp,"d_mscf[%d]",n_mscf);
@@ -642,12 +628,6 @@ int perturbations_output_titles(
       class_store_columntitle(titles,"t_dcdm",pba->has_dcdm);
       class_store_columntitle(titles,"t_dr",pba->has_dr);
       class_store_columntitle(titles,"t_scf",pba->has_scf);
-      if (pba->has_mscf == _TRUE_) {
-        for (n_mscf=0; n_mscf < pba->N_mscf; n_mscf++) {
-          class_sprintf(tmp,"t_mscf[%d]",n_mscf);
-          class_store_columntitle(titles,tmp,_TRUE_);
-        }
-      }
       if (pba->has_mscf == _TRUE_) {
         for (n_mscf=0; n_mscf < pba->N_mscf; n_mscf++) {
           class_sprintf(tmp,"t_mscf[%d]",n_mscf);
@@ -1541,10 +1521,6 @@ int perturbations_indices(
       class_define_index(ppt->index_tp_delta_phi_mscf,  ppt->has_mscf, index_type,pba->N_mscf);
       class_define_index(ppt->index_tp_delta_phi_over_phi_mscf,  ppt->has_mscf, index_type,pba->N_mscf);
       class_define_index(ppt->index_tp_delta_phi_prime_mscf,  ppt->has_mscf, index_type,pba->N_mscf);
-      class_define_index(ppt->index_tp_delta_mscf,  ppt->has_source_delta_mscf, index_type,pba->N_mscf);
-      class_define_index(ppt->index_tp_delta_phi_mscf,  ppt->has_mscf, index_type,pba->N_mscf);
-      class_define_index(ppt->index_tp_delta_phi_over_phi_mscf,  ppt->has_mscf, index_type,pba->N_mscf);
-      class_define_index(ppt->index_tp_delta_phi_prime_mscf,  ppt->has_mscf, index_type,pba->N_mscf);
       class_define_index(ppt->index_tp_delta_dr,   ppt->has_source_delta_dr,  index_type,1);
       class_define_index(ppt->index_tp_delta_ur,   ppt->has_source_delta_ur,  index_type,1);
       class_define_index(ppt->index_tp_delta_idr,  ppt->has_source_delta_idr, index_type,1);
@@ -1559,7 +1535,6 @@ int perturbations_indices(
       class_define_index(ppt->index_tp_theta_dcdm, ppt->has_source_theta_dcdm,index_type,1);
       class_define_index(ppt->index_tp_theta_fld,  ppt->has_source_theta_fld, index_type,1);
       class_define_index(ppt->index_tp_theta_scf,  ppt->has_source_theta_scf, index_type,1);
-      class_define_index(ppt->index_tp_theta_mscf,  ppt->has_source_theta_mscf, index_type,pba->N_mscf);
       class_define_index(ppt->index_tp_theta_mscf,  ppt->has_source_theta_mscf, index_type,pba->N_mscf);
       class_define_index(ppt->index_tp_theta_dr,   ppt->has_source_theta_dr,  index_type,1);
       class_define_index(ppt->index_tp_theta_ur,   ppt->has_source_theta_ur,  index_type,1);
@@ -3461,7 +3436,6 @@ int perturbations_prepare_k_output(struct background * pba,
                                    struct perturbations * ppt
                                    ){
   int n_ncdm,n_mscf;
-  int n_ncdm,n_mscf;
   char tmp[40];
 
   ppt->scalar_titles[0]='\0';
@@ -4050,7 +4024,6 @@ int perturbations_vector_init(
 
   int index_pt;
   int l;
-  int n_ncdm,n_mscf,index_q,ncdm_l_size;
   int n_ncdm,n_mscf,index_q,ncdm_l_size;
   double rho_plus_p_ncdm,q,q2,epsilon,a,factor;
 
@@ -4709,7 +4682,7 @@ int perturbations_vector_init(
               ppw->pv->y[ppw->pv->index_pt_phi_mscf+n_mscf];
 
             ppv->y[ppv->index_pt_phi_prime_mscf+n_mscf] =
-              ppw->pv->y[ppw->pv->index_pt_phi_prime_scf+n_mscf];
+              ppw->pv->y[ppw->pv->index_pt_phi_prime_mscf+n_mscf];
           // }
           // if (pba->scf_evolve_as_fluid == _TRUE_){ //CO 23.01.18
 
@@ -5594,7 +5567,6 @@ int perturbations_initial_conditions(struct precision * ppr,
   double delta_dr=0;
   double q,epsilon,k2;
   int index_q,n_ncdm,n_mscf,idx;
-  int index_q,n_ncdm,n_mscf,idx;
   double rho_r,rho_m,rho_nu,rho_m_over_rho_r, rho_cdm =0.;
   double fracnu,fracg,fracb,fraccdm = 0.,fracidm = 0.;
   double om;
@@ -6405,7 +6377,6 @@ int perturbations_initial_conditions(struct precision * ppr,
         ppw->pv->y[ppw->pv->index_pt_phase_shift_B] = 0;
         ppw->pv->y[ppw->pv->index_pt_phase_shift] = ppw->pv->y[ppw->pv->index_pt_phase_shift_B]/pow(pow(ppw->pv->y[ppw->pv->index_pt_phase_shift_A]-1,2)+pow(ppw->pv->y[ppw->pv->index_pt_phase_shift_A],2),0.5);
     }
-  }
   /** --> For tensors */
   if (_tensors_) {
 
@@ -8245,7 +8216,7 @@ int perturbations_sources(
   /** - define local variables */
 
   double P;
-  int index_tp;
+  int index_tp, n_mscf;
 
   struct perturbations_parameters_and_workspace * pppaw;
   struct precision * ppr;
@@ -8263,6 +8234,7 @@ int perturbations_sources(
   double * pvecmetric;
 
   double delta_g, delta_rho_scf, rho_plus_p_theta_scf;
+  double delta_rho_mscf, delta_p_mscf;
   double a_prime_over_a=0.;  /* (a'/a) */
   double a_prime_over_a_prime=0.;  /* (a'/a)' */
   double w_fld,dw_over_da_fld,integral_fld;
@@ -8743,6 +8715,27 @@ int perturbations_sources(
         _set_source_(ppt->index_tp_delta_phi_scf) = y[ppw->pv->index_pt_phi_scf];
         _set_source_(ppt->index_tp_delta_phi_over_phi_scf) = y[ppw->pv->index_pt_phi_scf]/ppw->pvecback[pba->index_bg_phi_scf];
         _set_source_(ppt->index_tp_delta_phi_prime_scf) = y[ppw->pv->index_pt_phi_prime_scf];
+      }
+    }
+    if (ppt->has_source_delta_mscf == _TRUE_) {
+      for (n_mscf = 0; n_mscf < pba->N_mscf; n_mscf++) {
+        if (ppt->gauge == synchronous){
+          delta_rho_mscf =  1./3.*
+            (1./a2*ppw->pvecback[pba->index_bg_phi_prime_mscf+n_mscf]*y[ppw->pv->index_pt_phi_prime_mscf+n_mscf]
+             + ppw->pvecback[pba->index_bg_dV_mscf+n_mscf]*y[ppw->pv->index_pt_phi_mscf+n_mscf])
+             + 3.*a_prime_over_a*(1.+pvecback[pba->index_bg_p_mscf+n_mscf]/pvecback[pba->index_bg_rho_mscf+n_mscf])*theta_over_k2; // N-body gauge correction
+        }
+        else{
+          delta_rho_mscf =  1./3.*
+            (1./a2*ppw->pvecback[pba->index_bg_phi_prime_mscf+n_mscf]*y[ppw->pv->index_pt_phi_prime_mscf+n_mscf]
+             + ppw->pvecback[pba->index_bg_dV_mscf+n_mscf]*y[ppw->pv->index_pt_phi_mscf+n_mscf]
+             - 1./a2*pow(ppw->pvecback[pba->index_bg_phi_prime_mscf+n_mscf],2)*ppw->pvecmetric[ppw->index_mt_psi])
+             + 3.*a_prime_over_a*(1.+pvecback[pba->index_bg_p_mscf+n_mscf]/pvecback[pba->index_bg_rho_mscf+n_mscf])*theta_over_k2;
+        }
+        _set_source_(ppt->index_tp_delta_mscf+n_mscf) = delta_rho_mscf/pvecback[pba->index_bg_rho_mscf+n_mscf];
+        _set_source_(ppt->index_tp_delta_phi_mscf+n_mscf) = y[ppw->pv->index_pt_phi_mscf+n_mscf];
+        _set_source_(ppt->index_tp_delta_phi_over_phi_mscf+n_mscf) = y[ppw->pv->index_pt_phi_mscf+n_mscf]/ppw->pvecback[pba->index_bg_phi_mscf+n_mscf];
+        _set_source_(ppt->index_tp_delta_phi_prime_mscf+n_mscf) = y[ppw->pv->index_pt_phi_prime_mscf+n_mscf];
       }
     }
 
@@ -9431,9 +9424,9 @@ int perturbations_print_variables(double tau,
           delta_mscf[n_mscf]= delta_rho_mscf/pvecback[pba->index_bg_rho_mscf+n_mscf];
           theta_mscf[n_mscf] = rho_plus_p_theta_mscf/(pvecback[pba->index_bg_rho_mscf+n_mscf]+pvecback[pba->index_bg_p_mscf+n_mscf]);
 
-          delta_phi_mscf[n_mscf] = y[ppw->pv->index_pt_phi_scf];
-          delta_phi_over_phi_mscf[n_mscf] = y[ppw->pv->index_pt_phi_scf]/ppw->pvecback[pba->index_bg_phi_scf];
-          delta_phi_prime_mscf[n_mscf] = y[ppw->pv->index_pt_phi_prime_scf];
+          delta_phi_mscf[n_mscf] = y[ppw->pv->index_pt_phi_mscf+n_mscf];
+          delta_phi_over_phi_mscf[n_mscf] = y[ppw->pv->index_pt_phi_mscf+n_mscf]/ppw->pvecback[pba->index_bg_phi_mscf+n_mscf];
+          delta_phi_prime_mscf[n_mscf] = y[ppw->pv->index_pt_phi_prime_mscf+n_mscf];
 
       }
     }
@@ -10941,7 +10934,7 @@ int perturbations_derivs(double tau,
         dy[pv->index_pt_phi_prime_mscf+n_mscf] =  - 2.*a_prime_over_a*y[pv->index_pt_phi_prime_mscf+n_mscf]
         - metric_continuity*pvecback[pba->index_bg_phi_prime_mscf+n_mscf] //  metric_continuity = h'/2
         // - 2*a2/k2*metric_euler*pvecback[pba->index_bg_dV_scf] //VP: This term was missing in newtonian gauge, but we do not follow psi' so we cannot yet solve the perturbed KG equation in newtonian gauge.
-        - (k2 + a2*pvecback[pba->index_bg_ddV_mscf+n_mscf])*y[pv->index_pt_phi_scf+n_mscf]; //checked
+        - (k2 + a2*pvecback[pba->index_bg_ddV_mscf+n_mscf])*y[pv->index_pt_phi_mscf+n_mscf]; //checked
 
 
         // if(index_k==0)printf("phi' %e ddV %e\n",pvecback[pba->index_bg_phi_prime_scf],pvecback[pba->index_bg_ddV_scf]);
