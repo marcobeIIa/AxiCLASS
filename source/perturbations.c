@@ -851,21 +851,12 @@ int perturbations_init(
     ppt->has_mscf = _FALSE_;
   }
   if(pba->mscf_has_perturbations == _TRUE_){
+    // printf("line 853 reached fine. updating ppt->msc_has_perturbations \n");
     ppt->mscf_has_perturbations = _TRUE_;
   }else{
+    // printf("line 857 reached fine. updating ppt->msc_has_perturbations \n");
     ppt->mscf_has_perturbations = _FALSE_;
   }
-  if(pba->has_mscf == _TRUE_){
-    ppt->has_mscf = _TRUE_;
-  }else{
-    ppt->has_mscf = _FALSE_;
-  }
-  if(pba->mscf_has_perturbations == _TRUE_){
-    ppt->mscf_has_perturbations = _TRUE_;
-  }else{
-    ppt->mscf_has_perturbations = _FALSE_;
-  }
-
 
   ppt->has_idm_fld = _FALSE_;
   ppt->has_idm_scf = _FALSE_;
@@ -4158,6 +4149,7 @@ int perturbations_vector_init(
     }
     if (pba->has_mscf == _TRUE_){
       if (pba->mscf_has_perturbations == _TRUE_){
+            // printf("line 4152 reached, introducing phi,phi' indices \n");
 //          if(pba->mscf_evolve_like_axionCAMB == _FALSE_){
             class_define_index(ppv->index_pt_phi_mscf,_TRUE_,index_pt,pba->N_mscf); /* scalar field density */
             class_define_index(ppv->index_pt_phi_prime_mscf,_TRUE_,index_pt,pba->N_mscf); /* scalar field velocity */
@@ -4676,7 +4668,10 @@ int perturbations_vector_init(
         }
       }
       if (pba->has_mscf == _TRUE_&& pba->mscf_has_perturbations == _TRUE_) {
+        // printf("line 4671 reached, updating some perturbations vectors? \n");
         for (n_mscf = 0; n_mscf < pba->N_mscf; n_mscf++){
+
+            // printf("entering loop, n_mscf = %d\n", n_mscf);
           // if (pba->mscf_evolve_like_axionCAMB == _FALSE_){
             ppv->y[ppv->index_pt_phi_mscf+n_mscf] =
               ppw->pv->y[ppw->pv->index_pt_phi_mscf+n_mscf];
@@ -5881,7 +5876,9 @@ int perturbations_initial_conditions(struct precision * ppr,
         //CO 22.01.18 If we intend to use fluid eqs, we need delta and theta. Technically only theta because here we are in the synchronous gauge, but both for ease. Always need phi and phi prime.
       }
       if (pba->has_mscf == _TRUE_ && pba->mscf_has_perturbations == _TRUE_) {
+        // printf("line 5879 reached, inside perturbations_initial_conditions \n");
         for (n_mscf = 0; n_mscf < pba->N_mscf; n_mscf++){
+          // printf("looping over n_mscf = %d \n", n_mscf);
           /** - ---> Canonical field (solving for the perturbations):
            *  initial perturbations set to zero, they should reach the attractor soon enough.
            *  - --->  TODO: Incorporate the attractor IC from 1004.5509.
@@ -6258,8 +6255,10 @@ int perturbations_initial_conditions(struct precision * ppr,
           }
       }
       if (pba->has_mscf == _TRUE_&& pba->mscf_has_perturbations == _TRUE_) {
+        // printf("line 6258 reached, still inside perturbations_initial_conditions \n");
         // if (pba->mscf_evolve_like_axionCAMB == _FALSE_){
         for (n_mscf = 0; n_mscf < pba->N_mscf; n_mscf++){
+          // printf("looping over n_mscf = %d \n", n_mscf);
           alpha_prime = 0.0;
             /* - 2. * a_prime_over_a * alpha + eta
               - 4.5 * (a2/k2) * ppw->rho_plus_p_shear; */
@@ -7847,15 +7846,17 @@ int perturbations_total_stress_energy(
 
     /* add your extra species here */
     if (pba->has_mscf == _TRUE_&& pba->mscf_has_perturbations == _TRUE_) {
+      // printf("line 7849 reached, inside perturbations_total_stress_energy \n");
       if (ppt->perturbations_verbose>10)
         fprintf(stdout,"Inside mscf if statement. pba->mscf_has_perturbations = %d. \n", pba->mscf_has_perturbations);
 
       for (n_mscf = 0; n_mscf < pba->N_mscf; n_mscf++){
+        // printf("looping over n_mscf = %d \n", n_mscf);
         if(ppt->gauge == synchronous){
             delta_rho_mscf =  1./3.*
             (1./a2*ppw->pvecback[pba->index_bg_phi_prime_mscf+n_mscf]*y[ppw->pv->index_pt_phi_prime_mscf+n_mscf]
              + ppw->pvecback[pba->index_bg_dV_mscf+n_mscf]*y[ppw->pv->index_pt_phi_mscf+n_mscf]);
-            delta_p_scf = 1./3.*
+            delta_p_mscf = 1./3.*
             (1./a2*ppw->pvecback[pba->index_bg_phi_prime_mscf+n_mscf]*y[ppw->pv->index_pt_phi_prime_mscf+n_mscf]
              - ppw->pvecback[pba->index_bg_dV_mscf+n_mscf]*y[ppw->pv->index_pt_phi_mscf+n_mscf]);
 
@@ -7877,7 +7878,7 @@ int perturbations_total_stress_energy(
             (1./a2*ppw->pvecback[pba->index_bg_phi_prime_mscf+n_mscf]*y[ppw->pv->index_pt_phi_prime_mscf+n_mscf]
              + ppw->pvecback[pba->index_bg_dV_mscf+n_mscf]*y[ppw->pv->index_pt_phi_mscf+n_mscf]
              - 1./a2*pow(ppw->pvecback[pba->index_bg_phi_prime_mscf+n_mscf],2)*psi);
-          delta_p_scf =  1./3.*
+          delta_p_mscf =  1./3.*
             (1./a2*ppw->pvecback[pba->index_bg_phi_prime_mscf+n_mscf]*y[ppw->pv->index_pt_phi_prime_mscf+n_mscf]
              - ppw->pvecback[pba->index_bg_dV_mscf+n_mscf]*y[ppw->pv->index_pt_phi_mscf+n_mscf]
              - 1./a2*pow(ppw->pvecback[pba->index_bg_phi_prime_mscf+n_mscf],2)*psi);
@@ -7893,9 +7894,9 @@ int perturbations_total_stress_energy(
         //   //do nothing
         // }
         // else{
-          rho_plus_p_theta_mscf =  1./3.*
-            k*k/a2*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_phi_scf];
-        // }
+      rho_plus_p_theta_mscf =  1./3.*
+        k*k/a2*ppw->pvecback[pba->index_bg_phi_prime_mscf+n_mscf]*y[ppw->pv->index_pt_phi_mscf+n_mscf];
+      // }
 
       ppw->rho_plus_p_theta += rho_plus_p_theta_mscf;
       ppw->rho_plus_p_tot += ppw->pvecback[pba->index_bg_rho_mscf+n_mscf]+ppw->pvecback[pba->index_bg_p_mscf+n_mscf];
@@ -9404,7 +9405,9 @@ int perturbations_print_variables(double tau,
       class_alloc(delta_phi_prime_mscf, pba->N_mscf * sizeof(double), pba->error_message);
     }
     if (pba->has_mscf == _TRUE_&& pba->mscf_has_perturbations == _TRUE_){
+      // printf("line 9408 reached, inside perturbations_total_stress_energy \n");
       for(n_mscf = 0; n_mscf<pba->N_mscf; n_mscf++){
+        // printf("looping over n_mscf = %d \n", n_mscf);
       //If we are following KG:
           if (ppt->gauge == synchronous){
             delta_rho_mscf =  1./3.*
@@ -9569,7 +9572,9 @@ int perturbations_print_variables(double tau,
         else theta_scf += k*k*alpha;
       }
       if (pba->has_mscf == _TRUE_ && pba->mscf_has_perturbations == _TRUE_) {
+      // printf("line 9574 reached, inside peturbations_print_variables \n");
         for (n_mscf=0; n_mscf < pba->N_mscf; n_mscf++){
+          // printf("looping over n_mscf = %d \n", n_mscf);
           delta_mscf[n_mscf] -= -3.0*alpha*pvecback[pba->index_bg_a]*H*(1+pvecback[pba->index_bg_w_mscf]);
           // if(ppt->use_big_theta_scf == _TRUE_) big_theta_scf += (1.0+pvecback[pba->index_bg_w_scf])*k*k*alpha;
           // else theta_scf += k*k*alpha;
@@ -9665,7 +9670,9 @@ int perturbations_print_variables(double tau,
     }
     }
     if ((ppt->has_mscf==_TRUE_)&&(pba->mscf_has_perturbations == _TRUE_)){
+      // printf("line 9673 reached, still inside peturbations_print_variables \n");
       for (n_mscf=0; n_mscf < pba->N_mscf; n_mscf++){
+        // printf("looping over n_mscf = %d \n", n_mscf);
         class_store_double(dataptr, delta_phi_mscf[n_mscf], _TRUE_, storeidx);
         class_store_double(dataptr, delta_phi_over_phi_mscf[n_mscf], _TRUE_, storeidx);
         class_store_double(dataptr, delta_phi_prime_mscf[n_mscf], _TRUE_, storeidx);
@@ -10921,7 +10928,9 @@ int perturbations_derivs(double tau,
 
     /*-->many scalar fields*/  
     if (pba->has_mscf == _TRUE_ && pba->mscf_has_perturbations == _TRUE_) {
+      // printf("line 10931 reached, not sure which function lol \n");
       for (n_mscf = 0; n_mscf < pba->N_mscf; n_mscf++) {
+        // printf("looping over n_mscf = %d \n", n_mscf);
         if (ppt->perturbations_verbose>10){
           fprintf(stdout,"Evolving as KG.\n");
         }

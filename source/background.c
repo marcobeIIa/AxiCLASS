@@ -977,11 +977,12 @@ int background_init(
                     struct precision * ppr,
                     struct background * pba
                     ) {
+  printf("debug: entered background_init \n"); //print_trigger
 
   /** Summary: */
 
   /** - define local variables */
-  int n_ncdm;
+  int n_ncdm,n_mscf;
   double rho_ncdm_rel,rho_nu_rel;
   double Neff, Omega_rad_neutrinos, Omega_tot_ac, N_dark;
   double w_fld, dw_over_da, integral_fld;
@@ -1219,7 +1220,125 @@ int background_init(
         pba->log10_z_c=1;
         // printf("m_scf is %e pba->w_scf %e pba->f_axion %e\n", pba->m_scf,pba->w_scf,pba->f_axion);
      }
+  if(pba->has_mscf == _TRUE_){
+    printf("debug: before mscf loop\n"); //print_trigger
+    for (n_mscf = 0; n_mscf < pba-> N_mscf; n_mscf++){
+        printf("debug: enter mscf loop\n"); //print_trigger
+        printf("log10_maxion_ac[n_mscf] = %e \n", pba->log10_maxion_ac[n_mscf]);
+        printf("alpha_squared[n_mscf] %e \n", pba->alpha_squared_mscf[n_mscf]);
+        if(pba->log10_maxion_ac[n_mscf] > -30 && pba->log10_fraction_maxion_ac[n_mscf] > -30){
+          printf("debug: entered shooting instance 1 %d \n", n_mscf); //print_trigger
+           /*-30 is the default value*/
+//            pba->alpha_squared = fabs(pba->alpha_squared);
+//            pba->power_of_mu = fabs(pba->power_of_mu);
 
+        /*shoot for both*/
+        // pba->power_of_mu= sqrt(pow(pba->power_of_mu,2));
+        // pba->mu_squared_alpha_squared= sqrt(pow(pba->mu_squared_alpha_squared,2));
+        // Omega_rad_neutrinos = Neff/(1/7.*8./pow(4./11.,4./3.)/pba->Omega0_g);
+
+          Omega_r = pba->Omega0_g;
+          if(pba->has_ur == _TRUE_) Omega_r += pba->Omega0_ur;
+          Omega_m = pba->Omega0_b;
+          if(pba->has_cdm == _TRUE_) Omega_m += pba->Omega0_cdm;
+          if(pba->has_idm == _TRUE_) Omega_m += pba->Omega0_idm;
+          if(pba->has_dcdm == _TRUE_) Omega_m += pba->Omega0_dcdm;
+
+          a_eq = Omega_r /Omega_m;
+
+          if(pow(10,pba->log10_maxion_ac[n_mscf])<a_eq){
+            p = 1./2;
+            pba->m_mscf[n_mscf] = pow(pow(10,pba->power_of_mu_mscf[n_mscf]),-2.);
+          }
+          else{
+            p = 2./3;
+            pba->m_mscf[n_mscf] = pow(pow(10,pba->power_of_mu_mscf[n_mscf]),-3./2);
+          }
+          pba->f_axion_mscf[n_mscf] = sqrt(pow(10,pba->alpha_squared_mscf[n_mscf]));
+
+          // printf("pba->f_axion %r\n", );
+          pba->log10_f_maxion[n_mscf] = log10(pba->f_axion_mscf[n_mscf]);
+          pba->log10_m_maxion[n_mscf] = log10(pba->m_mscf[n_mscf]);
+
+          pba->a_c_mscf[n_mscf]=pow(10,pba->log10_maxion_ac[n_mscf]);
+
+          cos_initial = cos(pba->theta_ini_mscf[n_mscf]);
+          sin_initial = sin(pba->theta_ini_mscf[n_mscf]);
+          // printf("%e %e %e \n",cos_initial,sin_initial,p);
+
+          n = pba->n_axion_mscf[n_mscf];
+
+
+          Gac =sqrt(_PI_)*gsl_sf_gamma((n+1.)/(2*n))/gsl_sf_gamma(1+1./(2*n))*pow(2,-(n*n+1)/(2*n))*pow(3,0.5*(1./n-1))
+          *pow(pba->a_c,3-6./(1+n))*pow(pow(pba->a_c,6*n/(1+n))+1,0.5*(1./n-1));
+          // pba->omega_axion = pba->H0*pba->m_mscf[n_mscf]*pow(1-cos_initial,0.5*(n-1))*Gac;
+
+          // printf("pba->axion_ac %e pba->log10_fraction_axion_ac %e pba->m_scf %e pba->f_axion %e\n",pba->log10_axion_ac,pba->log10_fraction_axion_ac,pba->m_scf,pba->f_axion);
+          printf("n_mscf %d pba->maxion_ac %e pba->log10_fraction_maxion_ac %e pba->m_mscf %e pba->f_axion_mscf %e\n",n_mscf,pba->log10_maxion_ac[n_mscf],pba->log10_fraction_maxion_ac[n_mscf],pba->m_mscf[n_mscf],pba->f_axion_mscf[n_mscf]);
+          // if(pba->background_verbose>10)printf("pba->m_scf %e pba->f_axion %e pba->omega_axion  %e\n",pba->m_scf,pba->f_axion,pba->omega_axion);
+          }
+
+          else if(pba->alpha_squared_mscf[n_mscf] > -30 && pba->log10_fraction_maxion_ac[n_mscf] > -30){
+            printf("debug: entered shooting instance 2 %d \n", n_mscf); //print_trigger
+            /*shoot for fac by varying alpha*/
+            // pba->power_of_mu= sqrt(pow(pba->power_of_mu,2));
+            // pba->mu_squared_alpha_squared= sqrt(pow(pba->mu_squared_alpha_squared,2));
+            // Omega_rad_neutrinos = Neff/(1/7.*8./pow(4./11.,4./3.)/pba->Omega0_g);
+
+              pba->f_axion_mscf[n_mscf] = sqrt(pow(10,pba->alpha_squared_mscf[n_mscf]));
+
+              pba->log10_f_maxion[n_mscf] = log10(pba->f_axion_mscf[n_mscf]);
+              pba->log10_m_maxion[n_mscf] = log10(pba->m_mscf[n_mscf]);
+              // printf("pba->axion_ac %e pba->fraction_axion_ac %e pba->m_scf %e pba->f_axion %e\n",pba->axion_ac,pba->fraction_axion_ac,pba->m_scf,pba->f_axion);
+              // printf("pba->mu_squared_alpha_squared %e \n",pba->mu_squared_alpha_squared);
+          }
+          else if(pba->power_of_mu_mscf[n_mscf]> -30 && pba->log10_maxion_ac[n_mscf] > -30){
+            printf("debug: entered shooting instance 3 %d \n", n_mscf); //print_trigger
+            pba->power_of_mu_mscf[n_mscf] = fabs(pba->power_of_mu_mscf[n_mscf]);
+            /*shoot for axion ac by varying mu*/
+            // pba->power_of_mu= sqrt(pow(pba->power_of_mu,2));
+            // pba->mu_squared_alpha_squared= sqrt(pow(pba->mu_squared_alpha_squared,2));
+            // Omega_rad_neutrinos = Neff/(1/7.*8./pow(4./11.,4./3.)/pba->Omega0_g);
+            Omega_r = pba->Omega0_g;
+            if(pba->has_ur == _TRUE_) Omega_r += pba->Omega0_ur;
+            Omega_m = pba->Omega0_b;
+            if(pba->has_cdm == _TRUE_) Omega_m += pba->Omega0_cdm;
+            if(pba->has_idm == _TRUE_) Omega_m += pba->Omega0_idm;
+            if(pba->has_dcdm == _TRUE_) Omega_m += pba->Omega0_dcdm;
+
+            a_eq = Omega_r /Omega_m;
+
+            if(pow(10,pba->log10_maxion_ac[n_mscf])<a_eq){
+              p = 1./2;
+              pba->m_mscf[n_mscf] = pow(pow(10,pba->power_of_mu_mscf[n_mscf]),-2.);
+            }
+            else{
+              p = 2./3;
+              pba->m_mscf[n_mscf] = pow(pow(10,pba->power_of_mu_mscf[n_mscf]),-3./2);
+            }
+              pba->log10_f_maxion[n_mscf] = log10(pba->f_axion_mscf[n_mscf]);
+              pba->log10_m_maxion[n_mscf] = log10(pba->m_mscf[n_mscf]);
+              // printf("pba->axion_ac %e pba->log10_fraction_axion_ac %e pba->m_scf %e pba->f_axion %e\n",pba->axion_ac,pba->log10_fraction_axion_ac,pba->m_scf,pba->f_axion);
+              // printf("pba->m_scf %e pba->power_of_mu %e \n",pba->m_scf,pba->power_of_mu);
+          }
+          
+            //pba->w_scf = (pba->n_axion-1.0)/(pba->n_axion+1.0);
+//CHECK this part, i am ignoring conversion from theta to phi and ideally ill feed the machine both
+            // pba->scf_parameters[0]*=pba->f_axion; //conversion from theta_i to phi_i; multiplying by fa
+            // pba->scf_parameters[1]*=pba->f_axion; //conversion from theta_dot_i to phi_dot_i; multiplying by fa
+//            pba->theta_ini_mscf[n_mscf]*=pba->f_axion_mscf; //conversion from theta_i to phi_i; multiplying by fa
+ //           pba->phi_prime_ini_scf*=pba->f_axion; //conversion from theta_dot_i to phi_dot_i; multiplying by fa
+            // printf("%e %e\n", pba->scf_parameters[0],  pba->scf_parameters[0]/pba->f_axion);
+
+
+
+
+        // pba->f_ede_mscf[n_mscf]=0.0;  //already initialised to zero 
+         // pba->log10_z_c_mscf[n_mscf]=1; //already initialised in input.c 
+        // printf("m_scf is %e pba->w_scf %e pba->f_axion %e\n", pba->m_scf,pba->w_scf,pba->f_axion);
+     }
+    printf("debug: exited mscf loop 3 %d \n", n_mscf); //print_trigger
+    }
   /** - check that input parameters make sense and write additional information about them */
   class_call(background_checks(ppr,pba),
              pba->error_message,
@@ -1241,6 +1360,7 @@ int background_init(
              pba->error_message);
 
   pba->is_allocated = _TRUE_;
+  printf("debug: exiting background_init \n"); //print_trigger
 
   return _SUCCESS_;
 
@@ -1349,6 +1469,7 @@ int background_free_input(
   }
   if (pba->Omega0_mscf_tot != 0.){
     // printf("1344 reached background.c, freeing memory\n");
+    //CHECK am i freeing everything correctly? what must i free
     free(pba->m_mscf);
     free(pba->phi_ini_mscf);
     free(pba->phi_prime_ini_mscf);
@@ -2275,11 +2396,11 @@ int background_checks(
 
         /* inform the user also about the value of the ncdm
            masses in eV and about */
+
         printf(" -> non-cold dark matter species with i=%d has m_i = %e eV (so m_i / omega_i =%e eV)\n",
                n_ncdm+1,
                pba->m_ncdm_in_eV[n_ncdm],
                pba->m_ncdm_in_eV[n_ncdm]*pba->deg_ncdm[n_ncdm]/pba->Omega0_ncdm[n_ncdm]/pba->h/pba->h);
-
         /* call this function to get rho_ncdm */
         background_ncdm_momenta(pba->q_ncdm_bg[n_ncdm],
                                 pba->w_ncdm_bg[n_ncdm],
@@ -2292,7 +2413,7 @@ int background_checks(
                                 NULL,
                                 NULL,
                                 NULL);
-
+        printf("segfault check\n");
         /* inform user of the contribution of each species to
            radiation density (in relativistic limit): should be
            between 1.01 and 1.02 for each active neutrino species;
@@ -2423,6 +2544,7 @@ int background_solve(
 if(pba->Omega0_scf!=0){
   Omega0_axion_used = pba->Omega0_scf;
 }
+
 while(is_axion_converged == _FALSE_){
 //VP: new to axiclass: To correctly incorporate the axion contribution to Omega_Lambda in the case where it is not known.
 /** - allocate vector of quantities to be integrated */
@@ -2444,7 +2566,7 @@ class_call(background_initial_conditions(ppr,pba,pvecback,pvecback_integration,&
 
   // is_axion_converged = _TRUE_;
   /** - perform the integration */
-  // printf("..integrating background\n");
+   printf("debugging: integrating background\n");
   class_call(generic_evolver(background_derivs,
                              loga_ini,
                              loga_final,
@@ -2463,7 +2585,7 @@ class_call(background_initial_conditions(ppr,pba,pvecback,pvecback_integration,&
                              pba->error_message),
              pba->error_message,
              pba->error_message);
-// printf("..done integrating background\n");
+ printf("..done integrating background\n");
 
              /* VP: loop over background to ensure the closure relation, to be updated*/
      //
@@ -2722,7 +2844,7 @@ class_call(background_initial_conditions(ppr,pba,pvecback,pvecback_integration,&
       //printf("wait for implem");
       //}
 //      if(pba->mscf_potential == axion_mscf){
-        printf("Additional scf parameters used: \n");
+        printf("Additional mscf parameters used: \n");
         for (k=0; k<pba->N_mscf; k++){
           printf("n = %e m_a = %e eV, f_a/mpl = %e\n",pba->n_axion_mscf[k],(pba->m_mscf[k]*pba->H0/1.5638e29),pba->f_axion_mscf[k]);
           printf("  phi_ini = %e, phi_prime_ini %e\n", pba->phi_ini_mscf[k], pba->phi_prime_ini_mscf[k]);
@@ -2769,6 +2891,7 @@ class_call(background_initial_conditions(ppr,pba,pvecback,pvecback_integration,&
   pba->scf_kg_eq = _TRUE_; // COpertchange
   free(used_in_output);
 
+  printf("background_solve exit ...\n");
   return _SUCCESS_;
 }
 
@@ -2983,7 +3106,7 @@ int background_initial_conditions(
   /* Infer pvecback from pvecback_integration */
   // printf("2984 reached background.c, ready to roll\n");
   if (pba->has_mscf == _TRUE_) {
-  // printf("2986 reached background.c, doing stuff\n");
+  printf("2986 reached background.c, doing stuff\n");
     //if (pba->attractor_ic_scf == _TRUE_) {
       //printf("not implemented");
     //}
@@ -3022,7 +3145,7 @@ int background_initial_conditions(
       // pvecback_integration[pba->index_bi_rho_mscf+k] = 0; //vp: in axiclass we initialise the fluid scf variable to 0, we will update its value when needed at the time of the switch.
     }
   }
-  // printf("calling background functions.\n");//print_trigger
+  printf("calling background functions.\n");//print_trigger
   /* infer pvecback from pvecback_integration */
   class_call(background_functions(pba, a, pvecback_integration, normal_info, pvecback),
              pba->error_message,
@@ -3625,6 +3748,7 @@ int background_sources(
              pba->error_message,
              pba->error_message);
 
+  // printf("background_sources exited ...\n");
   return _SUCCESS_;
 
 }
@@ -3772,7 +3896,7 @@ int background_output_budget(
           pba->Omega0_mscf[k]=pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_mscf+k]/pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_crit];      
           pba->Omega0_mscf_tot+=pba->Omega0_mscf[k];      
         }
-        class_print_species("Many scalar Fields",mscf_tot);
+      class_print_species("Many scalar Fields",mscf_tot);
         budget_other+=pba->Omega0_mscf_tot;
         // printf("pba->Omega0_axion %e\n", pba->Omega0_axion);
         // }
