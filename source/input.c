@@ -530,7 +530,6 @@ int input_shooting(struct file_content * pfc,
   short zc_is_zeq;
   double * unknown_parameter;
   int unknown_parameters_size;
-  int unknown_names_parameters_size;
   int fevals=0;
   double xzero;
   double *dxdF, *x_inout;
@@ -972,7 +971,7 @@ int input_shooting(struct file_content * pfc,
     }
     else if (fzw.do_shooting_mscf ==_TRUE_){
       unknown_parameters_size += 2*pba->N_mscf; //CHECK if code doesn't work this is a suspicious addition
-      printf("unknown names parameter size = %d, unknown parameter size = %d\n",unknown_names_parameters_size,unknown_parameters_size);
+      printf("unknown parameter size = %d\n",unknown_parameters_size);
       // i flatten the mscf parameter array and will run for all mscf contiguously, as in i, i+1, ..., i+N_mscf
     }
       
@@ -1025,7 +1024,7 @@ int input_shooting(struct file_content * pfc,
     if (pba->N_mscf == 0 ){
       param1_arr = NULL;  //make sure to initialise this array of parameters, which we only need in the case of mscf
     }
-    while (counter < unknown_names_parameters_size){
+    while (counter < unknown_parameters_size){
       index_target = target_indices[counter];
       if(target_namestrings[index_target] == "log10_axion_ac" && zc_is_zeq == _TRUE_){
       param1 = log10(Omega_r/Omega_m); // assumes a flat universe with a=1 today
