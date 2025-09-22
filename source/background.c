@@ -3892,13 +3892,12 @@ int background_output_budget(
     } if (pba->has_mscf == _TRUE_){
       // for (k = 0; k < pba->N_mscf; k++){
     //  if (!(pba->n_axion_mscf[k] == 1) ){
-        for (k=0; k<pba->N_mscf; k++){
-          pba->Omega0_mscf[k]=pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_mscf+k]/pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_crit];      
-          pba->Omega0_mscf_tot+=pba->Omega0_mscf[k];      
-        }
+        // for (k=0; k<pba->N_mscf; k++){
+        //   pba->Omega0_mscf[k]=pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_mscf+k]/pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_rho_crit];      
+        //   pba->Omega0_mscf_tot+=pba->Omega0_mscf[k];      
+        // }
       class_print_species("Many scalar Fields",mscf_tot);
         budget_other+=pba->Omega0_mscf_tot;
-        // printf("pba->Omega0_axion %e\n", pba->Omega0_axion);
         // }
       // }
     }
