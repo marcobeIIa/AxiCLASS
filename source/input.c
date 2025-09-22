@@ -870,7 +870,7 @@ int input_shooting(struct file_content * pfc,
       //   //this line is translated into mscf from the scf case but i don't understand the point
         // fzw.log10_maxion_ac[n_mscf] = 0.0; 
         printf("debug: read log10_maxion_ac %e \n", fzw.log10_maxion_ac[n_mscf]);
-        printf("debug: read fraction_maxion_ax %e \n", fzw.fraction_maxion_ac[n_mscf]);
+        printf("debug: read fraction_maxion_ac %e \n", fzw.fraction_maxion_ac[n_mscf]);
         printf("debug: read m_mscf %e \n", fzw.m_mscf[n_mscf]);
         printf("debug: read f_axion_mscf %e \n", fzw.f_axion_mscf[n_mscf]);
         // fzw.m_mscf[n_mscf] = 0.0; 
@@ -1956,6 +1956,7 @@ int input_get_guess(double *xguess,
 
 
       case fraction_maxion_ac:
+        printf("fraction_maxion_ac entered in input_get_guess...\n");
           for (n_mscf=0; n_mscf<ba.N_mscf; n_mscf++){
             printf("entering loop reached in get_guess...\n");
             phi_initial = ba.theta_ini_mscf[n_mscf];// CHECK this should be theta correct?
@@ -1999,6 +2000,7 @@ int input_get_guess(double *xguess,
       case log10_maxion_ac:
         printf("log10_maxion_ac reached in get_guess\n");
           for (n_mscf=0; n_mscf<ba.N_mscf; n_mscf++){
+            printf("here reached\n");
             phi_initial = ba.theta_ini_mscf[n_mscf]; // CHECK this should be theta correct?
             axc=pow(10.,ba.log10_maxion_ac[n_mscf]);
             if(ba.log10_fraction_maxion_ac[n_mscf]>-30){
@@ -2032,6 +2034,7 @@ int input_get_guess(double *xguess,
 
             if(pfzw->input_verbose>10)printf("get guess: for %d field, axion_ac %e power_of_mu %e dxdy[index_guess] %e Omega_m %e Omega_rad %e\n",n_mscf,axc,xguess[index_guess+n_mscf],dxdy[index_guess+n_mscf],(ba.Omega0_cdm+ba.Omega0_b),(ba.Omega0_g+ba.Omega0_ur));
           } index_guess += ba.N_mscf -1;
+          printf("here reached2\n");
            break;
 
       case omega_ini_dcdm:
