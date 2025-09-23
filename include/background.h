@@ -178,6 +178,8 @@ struct background
 //  enum mscf_pot mscf_potential; /**< List of currently implement potential for many scalar fields */
   double * scf_parameters;  /**< list of parameters describing the scalar field potential */
   double *phi_ini_mscf;       /**< \f$ \phi(t_0) \f$: scalar field initial value */
+  double *theta_ini_mscf;       /**< theta_ini used for shooting instead of phi */
+  double *theta_prime_ini_mscf;       /**< theta_ini used for shooting instead of phi */
   double *phi_prime_ini_mscf; /**< \f$ d\phi(t_0)/d\tau \f$: scalar field initial derivative wrt conformal time */
   int scf_parameters_size;  /**< size of scf_parameters */
   int scf_tuning_index;     /**< index in scf_parameters used for tuning */
@@ -187,20 +189,29 @@ struct background
   double f_axion;
   double alpha_squared;
   double power_of_mu;
+  double * alpha_squared_mscf;
+  double * power_of_mu_mscf;
   double *m_mscf;
   double *f_axion_mscf;
   double log10_f_axion;
   double log10_m_axion;
   double log10_axion_ac;
+  double * log10_f_maxion;
+  double * log10_m_maxion;
+  double * log10_maxion_ac;
   double V0_phi2n;
   double a_c;
+  double * a_c_mscf;
   double log10_fraction_axion_ac;
+  double * log10_fraction_maxion_ac;
   double adptative_stepsize;
   double Omega0_axion;
   double Omega_axion_ac;
   double log10_z_c; //
   double zc_is_zeq; //enforce zc=zeq, with zeq=(Omega0_b+Omega0_cdm)/(Omega0_g+Omega0_ur);
   double f_ede; // TK added doubles to fill with values of the exact z_c and fraction_ede eventually
+  double * f_ede_mscf; // TK added doubles to fill with values of the exact z_c and fraction_ede eventually
+  double * log10_z_c_mscf; //
   double phi_scf_c; // Added for debugging. Trying to see whether the value of phi at z_c is really 7/8 phi_ini
   double n_axion;
   double *n_axion_mscf;

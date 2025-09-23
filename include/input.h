@@ -213,13 +213,13 @@
 
 enum target_names {theta_s, theta_s_100, Neff,Omega_dcdmdr, omega_dcdmdr,
                   Omega_scf, Omega_ini_dcdm, omega_ini_dcdm,
-                  fraction_axion_ac, log10_axion_ac, Omega_scf_shoot_fa, log10_fraction_axion_ac_phi2n,
+                  fraction_axion_ac, log10_axion_ac, fraction_maxion_ac, log10_maxion_ac, Omega_scf_shoot_fa, log10_fraction_axion_ac_phi2n,
                   log10_axion_ac_phi2n, a_peak_eq, sigma8, S8};
 /* Important: add one for each new target_names */
 enum computation_stage {cs_background, cs_thermodynamics, cs_perturbations,
                         cs_primordial, cs_nonlinear, cs_transfer, cs_spectra};
 /* Important: Keep this number equal to the number of target_names (except sigma8), and keep sigma8 at the very end */
-#define _NUM_TARGETS_ 16 //Keep this number as number of target_names
+#define _NUM_TARGETS_ 18 //Keep this number as number of target_names
 enum scf_pot_inp{
   pol_times_exp_inp, /** scf_potential set to pol_times_exp:V equals ((\phi-B)^\alpha + A)exp(-lambda*phi), see http://arxiv.org/abs/astro-ph/9908085.*/
   double_exp_inp, /* scf_potential set to double_exp: V equals \Lambda_1^4e^{-\lambda\phi}+\Lambda_2^4e^{-\mu\phi} */
@@ -244,17 +244,23 @@ struct fzerofun_workspace {
   short scf_evolve_as_fluid_always; /** Should we evolve as a fluid or use KG eqs all the way through? */
   short do_shooting;        /**< Should we do shooting */
   short do_shooting_scf;        /**< Should we use shooting method to determine phi_init */
+  short do_shooting_mscf;        /**< Should we use shooting method to determine phi_init */
   short loop_over_background_for_closure_relation;
   double precision_loop_over_background;
   double m_scf;
   double f_axion;
+  double * m_mscf;
+  double * f_axion_mscf;
   double Omega0_axion;
   double log10_axion_ac;
   int n_axion;
+  double * n_axion_mscf;
   double theta_axion;
   double w_scf;
   double threshold_scf_fluid_m_over_H;
   double * scf_parameters;  /**< list of parameters describing the scalar field potential */
+  double * fraction_maxion_ac; 
+  double * log10_maxion_ac;
   int scf_parameters_size;  /**< size of scf_parameters */
   int scf_tuning_index;     /**< index in scf_parameters used for tuning */
   int input_verbose;  /**<for verbose when shooting */
