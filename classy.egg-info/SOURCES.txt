@@ -8,6 +8,7 @@ test_lensedCls.py
 ./CPU.py
 ./Makefile
 ./test_lensedCls.py
+./external/.DS_Store
 ./external/HMcode/hmcode.c
 ./external/HMcode/hmcode.h
 ./external/Halofit/halofit.c
@@ -64,6 +65,7 @@ test_lensedCls.py
 ./external/heating/injection.h
 ./external/heating/noninjection.c
 ./external/heating/noninjection.h
+./external_fz/.DS_Store
 ./external_fz/DarkAges_Example.py
 ./external_fz/Fallback.dat
 ./external_fz/VERSION
@@ -152,6 +154,7 @@ test_lensedCls.py
 ./include/transfer.h
 ./include/trigonometric_integrals.h
 ./main/class.c
+./python/.DS_Store
 ./python/README
 ./python/cclassy.pxd
 ./python/classy.cpp
@@ -191,6 +194,7 @@ classy.egg-info/PKG-INFO
 classy.egg-info/SOURCES.txt
 classy.egg-info/dependency_links.txt
 classy.egg-info/top_level.txt
+external/.DS_Store
 external/HMcode/hmcode.c
 external/HMcode/hmcode.h
 external/Halofit/halofit.c
@@ -247,6 +251,7 @@ external/heating/injection.c
 external/heating/injection.h
 external/heating/noninjection.c
 external/heating/noninjection.h
+external_fz/.DS_Store
 external_fz/DarkAges_Example.py
 external_fz/Fallback.dat
 external_fz/VERSION
@@ -335,6 +340,7 @@ include/thermodynamics_tmp.h
 include/transfer.h
 include/trigonometric_integrals.h
 main/class.c
+python/.DS_Store
 python/README
 python/cclassy.pxd
 python/classy.cpp

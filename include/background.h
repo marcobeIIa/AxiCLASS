@@ -166,8 +166,6 @@ struct background
   double Omega_ini_dcdm;    /**< \f$ \Omega_{ini,dcdm} \f$: rescaled initial value for dcdm density (see 1407.2418 for definitions) */
 
   double Omega0_scf;        /**< \f$ \Omega_{0 scf} \f$: scalar field */
-  int N_mscf;                            /**< Number of axion species (no fluid) */  
-  double *Omega0_mscf, Omega0_mscf_tot;        /**< \f$ \Omega_{0 mscf} \f$: many scalar field and total energy fraction */ 
   short scf_evolve_as_fluid; /** set to false to only evolve KG equations, otherwise - switch to fluid when necessary. To be used in perturbation module*/
   double threshold_scf_fluid_m_over_H; /** if scf_evolve_as_fluid set to true, the scf will be modeled as a fluid once m/H drops below threshold_scf_fluid_m_over_H */
   double security_small_Omega_scf; /** enforce fluid when Om_scf is below  security_small_Omega_scf even if scf_evolve_as_fluid = False to avoid code crashing; harmless due to the smallness of Om_scf */
@@ -177,8 +175,6 @@ struct background
   enum scf_pot scf_potential; /**< List of currently implement potential for a scalar field */
 //  enum mscf_pot mscf_potential; /**< List of currently implement potential for many scalar fields */
   double * scf_parameters;  /**< list of parameters describing the scalar field potential */
-  double *phi_ini_mscf;       /**< \f$ \phi(t_0) \f$: scalar field initial value */
-  double *phi_prime_ini_mscf; /**< \f$ d\phi(t_0)/d\tau \f$: scalar field initial derivative wrt conformal time */
   int scf_parameters_size;  /**< size of scf_parameters */
   int scf_tuning_index;     /**< index in scf_parameters used for tuning */
   double theta_axion;
@@ -187,8 +183,6 @@ struct background
   double f_axion;
   double alpha_squared;
   double power_of_mu;
-  double *m_mscf;
-  double *f_axion_mscf;
   double log10_f_axion;
   double log10_m_axion;
   double log10_axion_ac;
@@ -203,7 +197,6 @@ struct background
   double f_ede; // TK added doubles to fill with values of the exact z_c and fraction_ede eventually
   double phi_scf_c; // Added for debugging. Trying to see whether the value of phi at z_c is really 7/8 phi_ini
   double n_axion;
-  double *n_axion_mscf;
   double w_scf;
   double cs2_scf;
 
@@ -213,7 +206,6 @@ struct background
   short kg_fld_switch;    /**< evolve scalar field with KG equations */
   short scf_fluid_eq;    /**< evolve scalar field with KG equations */
   short scf_evolve_like_axionCAMB; /**< evolve scalar field perturbations like axionCAMB */
-  short mscf_evolve_like_axionCAMB; /**< evolve scalar field perturbations like axionCAMB */
   short scf_has_perturbations; /** do scalar field perts */
   short mscf_has_perturbations; /** do many scalar field perts */
   short loop_over_background_for_closure_relation; /** do we want to loop over background?*/
@@ -225,6 +217,30 @@ struct background
   //double scf_alpha;  /**< \f$ \alpha \f$ : Albrecht-Skordis polynomial slope */
   //double scf_B; /**< \f$ \alpha \f$ : Albrecht-Skordis field shift */
   //double scf_A; /**< \f$ \alpha \f$ : Albrecht-Skordis offset */
+
+  /*MSCF parameters*/
+  int N_mscf;                            /**< Number of axion species (no fluid) */  
+  double * Omega0_mscf;
+  double Omega0_mscf_tot;        /**< \f$ \Omega_{0 mscf} \f$: many scalar field and total energy fraction */ 
+  double * phi_ini_mscf;       /**< \f$ \phi(t_0) \f$: scalar field initial value */
+  double * theta_ini_mscf;       /**< theta_ini used for shooting instead of phi */
+  double * theta_prime_ini_mscf;       /**< theta_ini used for shooting instead of phi */
+  double * phi_prime_ini_mscf; /**< \f$ d\phi(t_0)/d\tau \f$: scalar field initial derivative wrt conformal time */
+  double * m_mscf;
+  double * log10_fraction_maxion_ac;
+  double * log10_maxion_ac;
+  double * alpha_squared_mscf;
+  double * power_of_mu_mscf;
+  double * log10_f_maxion;
+  double * log10_m_maxion;
+  double * f_axion_mscf;
+  double * a_c_mscf;
+  double * f_ede_mscf; // TK added doubles to fill with values of the exact z_c and fraction_ede eventually
+  double * log10_z_c_mscf; //
+  double * n_axion_mscf;
+
+
+  short mscf_evolve_like_axionCAMB; // ????
 
 
   int N_ncdm;                            /**< Number of distinguishable ncdm species */

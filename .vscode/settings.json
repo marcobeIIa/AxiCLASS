@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "parallel.h": "c"
-    }
+        "parallel.h": "c",
+        "common.h": "c"
+    },
+    "terminal.integrated.fontFamily": "MesloLGS NF"
 }
