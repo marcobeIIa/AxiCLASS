@@ -79,7 +79,7 @@ class_precision_parameter(Omega0_cdm_min_synchronous,double,1.e-10)
 /**
  * Absolute tolerance of root x during shooting (only 2D case)
  */
-class_precision_parameter(tol_shooting_deltax,double,1.e-4)
+class_precision_parameter(tol_shooting_deltax,double,5.e-3)
 /**
  * Absolute tolerance of function value F during shooting (only 2D case)
  */

@@ -525,6 +525,7 @@ int input_shooting(struct file_content * pfc,
   int n_mscf;
 
   double param1, param2;
+  double * param1_arr;
   double sigma_B = 2. * pow(_PI_,5) * pow(_k_B_,4) / 15. / pow(_h_P_,3) / pow(_c_,2);
   int counter, index_target, i;
   double Omega_m, Omega_r, Omega0_g, Omega0_cdm,Omega0_b, T_cmb, H0, h;
@@ -917,9 +918,24 @@ class_call(parser_read_string(pfc,"do_shooting",&string1,&flag1,errmsg),
  //CHECK this is definitely gonna break for N_mscf > 1!!!!!!
   for (index_target = 0; index_target < _NUM_TARGETS_; index_target++){
       // Handle the case where we have multiple scalar fields
-      if (fzw.N_mscf > 1) {
-        printf("running into broken territory!!!!!\n");
-      }     
+    //  if (fzw.N_mscf > 1) {
+    //    printf("running into broken territory!!!!!\n");
+    //  }     
+    if ((target_namestrings[index_target] == "fraction_maxion_ac")||(target_namestrings[index_target]=="log10_maxion_ac")){
+      class_call(parser_read_list_of_doubles(pfc, target_namestrings[index_target], &(fzw.N_mscf),&param1_arr, &flag1, errmsg), 
+                  errmsg,
+                  errmsg);
+    if (flag1 == _TRUE_){
+        if(input_verbose > 10){
+        for (n_mscf = 0; n_mscf < fzw.N_mscf; n_mscf++){
+          printf("entered mscf sshooting case\n");
+          printf("Found target: %s, target value[%d] =  %e\n",target_namestrings[index_target], n_mscf,param1_arr[n_mscf]);
+                    }
+            }
+        }
+    }
+    else {
+    param1_arr = NULL;
     class_call(parser_read_double(pfc,target_namestrings[index_target],&param1,&flag1,errmsg),
                errmsg,
                errmsg);
@@ -938,6 +954,8 @@ class_call(parser_read_string(pfc,"do_shooting",&string1,&flag1,errmsg),
       if (needs_shooting == _TRUE_){
         if(input_verbose > 10){
           printf("Found target: %s, target value =  %e\n",target_namestrings[index_target],param1);
+        }
+
         }
         if(fzw.do_shooting_scf ==_FALSE_ && (target_namestrings[index_target]=="Omega_scf_shoot_fa"||target_namestrings[index_target]=="Omega_scf"|| target_namestrings[index_target]=="fraction_axion_ac" ||  target_namestrings[index_target]=="log10_fraction_axion_ac_phi2n"||  target_namestrings[index_target]=="log10_axion_ac_phi2n")){
           // printf("I will not add it!\n");
@@ -997,14 +1015,14 @@ class_call(parser_read_string(pfc,"do_shooting",&string1,&flag1,errmsg),
                 errmsg);
 
     /** Go through all cases with unknown parameters */
-printf("=== ENTERING LOOP ===\n");
-printf("unknown_parameters_size=%d  target_size_mscf=%d  N_mscf=%d\n",
-       unknown_parameters_size, fzw.target_size_mscf, fzw.N_mscf);
+// printf("=== ENTERING LOOP ===\n");
+// printf("unknown_parameters_size=%d  target_size_mscf=%d  N_mscf=%d\n",
+      //  unknown_parameters_size, fzw.target_size_mscf, fzw.N_mscf);
 
 index1 = 0;
 for (index2 = 0; index2 < unknown_parameters_size; index2++,index1++) {
 
-    printf("\n-- index2=%d  index1=%d -----------------------------\n", index2, index1);
+    // printf("\n-- index2=%d  index1=%d -----------------------------\n", index2, index1);
 
     if (index1 >= fzw.target_size_mscf) {
         printf("ERROR: index1 >= fzw.target_size_mscf  (%d >= %d)\n",
@@ -1013,44 +1031,44 @@ for (index2 = 0; index2 < unknown_parameters_size; index2++,index1++) {
     }
 
     index_target = target_indices[index2];
-    printf("index_target = %d  name = %s\n",
-           index_target, target_namestrings[index_target]);
+    // printf("index_target = %d  name = %s\n",
+    //        index_target, target_namestrings[index_target]);
 
     /* store name of target parameter */
     fzw.target_name[index2] = index_target;
-    printf("stored target_name[%d] = %d\n", index2, index_target);
+    // printf("stored target_name[%d] = %d\n", index2, index_target);
 
-    if (fzw.target_name[index2] == fraction_maxion_ac) {
+    if (fzw.target_name[index2] == "fraction_maxion_ac") {
 
-        printf("branch: fraction_maxion_ac\n");
+        // printf("branch: fraction_maxion_ac\n");
         for (n = 0; n < fzw.N_mscf; n++) {
-            printf("  n=%d  index2+n=%d  value=%.6g\n",
-                   n, index2 + n, fzw.fraction_maxion_ac[n]);
+            // printf("  n=%d  index2+n=%d  value=%.6g\n",
+            //        n, index2 + n, fzw.fraction_maxion_ac[n]);
             fzw.target_value[index2 + n] = fzw.fraction_maxion_ac[n];
         }
         index1 += n-1;
-        printf("after fraction loop: index1=%d (added %d)\n", index1, n);
+        // printf("after fraction loop: index1=%d (added %d)\n", index1, n);
 
-    } else if (fzw.target_name[index2] == log10_maxion_ac) {
+    } else if (fzw.target_name[index2] == "log10_maxion_ac") {
 
-        printf("branch: log10_maxion_ac\n");
+        // printf("branch: log10_maxion_ac\n");
         for (n = 0; n < fzw.N_mscf; n++) {
-            printf("  n=%d  index2+n=%d  value=%.6g\n",
-                   n, index2 + n, fzw.log10_maxion_ac[n]);
+            // printf("  n=%d  index2+n=%d  value=%.6g\n",
+            //        n, index2 + n, fzw.log10_maxion_ac[n]);
             fzw.target_value[index2 + n] = fzw.log10_maxion_ac[n];
         }
         index1 += n-1;
-        printf("after log10 loop: index1=%d (added %d)\n", index1, n);
+        // printf("after log10 loop: index1=%d (added %d)\n", index1, n);
 
     } else {
 
         if (strcmp(target_namestrings[index_target], "log10_axion_ac") == 0
             && zc_is_zeq == _TRUE_) {
-            printf("branch: log10_axion_ac special case\n");
+            // printf("branch: log10_axion_ac special case\n");
             param1 = log10(Omega_r / Omega_m);
         }
         else {
-            printf("branch: normal parser_read_double\n");
+            // printf("branch: normal parser_read_double\n");
             class_call(parser_read_double(pfc,
                                           target_namestrings[index_target],
                                           &param1,
@@ -1065,15 +1083,15 @@ for (index2 = 0; index2 < unknown_parameters_size; index2++,index1++) {
         /* substitute the name of the target parameter with the name of the
           corresponding unknown parameter */
         strcpy(fzw.fc.name[fzw.unknown_parameters_index[index2]],unknown_namestrings[index_target]);
-        printf("stored target_value[%d] = %.6g\n", index1, param1);
-        printf("unknown_parameters_index[%d] = %d\n",
-               index2, fzw.unknown_parameters_index[index2]);
+        // printf("stored target_value[%d] = %.6g\n", index1, param1);
+        // printf("unknown_parameters_index[%d] = %d\n",
+        //        index2, fzw.unknown_parameters_index[index2]);
 
     }
     // index1++;
 }
 
-printf("=== LOOP COMPLETE ===\n");
+// printf("=== LOOP COMPLETE ===\n");
 
     /** If there is only one parameter, we use a more efficient Newton method for 1D cases */
     if (unknown_parameters_size == 1){
@@ -1119,10 +1137,10 @@ printf("=== LOOP COMPLETE ===\n");
 
       /* Allocate local variables */
       class_alloc(x_inout,
-                  sizeof(double)*unknown_parameters_size,
+                  sizeof(double)*unknown_parameters_size_mscf,
                   errmsg);
       class_alloc(dxdF,
-                  sizeof(double)*unknown_parameters_size,
+                  sizeof(double)*unknown_parameters_size_mscf,
                   errmsg);
 
       /* Get the guess for the initial variables */
@@ -1134,7 +1152,7 @@ printf("=== LOOP COMPLETE ===\n");
       class_call_try(fzero_Newton(input_try_unknown_parameters,
                                   x_inout,
                                   dxdF,
-                                  unknown_parameters_size,
+                                  unknown_parameters_size_mscf,
                                   ppr->tol_shooting_deltax,
                                   ppr->tol_shooting_deltaF,
                                   &fzw,
@@ -1147,7 +1165,7 @@ printf("=== LOOP COMPLETE ===\n");
       /* Store xzero */
       // This needs to be done with enough accuracy. A standard double has a relative
       // precision of around 1e-16, so 1e-20 should be good enough for the shooting
-      for (counter = 0; counter < unknown_parameters_size; counter++){
+      for (counter = 0; counter < unknown_parameters_size_mscf; counter++){
         class_sprintf(fzw.fc.value[fzw.unknown_parameters_index[counter]],
                 "%.20e",x_inout[counter]);
         if (input_verbose > 0) {
@@ -1162,7 +1180,7 @@ printf("=== LOOP COMPLETE ===\n");
       free(x_inout);
       free(dxdF);
     }
-
+    // shooting_failed = _FALSE_;
     if (input_verbose > 1 && shooting_failed == _FALSE_) {
       printf("Shooting completed using %d function evaluations\n",fevals);
     }
@@ -1965,6 +1983,8 @@ int input_get_guess(double *xguess,
               axc = 0.0;
             }
             fxc=pow(10.,ba.log10_fraction_maxion_ac[n_mscf]);
+            printf("axc %e\n", axc);
+            printf("fxc %e\n", fxc);
             FF=0.8;
 
             Omega_r = ba.Omega0_g;
@@ -1978,8 +1998,10 @@ int input_get_guess(double *xguess,
             a_eq = Omega_r /Omega_m;
 
             if(axc<a_eq){
+                printf("axc<a_eq %e %e\n", axc, a_eq);
                 guess = 0.25*(3.*fxc*pow(1.-cos(phi_initial),ba.n_axion_mscf[n_mscf])*ba.n_axion_mscf[n_mscf]/tan(phi_initial/2.))/((1.-FF)*phi_initial*(5.*pow(1.-cos(FF*phi_initial),ba.n_axion_mscf[n_mscf])+2.*(1.-FF)*ba.n_axion_mscf[n_mscf]*phi_initial*pow(1.-cos(phi_initial),ba.n_axion_mscf[n_mscf])/tan(phi_initial/2.)));
             } else {
+                printf("axc>a_eq %e %e\n", axc, a_eq);
                 guess = 2./3.*fxc*ba.n_axion_mscf[n_mscf]*pow(1.-cos(phi_initial),ba.n_axion_mscf[n_mscf])/tan(phi_initial/2.)/((1.-FF)*phi_initial*(3.*(pow(1.-cos(FF*phi_initial),ba.n_axion_mscf[n_mscf]))+(1.-FF)*ba.n_axion_mscf[n_mscf]*phi_initial*pow(1.-cos(phi_initial),ba.n_axion_mscf[n_mscf])/tan(phi_initial/2.)));
             }
             xguess[index_guess_long] = log10(guess);
@@ -2285,6 +2307,7 @@ int input_try_unknown_parameters(double * unknown_parameter,
         if(input_verbose>10)printf("ba.f_ede %e  pfzw->target_value[i] %e output[i] %e\n", ba.f_ede,pfzw->target_value[i],output[i]);
         break;
       case log10_axion_ac:
+        printf("log10_z_c%e\n", ba.log10_z_c);
         ac = 1./(pow(10,ba.log10_z_c)+1);
         output[i] = log10(ac)-pfzw->target_value[i];
          if(input_verbose>10)printf("ac %e  pfzw->target_value[i] %e output[i] %e\n", log10(ac),pfzw->target_value[i],output[i]);
@@ -2335,18 +2358,19 @@ int input_try_unknown_parameters(double * unknown_parameter,
 
       break;
       case fraction_maxion_ac: // TLS where to print out log10_fraction_axion_ac and axion_ac
-      for (n_mscf = 0; n_mscf < ba.N_mscf; n_mscf++){
-          // output[i] = log10(ba.f_ede)-pfzw->target_value[i];
-          output[i+n_mscf] = ba.f_ede_mscf[n_mscf]-pfzw->target_value[i+n_mscf];
-          if(input_verbose>10)printf("n_mscf %d, ba.f_ede_mscf %e  pfzw->target_value[i] %e output[i] %e\n", n_mscf, ba.f_ede_mscf[n_mscf],pfzw->target_value[i+n_mscf],output[i+n_mscf]);
-          } i += ba.N_mscf - 1;
+        for (n_mscf = 0; n_mscf < ba.N_mscf; n_mscf++){
+            // output[i] = log10(ba.f_ede)-pfzw->target_value[i];
+            output[i+n_mscf] = ba.f_ede_mscf[n_mscf]-pfzw->target_value[i+n_mscf];
+            if(input_verbose>10)printf("n_mscf %d, ba.f_ede_mscf %e  pfzw->target_value[i] %e output[i] %e\n", n_mscf, ba.f_ede_mscf[n_mscf],pfzw->target_value[i+n_mscf],output[i+n_mscf]);
+            } i += ba.N_mscf - 1;
         break;
       case log10_maxion_ac:
-      for (n_mscf = 0; n_mscf < ba.N_mscf; n_mscf++){
-          ac = pow(10,ba.log10_maxion_ac[n_mscf]); //CHECK
-          output[i+n_mscf] = log10(ac)-pfzw->target_value[i+n_mscf]; //can do without exp -> log maybe CHECK if these variables used elsewhere
-          if(input_verbose>10)printf("n_mscf %d, ac %e  pfzw->target_value[i] %e output[i] %e\n",n_mscf,log10(ac),pfzw->target_value[i+n_mscf],output[i+n_mscf]);
-          } i += ba.N_mscf - 1;
+        for (n_mscf = 0; n_mscf < ba.N_mscf; n_mscf++){
+            printf("log10_z_c_mscf %e\n", ba.log10_z_c_mscf[n_mscf]);
+            ac = 1./(pow(10,ba.log10_z_c_mscf[n_mscf])+1);
+            output[i+n_mscf] = log10(ac)-pfzw->target_value[i+n_mscf]; //can do without exp -> log maybe CHECK if these variables used elsewhere
+            if(input_verbose>10)printf("n_mscf %d, ac %e  pfzw->target_value[i] %e output[i] %e\n",n_mscf,log10(ac),pfzw->target_value[i+n_mscf],output[i+n_mscf]);
+            } i += ba.N_mscf - 1;
         break;
       case Omega_ini_dcdm:
       case omega_ini_dcdm:
@@ -2989,11 +3013,11 @@ int input_read_parameters_general(struct file_content * pfc,
   class_call(parser_read_double(pfc,"H0",&param1,&flag1,errmsg),
              errmsg,
              errmsg);
-  printf("in input_read_parameters, H0 = %e\n", param1);
-  // class_call(parser_read_double(pfc,"h",&param2,&flag2,errmsg),
-  //            errmsg,
-  //            errmsg);
-  printf("in input_read_parameters, h = %e\n", param2);
+  // printf("in input_read_parameters, H0 = %e\n", param1);
+  class_call(parser_read_double(pfc,"h",&param2,&flag2,errmsg),
+             errmsg,
+             errmsg);
+  // printf("in input_read_parameters, h = %e\n", param2);
   /* Test */
   class_test((flag1 == _TRUE_) && (flag2 == _TRUE_),
              errmsg,
@@ -5086,8 +5110,10 @@ class_call(parser_read_double(pfc,"Omega_scf_shoot_fa",&param4,&flag4,errmsg),
     // if(pba->scf_parameters[pba->scf_tuning_index]<0)pba->scf_parameters[pba->scf_tuning_index]+=_PI_;
     class_read_double("log10_m_axion",pba->log10_m_axion);
     class_read_double("alpha_squared",pba->alpha_squared);
+    printf("alpha_squared %e\n",pba->alpha_squared);
+
     class_read_double("power_of_mu",pba->power_of_mu);
-    // printf("power_of_mu %e\n",pba->power_of_mu);
+    printf("power_of_mu %e\n",pba->power_of_mu);
 
    /***additional parameters: only for shooting*/
    class_read_double("phi_ini_scf",pba->phi_ini_scf);
@@ -5194,16 +5220,16 @@ class_call(parser_read_double(pfc,"Omega_scf_shoot_fa",&param4,&flag4,errmsg),
     class_alloc(pba->Omega0_mscf, pba->N_mscf * sizeof(double), errmsg);
     class_alloc(pba->phi_ini_mscf, pba->N_mscf * sizeof(double), errmsg); //initialised in background_init
     class_alloc(pba->phi_prime_ini_mscf, pba->N_mscf * sizeof(double), errmsg); //initialised in background_init
-    class_alloc(pba->theta_ini_mscf,pba->N_mscf * sizeof(double), errmsg); 
-    class_alloc(pba->theta_prime_ini_mscf,pba->N_mscf * sizeof(double), errmsg);
-    class_alloc(pba->m_mscf, pba->N_mscf * sizeof(double), errmsg);
-    class_alloc(pba->f_axion_mscf, pba->N_mscf * sizeof(double), errmsg);
-    class_alloc(pba->n_axion_mscf, pba->N_mscf * sizeof(double), errmsg);
+    // class_alloc(pba->theta_ini_mscf,pba->N_mscf * sizeof(double), errmsg); 
+    // class_alloc(pba->theta_prime_ini_mscf,pba->N_mscf * sizeof(double), errmsg);
+    // class_alloc(pba->m_mscf, pba->N_mscf * sizeof(double), errmsg);
+    // class_alloc(pba->f_axion_mscf, pba->N_mscf * sizeof(double), errmsg);
+    // class_alloc(pba->n_axion_mscf, pba->N_mscf * sizeof(double), errmsg);
 
     class_alloc(pba->log10_fraction_maxion_ac,pba->N_mscf * sizeof(double), errmsg);
-    class_alloc(pba->log10_maxion_ac,pba->N_mscf * sizeof(double), errmsg);
-    class_alloc(pba->alpha_squared_mscf,pba->N_mscf * sizeof(double), errmsg); 
-    class_alloc(pba->power_of_mu_mscf,pba->N_mscf * sizeof(double), errmsg); 
+    // class_alloc(pba->log10_maxion_ac,pba->N_mscf * sizeof(double), errmsg);
+    // class_alloc(pba->alpha_squared_mscf,pba->N_mscf * sizeof(double), errmsg); 
+    // class_alloc(pba->power_of_mu_mscf,pba->N_mscf * sizeof(double), errmsg); 
     class_alloc(pba->log10_f_maxion,pba->N_mscf * sizeof(double), errmsg); // initialised in background_init
     class_alloc(pba->log10_m_maxion,pba->N_mscf * sizeof(double), errmsg); // initialised in background_init
     class_alloc(pba->a_c_mscf,pba->N_mscf * sizeof(double), errmsg); //initialised in background_init
@@ -5223,10 +5249,10 @@ class_call(parser_read_double(pfc,"Omega_scf_shoot_fa",&param4,&flag4,errmsg),
 
     class_read_list_of_doubles_or_default("alpha_squared_mscf",pba->alpha_squared_mscf,-30.0,pba->N_mscf);
     class_read_list_of_doubles_or_default("power_of_mu_mscf",pba->power_of_mu_mscf,-30.0,pba->N_mscf);
+    class_read_list_of_doubles_or_default("fraction_maxion_ac",pba->fraction_maxion_ac,0.0,pba->N_mscf);
     for (n_mscf = 0; n_mscf < pba->N_mscf; n_mscf++){
-      class_call(parser_read_double(pfc,"fraction_maxion_ac",&param1,&flag1,errmsg),errmsg,errmsg);
-      if (flag1 == _TRUE_){
-        pba->log10_fraction_maxion_ac[n_mscf] = log10(param1);
+      if (pba->fraction_maxion_ac[n_mscf] > 0){
+        pba->log10_fraction_maxion_ac[n_mscf] = log10(pba->fraction_maxion_ac[n_mscf]);
       } else {
         pba->log10_fraction_maxion_ac[n_mscf] = -30.0; // Default value if not provided
       }
@@ -5241,6 +5267,7 @@ class_call(parser_read_double(pfc,"Omega_scf_shoot_fa",&param4,&flag4,errmsg),
     pba->phi_prime_ini_mscf = NULL;
     pba->m_mscf = NULL;
     pba->log10_fraction_maxion_ac = NULL;
+    pba->fraction_maxion_ac = NULL;
     pba->log10_maxion_ac = NULL;
     pba->alpha_squared_mscf = NULL;
     pba->power_of_mu_mscf = NULL;

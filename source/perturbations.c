@@ -7894,12 +7894,11 @@ int perturbations_total_stress_energy(
         // }
         // else{
           rho_plus_p_theta_mscf =  1./3.*
-            k*k/a2*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_phi_scf];
+            k*k/a2*ppw->pvecback[pba->index_bg_phi_prime_mscf+n_mscf]*y[ppw->pv->index_pt_phi_mscf+n_mscf];
         // }
 
       ppw->rho_plus_p_theta += rho_plus_p_theta_mscf;
       ppw->rho_plus_p_tot += ppw->pvecback[pba->index_bg_rho_mscf+n_mscf]+ppw->pvecback[pba->index_bg_p_mscf+n_mscf];
-
       if(ppt->include_mscf_in_delta_cb == _TRUE_){
         /* if we want to include scf contribution to delta_cb, we have to do it now!
         if we only want to include it inside of delta_m, it will be done later */

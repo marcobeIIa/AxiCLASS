@@ -227,6 +227,7 @@ struct background
   double * theta_prime_ini_mscf;       /**< theta_ini used for shooting instead of phi */
   double * phi_prime_ini_mscf; /**< \f$ d\phi(t_0)/d\tau \f$: scalar field initial derivative wrt conformal time */
   double * m_mscf;
+  double * fraction_maxion_ac;
   double * log10_fraction_maxion_ac;
   double * log10_maxion_ac;
   double * alpha_squared_mscf;

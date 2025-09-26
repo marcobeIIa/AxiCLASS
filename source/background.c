@@ -558,11 +558,11 @@ int background_functions(
       //At this point phi and phi prime have already been updated, from their evolution equations, rho_scf is still from the last step,
       //The next few lines then calculate the new values for the density etc... from the new values of phi and phi prime
       pvecback[pba->index_bg_phi_mscf+k] = phi; // value of the scalar field phi
-      printf("phi %e \n", phi);
+      // printf("phi %e \n", phi);
       pvecback[pba->index_bg_phi_prime_mscf+k] = phi_prime; // value of the scalar field phi derivative wrt conformal time
-      printf("phi' %e \n", phi_prime);
+      // printf("phi' %e \n", phi_prime);
       pvecback[pba->index_bg_V_mscf+k] = V_mscf(pba,k,phi); //V_scf(pba,phi); //write here potential as function of phi
-      printf("V_mscf %e \n", V_mscf(pba,k,phi));
+      // printf("V_mscf %e \n", V_mscf(pba,k,phi));
       pvecback[pba->index_bg_dV_mscf+k] = dV_mscf(pba,k,phi); // dV_scf(pba,phi); //potential' as function of phi
       // printf("dV_mscf %e \n", dV_mscf(pba,k,phi));
       pvecback[pba->index_bg_ddV_mscf+k] = ddV_mscf(pba,k,phi); // ddV_scf(pba,phi); //potential'' as function of phi
@@ -575,10 +575,10 @@ int background_functions(
       rho_tot += pvecback[pba->index_bg_rho_mscf+k];
       p_tot += pvecback[pba->index_bg_p_mscf+k];
       dp_dloga += 0.0; /** <-- This depends on a_prime_over_a, so we cannot add it now! */
-      printf("pre mscf mingling, rho_r %e, rho_m %e \n", rho_r, rho_m);
+      // printf("pre mscf mingling, rho_r %e, rho_m %e \n", rho_r, rho_m);
       rho_r += 3.*pvecback[pba->index_bg_p_mscf+k]; //field pressure contributes radiation
       rho_m += pvecback[pba->index_bg_rho_mscf+k] - 3.* pvecback[pba->index_bg_p_mscf+k]; //the rest contributes matter
-      printf("postw mscf mingling, rho_r %e, rho_m %e \n", rho_r, rho_m);
+      // printf("postw mscf mingling, rho_r %e, rho_m %e \n", rho_r, rho_m);
 
       if(pba->background_verbose>11) printf("here KG equation, for %d -th field, a %e phi: %e, phi': %e, V: %e, rho_mscf: %e \n", k, a, pvecback_B[pba->index_bi_phi_mscf+k], pvecback_B[pba->index_bi_phi_prime_mscf+k], pvecback[pba->index_bg_V_mscf+k], pvecback[pba->index_bg_rho_mscf+k]);
     }
@@ -726,9 +726,9 @@ int background_functions(
              "rho_crit = %e instead of strictly positive",rho_crit);
 
   /** - compute relativistic density to total density ratio */
-  printf("rho_r = %e, rho_tot = %e \n", rho_r, rho_tot);
+  // printf("rho_r = %e, rho_tot = %e \n", rho_r, rho_tot);
   pvecback[pba->index_bg_Omega_r] = rho_r / rho_crit;
-  printf("glerbu grulgulu Omega_r = %e \n", pvecback[pba->index_bg_Omega_r]);
+  // printf("glerbu grulgulu Omega_r = %e \n", pvecback[pba->index_bg_Omega_r]);
 
   /** - compute other quantities in the exhaustive, redundant format */
   if (return_format == long_info) {
@@ -983,7 +983,6 @@ int background_init(
                     struct background * pba
                     ) {
 
-  printf("entered background_init \n"); //print_trigger
   /** Summary: */
 
   /** - define local variables */
@@ -1240,7 +1239,6 @@ int background_init(
               // pba->omega_axion = pba->H0*pba->m_scf*pow(1-cos_initial,0.5*(n-1))*Gac;  //CHECK this is only for fluid, i dont need it, correct?
             }
         else if(pba->log10_maxion_ac[n_mscf] > -30 && pba->log10_fraction_maxion_ac[n_mscf] > -30){
-          printf("entered here 1\n");
            /*-30 is the default value*/
 //            pba->alpha_squared = fabs(pba->alpha_squared);
 //            pba->power_of_mu = fabs(pba->power_of_mu);
@@ -1268,10 +1266,10 @@ int background_init(
             pba->m_mscf[n_mscf] = pow(pow(10,pba->power_of_mu_mscf[n_mscf]),-3./2);
           }
           pba->f_axion_mscf[n_mscf] = sqrt(pow(10,pba->alpha_squared_mscf[n_mscf]));
-
-          printf("pba->alpha_squared_mscf %e\n", pba->alpha_squared_mscf[n_mscf]);
-          printf("pba->f_axion %e\n", pba->f_axion_mscf[n_mscf]);
-          printf("pba->m_mscf %e\n", pba->m_mscf[n_mscf]);
+          printf("power_of_mu_mscf[%d] %e\n", n_mscf,pba->power_of_mu_mscf[n_mscf]);
+          printf("pba->alpha_squared_mscf[%d] %e\n", n_mscf, pba->alpha_squared_mscf[n_mscf]);
+          printf("pba->f_axion_mscf[%d] %e\n",n_mscf, pba->f_axion_mscf[n_mscf]);
+          printf("pba->m_mscf[%d] %e\n", n_mscf, pba->m_mscf[n_mscf]);
           pba->log10_f_maxion[n_mscf] = log10(pba->f_axion_mscf[n_mscf]);
           pba->log10_m_maxion[n_mscf] = log10(pba->m_mscf[n_mscf]);
 
@@ -1359,33 +1357,27 @@ int background_init(
      }
 
   /** - check that input parameters make sense and write additional information about them */
-  printf("check1\n");
   class_call(background_checks(ppr,pba),
              pba->error_message,
              pba->error_message);
 
-  printf("check2\n");
   /** - integrate the background over log(a), allocate and fill the background table */
   class_call(background_solve(ppr,pba),
              pba->error_message,
              pba->error_message);
 
-  printf("check3\n");
   /** - find and store a few derived parameters at radiation-matter equality */
   class_call(background_find_equality(ppr,pba),
              pba->error_message,
              pba->error_message);
 
-  printf("check4\n");
   /* - write a summary of the budget of the universe */
   class_call(background_output_budget(pba),
              pba->error_message,
              pba->error_message);
 
-  printf("check5\n");
   pba->is_allocated = _TRUE_;
 
-  printf("exited background_init \n"); //print_trigger
   return _SUCCESS_;
 
 }
@@ -1508,8 +1500,8 @@ int background_free_input(
     free(pba->log10_f_maxion);
     free(pba->log10_m_maxion);
     free(pba->a_c_mscf);
-    free(pba->f_ede_mscf);
-    free(pba->log10_z_c_mscf);
+    // free(pba->f_ede_mscf);
+    // free(pba->log10_z_c_mscf);
   }
   return _SUCCESS_;
 }
@@ -2601,7 +2593,6 @@ class_call(background_initial_conditions(ppr,pba,pvecback,pvecback_integration,&
   // is_axion_converged = _TRUE_;
   /** - perform the integration */
   // printf("..integrating background\n");
-  printf("where is the motherfucker segfaulting----------\n");
   class_call(generic_evolver(background_derivs,
                              loga_ini,
                              loga_final,
@@ -2620,7 +2611,6 @@ class_call(background_initial_conditions(ppr,pba,pvecback,pvecback_integration,&
                              pba->error_message),
              pba->error_message,
              pba->error_message);
-printf("..done integrating background\n");
 
              /* VP: loop over background to ensure the closure relation, to be updated*/
      //
@@ -2731,27 +2721,14 @@ printf("..done integrating background\n");
     if(pba->N_mscf>0){
      // printf("entering multi-scf \n");
      /* Scalar field critical redshift and fractional energy density at z_c calculations */
-     for (n_mscf=0;n_mscf<pba->N_mscf;n_mscf++){
      z_c_new = pba->z_table[index_loga];
+     for (n_mscf=0;n_mscf<pba->N_mscf;n_mscf++){
      f_ede_new = pba->background_table[index_loga*pba->bg_size+pba->index_bg_Omega_mscf+n_mscf];
      // printf("f_ede_new %e old fede %e z_c_new %e\n", f_ede_new,pba->f_ede,z_c_new);
      if(f_ede_new > pba->f_ede_mscf[n_mscf]){//there's a small problem when axion behaves like DM
        pba->log10_z_c_mscf[n_mscf]= log10(z_c_new);
-       // pba->axion_ac = 1/z_c_new-1;
        pba->f_ede_mscf[n_mscf] = f_ede_new;
-      //  pba->phi_scf_c = pba->background_table[index_loga*pba->bg_size+pba->index_bg_phi_scf]; //CHECK do we need to introduce this?
-       // printf("z %e pba->f_ede %e\n", pba->z_table[i],pba->f_ede);
-    //  }else{ //CHECK this is for fluid correct?
-    //    if(f_ede_new > pba->f_ede && pba->m_scf*pba->H0/pba->background_table[index_loga*pba->bg_size+pba->index_bg_H] <= pba->threshold_scf_fluid_m_over_H){
-    //      pba->f_ede = f_ede_new;
-    //      pba->phi_scf_c = pba->background_table[index_loga*pba->bg_size+pba->index_bg_phi_scf];
-    //      pba->log10_z_c = log10(z_c_new);
-
-    //    }
-    //  }
       }
-      printf("done updating z_c f_ede \n");
-      printf("z_c = %e, f_ede = %e\n", pba->log10_z_c_mscf[n_mscf], pba->f_ede_mscf[n_mscf]);
      }
 
     }
@@ -2900,8 +2877,11 @@ printf("..done integrating background\n");
       printf("     -> Omega_mscf_tot = %g\n",pba->Omega0_mscf_tot);
       printf("Additional mscf parameters used: \n");
       for (k=0; k<pba->N_mscf; k++){
-          printf("n = %e m_a = %e eV, f_a/mpl = %e\n",pba->n_axion_mscf[k],(pba->m_mscf[k]*pba->H0/1.5638e29),pba->f_axion_mscf[k]);
-          printf("  phi_ini = %e, phi_prime_ini %e\n", pba->phi_ini_mscf[k], pba->phi_prime_ini_mscf[k]);
+        printf("n = %e m_a = %e eV, f_a/mpl = %e\n",pba->n_axion_mscf[k],(pba->m_mscf[k]*pba->H0/1.5638e29),pba->f_axion_mscf[k]);
+        printf("  phi_ini = %e, phi_prime_ini %e\n", pba->phi_ini_mscf[k], pba->phi_prime_ini_mscf[k]);
+        printf("phi_ini_mscf = %e \n", pba->phi_ini_mscf[k]);
+        printf("     -> Exact log10(z_c) = %e f_ede = %e log10 f_ede = %e\n", pba->log10_z_c_mscf[k], pba->f_ede_mscf[k], log10(pba->f_ede_mscf[k]));
+      if(pba->log10_maxion_ac[k] > -30)printf("     -> approx log10(z_c) = %e pba->log10_axion_ac %e\n", log10(1/pow(10,pba->log10_maxion_ac[k])-1),pba->log10_maxion_ac[k]);
       }
       if (pba->has_lambda == _TRUE_) {
         printf("     -> Omega_Lambda = %g, wished %g\n",
@@ -3198,7 +3178,6 @@ int background_initial_conditions(
   /* Just checking that our initial time indeed is deep enough in the radiation
      dominated regime */
   printf("Omega_r 2 bg %e\n", Omega_rad);
-  // pvecback[pba->index_bg_Omega_r] = 1.;
   printf("Omega_r ini bg %e\n", pvecback[pba->index_bg_Omega_r]);
   class_test(fabs(pvecback[pba->index_bg_Omega_r]-1.) > ppr->tol_initial_Omega_r,
 
@@ -3709,7 +3688,7 @@ int background_derivs(
       /* VP: NEW AXICLASS: derivative with respect to log(a) */
       /** - Scalar field equation: \f$ \phi'' + 2 a H \phi' + a^2 dV = 0 \f$  (note H is wrt cosmological time)
           written as \f$ d\phi/dlna = phi' / (aH) \f$ and \f$ d\phi'/dlna = -2*phi' - (a/H) dV \f$ */
-      printf("random print, H %e a %e\n",H,a);
+      // printf("random print, H %e a %e\n",H,a);
       dy[pba->index_bi_phi_mscf+k] = y[pba->index_bi_phi_prime_mscf+k]/a/H;
       // printf("the guy is %e \n", dy[pba->index_bi_phi_mscf+k]);
       dy[pba->index_bi_phi_prime_mscf+k] = - 2*y[pba->index_bi_phi_prime_mscf+k] - a*dV_mscf(pba,k,y[pba->index_bi_phi_mscf+k])/H ;
