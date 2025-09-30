@@ -1069,12 +1069,14 @@ int ludcmp(double **a, int n, int *indx, double *d, double *vv){
 
 int fzero_Newton(int (*func)(double *x,
                              int x_size,
+                             int names_size,
                              void *param,
                              double *F,
                              ErrorMsg error_message),
                  double *x_inout,
                  double *dxdF,
                  int x_size,
+                 int names_size,
                  double tolx,
                  double tolF,
                  void *param,
@@ -1115,9 +1117,9 @@ int fzero_Newton(int (*func)(double *x,
     /** Compute F(x): */
     /**printf("x = [%f, %f], delx = [%e, %e]\n",
        x_inout[0],x_inout[1],delx[0],delx[1]);*/
-    class_call(func(x_inout, x_size, param, F0, error_message),
+    class_call(func(x_inout, x_size, names_size, param, F0, error_message),
                error_message, error_message);
-    /**    printf("F0 = [%f, %f]\n",F0[0],F0[1]);*/
+    /**    printf("f0 = [%f, %f]\n",f0[0],f0[1]);*/
     *fevals = *fevals + 1;
     errf=0.0; //fvec and Jacobian matrix in fjac.
     for (i=1; i<=x_size; i++)
@@ -1143,7 +1145,7 @@ int fzero_Newton(int (*func)(double *x,
 
       /**      printf("x = [%f, %f], delx = [%e, %e]\n",
                x_inout[0],x_inout[1],delx[0],delx[1]);*/
-      class_call(func(x_inout, x_size, param, Fdel, error_message),
+      class_call(func(x_inout, x_size, names_size, param, Fdel, error_message),
                  error_message, error_message);
       /**      printf("F = [%f, %f]\n",Fdel[0],Fdel[1]);*/
       for (j=1; j<=x_size; j++)

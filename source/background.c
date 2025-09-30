@@ -1225,8 +1225,10 @@ int background_init(
         // printf("m_scf is %e pba->w_scf %e pba->f_axion %e\n", pba->m_scf,pba->w_scf,pba->f_axion);
      }
   if(pba->has_mscf == _TRUE_){
+    printf("entering mscf territory in background_init\n");
         for (n_mscf = 0; n_mscf <pba->N_mscf; n_mscf++){
             if(pba->f_axion_mscf[n_mscf] > 0 && pba->m_mscf[n_mscf] > 0){
+              printf("nonshooting case\n");
               cos_initial = cos(pba->theta_ini_mscf[n_mscf]);
               sin_initial = sin(pba->theta_ini_mscf[n_mscf]);
               // printf("%e %e %e \n",cos_initial,sin_initial,pba->f_axion);
@@ -1239,6 +1241,8 @@ int background_init(
               // pba->omega_axion = pba->H0*pba->m_scf*pow(1-cos_initial,0.5*(n-1))*Gac;  //CHECK this is only for fluid, i dont need it, correct?
             }
         else if(pba->log10_maxion_ac[n_mscf] > -30 && pba->log10_fraction_maxion_ac[n_mscf] > -30){
+
+              printf("shooting case, i've fed log10_maxion_ac and fraction_maxion_ac\n");
            /*-30 is the default value*/
 //            pba->alpha_squared = fabs(pba->alpha_squared);
 //            pba->power_of_mu = fabs(pba->power_of_mu);
@@ -1288,6 +1292,7 @@ int background_init(
 
           // printf("pba->axion_ac %e pba->log10_fraction_axion_ac %e pba->m_scf %e pba->f_axion %e\n",pba->log10_axion_ac,pba->log10_fraction_axion_ac,pba->m_scf,pba->f_axion);
           if(pba->background_verbose>10)printf("n_mscf %d pba->m_mscf[n_mscf] %e pba->f_axion_mscf[n_mscf] %e \n",n_mscf,pba->m_mscf[n_mscf],pba->f_axion_mscf[n_mscf]);
+          printf("done with shooting case\n");
           }
 
           else if(pba->alpha_squared_mscf[n_mscf] > -30 && pba->log10_fraction_maxion_ac[n_mscf] > -30){
@@ -1355,17 +1360,20 @@ int background_init(
         // printf("m_scf is %e pba->w_scf %e pba->f_axion %e\n", pba->m_scf,pba->w_scf,pba->f_axion);
         }
      }
+    printf("exited mscf territory in background_init\n");
 
   /** - check that input parameters make sense and write additional information about them */
   class_call(background_checks(ppr,pba),
              pba->error_message,
              pba->error_message);
 
+  printf("calling background_solve\n");
   /** - integrate the background over log(a), allocate and fill the background table */
   class_call(background_solve(ppr,pba),
              pba->error_message,
              pba->error_message);
 
+  printf("background_solve called successfully\n");
   /** - find and store a few derived parameters at radiation-matter equality */
   class_call(background_find_equality(ppr,pba),
              pba->error_message,

@@ -376,6 +376,7 @@ extern "C" {
 
   int input_try_unknown_parameters(double * unknown_parameter,
                                    int unknown_parameters_size,
+                                   int unknown_names_size,
                                    void * pfzw,
                                    double * output,
                                    ErrorMsg errmsg);
