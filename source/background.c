@@ -1225,7 +1225,7 @@ int background_init(
         // printf("m_scf is %e pba->w_scf %e pba->f_axion %e\n", pba->m_scf,pba->w_scf,pba->f_axion);
      }
   if(pba->has_mscf == _TRUE_){
-    printf("entering mscf territory in background_init\n");
+    // printf("entering mscf territory in background_init\n");
         for (n_mscf = 0; n_mscf <pba->N_mscf; n_mscf++){
             if(pba->f_axion_mscf[n_mscf] > 0 && pba->m_mscf[n_mscf] > 0){
               printf("nonshooting case\n");
@@ -1242,7 +1242,7 @@ int background_init(
             }
         else if(pba->log10_maxion_ac[n_mscf] > -30 && pba->log10_fraction_maxion_ac[n_mscf] > -30){
 
-              printf("shooting case, i've fed log10_maxion_ac and fraction_maxion_ac\n");
+              // printf("shooting case, i've fed log10_maxion_ac and fraction_maxion_ac\n");
            /*-30 is the default value*/
 //            pba->alpha_squared = fabs(pba->alpha_squared);
 //            pba->power_of_mu = fabs(pba->power_of_mu);
@@ -1270,10 +1270,10 @@ int background_init(
             pba->m_mscf[n_mscf] = pow(pow(10,pba->power_of_mu_mscf[n_mscf]),-3./2);
           }
           pba->f_axion_mscf[n_mscf] = sqrt(pow(10,pba->alpha_squared_mscf[n_mscf]));
-          printf("power_of_mu_mscf[%d] %e\n", n_mscf,pba->power_of_mu_mscf[n_mscf]);
-          printf("pba->alpha_squared_mscf[%d] %e\n", n_mscf, pba->alpha_squared_mscf[n_mscf]);
-          printf("pba->f_axion_mscf[%d] %e\n",n_mscf, pba->f_axion_mscf[n_mscf]);
-          printf("pba->m_mscf[%d] %e\n", n_mscf, pba->m_mscf[n_mscf]);
+          // printf("power_of_mu_mscf[%d] %e\n", n_mscf,pba->power_of_mu_mscf[n_mscf]);
+          // printf("pba->alpha_squared_mscf[%d] %e\n", n_mscf, pba->alpha_squared_mscf[n_mscf]);
+          // printf("pba->f_axion_mscf[%d] %e\n",n_mscf, pba->f_axion_mscf[n_mscf]);
+          // printf("pba->m_mscf[%d] %e\n", n_mscf, pba->m_mscf[n_mscf]);
           pba->log10_f_maxion[n_mscf] = log10(pba->f_axion_mscf[n_mscf]);
           pba->log10_m_maxion[n_mscf] = log10(pba->m_mscf[n_mscf]);
 
@@ -1292,7 +1292,7 @@ int background_init(
 
           // printf("pba->axion_ac %e pba->log10_fraction_axion_ac %e pba->m_scf %e pba->f_axion %e\n",pba->log10_axion_ac,pba->log10_fraction_axion_ac,pba->m_scf,pba->f_axion);
           if(pba->background_verbose>10)printf("n_mscf %d pba->m_mscf[n_mscf] %e pba->f_axion_mscf[n_mscf] %e \n",n_mscf,pba->m_mscf[n_mscf],pba->f_axion_mscf[n_mscf]);
-          printf("done with shooting case\n");
+          // printf("done with shooting case\n");
           }
 
           else if(pba->alpha_squared_mscf[n_mscf] > -30 && pba->log10_fraction_maxion_ac[n_mscf] > -30){
@@ -1349,31 +1349,31 @@ int background_init(
 
 
 
-        printf("f_axion_mscf = %e \n", pba->f_axion_mscf[n_mscf]);
+        // printf("f_axion_mscf = %e \n", pba->f_axion_mscf[n_mscf]);
         pba->f_ede_mscf[n_mscf]=0.0;
         pba->log10_z_c_mscf[n_mscf]=1;
 
         pba->phi_ini_mscf[n_mscf]=pba->f_axion_mscf[n_mscf] * pba->theta_ini_mscf[n_mscf]; //conversion from theta_i to phi_i; multiplying by fa
         pba->phi_prime_ini_mscf[n_mscf]=pba->f_axion_mscf[n_mscf] * pba->theta_prime_ini_mscf[n_mscf]; //conversion from theta_dot_i to phi_dot_i; multiplying by fa
-        printf("phi ini = %e \n", pba->phi_ini_mscf[n_mscf]);
-        printf("phi prime ini = %e \n", pba->phi_prime_ini_mscf[n_mscf]);
+        // printf("phi ini = %e \n", pba->phi_ini_mscf[n_mscf]);
+        // printf("phi prime ini = %e \n", pba->phi_prime_ini_mscf[n_mscf]);
         // printf("m_scf is %e pba->w_scf %e pba->f_axion %e\n", pba->m_scf,pba->w_scf,pba->f_axion);
         }
      }
-    printf("exited mscf territory in background_init\n");
+    // printf("exited mscf territory in background_init\n");
 
   /** - check that input parameters make sense and write additional information about them */
   class_call(background_checks(ppr,pba),
              pba->error_message,
              pba->error_message);
 
-  printf("calling background_solve\n");
+  // printf("calling background_solve\n");
   /** - integrate the background over log(a), allocate and fill the background table */
   class_call(background_solve(ppr,pba),
              pba->error_message,
              pba->error_message);
 
-  printf("background_solve called successfully\n");
+  // printf("background_solve called successfully\n");
   /** - find and store a few derived parameters at radiation-matter equality */
   class_call(background_find_equality(ppr,pba),
              pba->error_message,
@@ -2489,7 +2489,7 @@ int background_solve(
                      struct precision *ppr,
                      struct background *pba
                      ) {
-  printf("background_solve reached ...\n");
+  // printf("background_solve reached ...\n");
 
   /** Summary: */
 
@@ -2736,7 +2736,7 @@ class_call(background_initial_conditions(ppr,pba,pvecback,pvecback_integration,&
      if(f_ede_new > pba->f_ede_mscf[n_mscf]){//there's a small problem when axion behaves like DM
        pba->log10_z_c_mscf[n_mscf]= log10(z_c_new);
        pba->f_ede_mscf[n_mscf] = f_ede_new;
-      }
+      } 
      }
 
     }
@@ -3016,7 +3016,7 @@ int background_initial_conditions(
   if (pba->has_idr == _TRUE_) {
     Omega_rad += pba->Omega0_idr;
   }
-  printf("Omega_r bg %e\n", Omega_rad);
+  // printf("Omega_r bg %e\n", Omega_rad);
   rho_rad = Omega_rad*pow(pba->H0,2)/pow(a,4);
   if (pba->has_ncdm == _TRUE_) {
     /** - We must add the relativistic contribution from NCDM species */
@@ -3185,8 +3185,8 @@ int background_initial_conditions(
 
   /* Just checking that our initial time indeed is deep enough in the radiation
      dominated regime */
-  printf("Omega_r 2 bg %e\n", Omega_rad);
-  printf("Omega_r ini bg %e\n", pvecback[pba->index_bg_Omega_r]);
+  // printf("Omega_r 2 bg %e\n", Omega_rad);
+  // printf("Omega_r ini bg %e\n", pvecback[pba->index_bg_Omega_r]);
   class_test(fabs(pvecback[pba->index_bg_Omega_r]-1.) > ppr->tol_initial_Omega_r,
 
              pba->error_message,
