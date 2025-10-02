@@ -1357,7 +1357,6 @@ int background_init(
         pba->phi_prime_ini_mscf[n_mscf]=pba->f_axion_mscf[n_mscf] * pba->theta_prime_ini_mscf[n_mscf]; //conversion from theta_dot_i to phi_dot_i; multiplying by fa
         // printf("phi ini = %e \n", pba->phi_ini_mscf[n_mscf]);
         // printf("phi prime ini = %e \n", pba->phi_prime_ini_mscf[n_mscf]);
-        // printf("m_scf is %e pba->w_scf %e pba->f_axion %e\n", pba->m_scf,pba->w_scf,pba->f_axion);
         }
      }
     // printf("exited mscf territory in background_init\n");
@@ -1367,13 +1366,11 @@ int background_init(
              pba->error_message,
              pba->error_message);
 
-  // printf("calling background_solve\n");
   /** - integrate the background over log(a), allocate and fill the background table */
   class_call(background_solve(ppr,pba),
              pba->error_message,
              pba->error_message);
 
-  // printf("background_solve called successfully\n");
   /** - find and store a few derived parameters at radiation-matter equality */
   class_call(background_find_equality(ppr,pba),
              pba->error_message,
@@ -1508,8 +1505,8 @@ int background_free_input(
     free(pba->log10_f_maxion);
     free(pba->log10_m_maxion);
     free(pba->a_c_mscf);
-    // free(pba->f_ede_mscf);
-    // free(pba->log10_z_c_mscf);
+    free(pba->f_ede_mscf);
+    free(pba->log10_z_c_mscf);
   }
   return _SUCCESS_;
 }

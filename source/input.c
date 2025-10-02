@@ -426,7 +426,7 @@ int input_read_from_file(struct file_content * pfc,
                             errmsg),
              errmsg,
              errmsg);
-
+  printf("pba->shooting_done_mscf = %d \n",pba->shooting_done_mscf);
   /** Update structs with input that is potentially updated after shooting */
   class_call(input_read_parameters(pfc,ppr,pba,pth,ppt,ptr,ppm,phr,pfo,ple,psd,pop,
                                     errmsg),
@@ -859,9 +859,9 @@ class_call(parser_read_string(pfc,"do_shooting",&string1,&flag1,errmsg),
   if (fzw.N_mscf != 0 ){
     printf("N_mscf != 0\n");
     class_alloc(fzw.m_mscf, fzw.N_mscf*sizeof(double),errmsg);
-    class_read_list_of_doubles_or_default("m_mscf",fzw.m_mscf,0.,fzw.N_mscf);
+    // class_read_list_of_doubles_or_default("m_mscf",fzw.m_mscf,0.,fzw.N_mscf);
     class_alloc(fzw.f_axion_mscf, fzw.N_mscf*sizeof(double),errmsg);
-    class_read_list_of_doubles_or_default("f_axion_mscf",fzw.f_axion_mscf,0.,fzw.N_mscf);
+    // class_read_list_of_doubles_or_default("f_axion_mscf",fzw.f_axion_mscf,0.,fzw.N_mscf);
     class_alloc(fzw.n_axion_mscf, fzw.N_mscf*sizeof(double),errmsg);
     class_read_list_of_doubles_or_default("n_axion_mscf",fzw.n_axion_mscf,0.,fzw.N_mscf);
     class_alloc(fzw.fraction_maxion_ac, fzw.N_mscf*sizeof(double),errmsg);
@@ -1024,85 +1024,6 @@ class_call(parser_read_string(pfc,"do_shooting",&string1,&flag1,errmsg),
                 errmsg);
 
     /** Go through all cases with unknown parameters */
-// printf("=== ENTERING LOOP ===\n");
-// printf("unknown_parameters_size=%d  target_size_mscf=%d  N_mscf=%d\n",
-//        unknown_parameters_size, fzw.target_size_mscf, fzw.N_mscf);
-
-// index1 = 0;
-// for (index2 = 0; index2 < unknown_parameters_size; index2++,index1++) {
-
-//     printf("\n-- index2=%d  index1=%d -----------------------------\n", index2, index1);
-
-//     if (index1 >= fzw.target_size_mscf) {
-//         printf("ERROR: index1 >= fzw.target_size_mscf  (%d >= %d)\n",
-//                index1, fzw.target_size_mscf);
-//         class_stop("index1 overflow", errmsg);
-//     }
-
-//     index_target = target_indices[index2];
-//     printf("index_target = %d  name = %s\n",
-//            index_target, target_namestrings[index_target]);
-
-//     /* store name of target parameter */
-//     fzw.target_name[index2] = index_target;
-//     printf("stored target_name[%d] = %d\n", index2, index_target);
-
-//     if (target_namestrings[index_target] == "fraction_maxion_ac") {
-
-//         printf("branch: fraction_maxion_ac\n");
-//         for (n = 0; n < fzw.N_mscf; n++) {
-//             printf("  n=%d  index2+n=%d  value=%.6g\n",
-//                    n, index2 + n, fzw.fraction_maxion_ac[n]);
-//             fzw.target_value[index1] = fzw.fraction_maxion_ac[n];
-//             index1++;
-//         }
-//         printf("after fraction loop: index1=%d (added %d)\n", index1, n);
-//         index1--;
-
-//     } else if (target_namestrings[index_target] == "log10_maxion_ac") {
-
-//         printf("branch: log10_maxion_ac\n");
-//         for (n = 0; n < fzw.N_mscf; n++) {
-//             printf("  n=%d  index2+n=%d  value=%.6g\n",
-//                    n, index2 + n, fzw.log10_maxion_ac[n]);
-//             fzw.target_value[index1] = fzw.log10_maxion_ac[n];
-//             index1++;
-//         }
-//         index1--;
-//         printf("after log10 loop: index1=%d (added %d)\n", index1, n);
-
-//     } else {
-
-//         if (strcmp(target_namestrings[index_target], "log10_axion_ac") == 0
-//             && zc_is_zeq == _TRUE_) {
-//             printf("branch: log10_axion_ac special case\n");
-//             param1 = log10(Omega_r / Omega_m);
-//         }
-//         else {
-//             printf("branch: normal parser_read_double\n");
-//             class_call(parser_read_double(pfc,
-//                                           target_namestrings[index_target],
-//                                           &param1,
-//                                           &flag1,
-//                                           errmsg),
-//                        errmsg,
-//                        errmsg);
-//         }
-
-//         fzw.target_value[index1] = param1;
-//         fzw.unknown_parameters_index[index2] = pfc->size + index2 - unknown_parameters_size;
-//         /* substitute the name of the target parameter with the name of the
-//           corresponding unknown parameter */
-       
-//         printf("stored target_value[%d] = %.6g\n", index1, param1);
-//     }
-//         printf("unknown_parameters_index[%d] = %d\n",
-//                index1, fzw.unknown_parameters_index[index2]);
-//         printf("unknown parameter name: %s\n",
-//                unknown_namestrings[index_target]);
-//         strcpy(fzw.fc.name[fzw.unknown_parameters_index[index2]],unknown_namestrings[index_target]);
-//     // index1++;
-// }
   for (counter = 0,counter_mscf=0; counter < unknown_parameters_size; counter++,counter_mscf++){
 
       index_target = target_indices[counter];
@@ -1267,6 +1188,7 @@ class_call(parser_read_string(pfc,"do_shooting",&string1,&flag1,errmsg),
     // printf("ba.alpha_squared_mscf[1] = %e\n", ba.alpha_squared_mscf[1]);
     // shooting_failed = _FALSE_;
     if (input_verbose > 1 && shooting_failed == _FALSE_) {
+      pba->shooting_done_mscf = _TRUE_;
       printf("Shooting completed using %d function evaluations\n",fevals);
     }
 
@@ -2200,9 +2122,9 @@ int input_get_guess(double *xguess,
   thermodynamics_free_input(&th);
   perturbations_free_input(&pt);
 
-  printf("exiting input_get_guess... \n");
-  printf("xguess[0], xguess[1] = %g, %g\n", xguess[0], xguess[1]);
-  printf("dxdy[0], dxdy[1] = %g, %g\n", dxdy[0], dxdy[1]);
+  // printf("exiting input_get_guess... \n");
+  // printf("xguess[0], xguess[1] = %g, %g\n", xguess[0], xguess[1]);
+  // printf("dxdy[0], dxdy[1] = %g, %g\n", dxdy[0], dxdy[1]);
   return _SUCCESS_;
 
 }
@@ -2715,10 +2637,18 @@ int input_read_parameters(struct file_content * pfc,
   int input_verbose=0;
 
   /** Set all input parameters to default values */
+  
+  //absolute mental gymnastics for when done shooting mscf
+  //this parameter reads the done-ness of shooting for mscf
+
+  //this line resets everything to default values, which we don't want if done shooting
   class_call(input_default_params(pba,pth,ppt,ptr,ppm,phr,pfo,ple,psd,pop),
              errmsg,
              errmsg);
 
+  if (pba->shooting_done_mscf != _TRUE_) {
+    pba->shooting_done_mscf = _FALSE_;
+  } 
   /** Read verbose for input structure */
   class_read_int("input_verbose",input_verbose);
 
@@ -3553,7 +3483,7 @@ int input_read_parameters_species(struct file_content * pfc,
       pba->Omega0_ur = param3/pba->h/pba->h;
     }
   }
-  printf("Omega_ur = %e\n", pba->Omega0_ur);
+  // printf("Omega_ur = %e\n", pba->Omega0_ur);
   class_test(pba->Omega0_ur<0,errmsg,"You cannot set the density of ultra-relativistic relics (dark radiation/neutrinos) to negative values. You might have input a total Neff smaller than what your massive neutrinos require minimally (around 1.02 * N_ncdm * deg_ncdm).");
 
   /** 3.a) Case of non-standard properties */
@@ -5389,8 +5319,6 @@ class_call(parser_read_double(pfc,"Omega_scf_shoot_fa",&param4,&flag4,errmsg),
     class_alloc(pba->phi_prime_ini_mscf, pba->N_mscf * sizeof(double), errmsg); //initialised in background_init
     // class_alloc(pba->theta_ini_mscf,pba->N_mscf * sizeof(double), errmsg); 
     // class_alloc(pba->theta_prime_ini_mscf,pba->N_mscf * sizeof(double), errmsg);
-    // class_alloc(pba->m_mscf, pba->N_mscf * sizeof(double), errmsg);
-    // class_alloc(pba->f_axion_mscf, pba->N_mscf * sizeof(double), errmsg);
     // class_alloc(pba->n_axion_mscf, pba->N_mscf * sizeof(double), errmsg);
 
     // class_alloc(pba->log10_fraction_maxion_ac,pba->N_mscf * sizeof(double), errmsg);
@@ -5409,22 +5337,27 @@ class_call(parser_read_double(pfc,"Omega_scf_shoot_fa",&param4,&flag4,errmsg),
     // class_read_list_of_doubles_or_default("Omega_mscf",pba->Omega0_mscf,0.0,pba->N_mscf);
     class_read_list_of_doubles_or_default("theta_ini_mscf",pba->theta_ini_mscf,0.0,pba->N_mscf);
     class_read_list_of_doubles_or_default("theta_prime_ini_mscf",pba->theta_prime_ini_mscf,0.0,pba->N_mscf);
-    class_read_list_of_doubles_or_default("m_mscf",pba->m_mscf,0.0,pba->N_mscf);
-    class_read_list_of_doubles_or_default("f_axion_mscf",pba->f_axion_mscf,0.0,pba->N_mscf);
-
+    class_call(parser_read_string(pfc,"do_shooting_mscf",&string1,&flag1,errmsg),
+              errmsg,
+              errmsg);
+    if (flag1 == _FALSE_){
+      // printf("trying to read m_mscf and f_axion\n");
+      class_read_list_of_doubles_or_default("m_mscf",pba->m_mscf,0.0,pba->N_mscf);
+      class_read_list_of_doubles_or_default("f_axion_mscf",pba->f_axion_mscf,0.0,pba->N_mscf);
+    }else {
+      // printf("not trying to read m_mscf and f_axion\n");
+      class_alloc(pba->m_mscf, pba->N_mscf * sizeof(double), errmsg);
+      class_alloc(pba->f_axion_mscf, pba->N_mscf * sizeof(double), errmsg);
+      // printf("pba->shooting_done_mscf %d\n", pba->shooting_done_mscf);
+      if (pba->shooting_done_mscf == _TRUE_){
+        // printf("here is where the magic happenz\n");
+        class_read_list_of_doubles("alpha_squared_mscf", pba->alpha_squared_mscf, pba->N_mscf);
+        class_read_list_of_doubles("power_of_mu_mscf", pba->power_of_mu_mscf, pba->N_mscf);
+      }
+    }
     class_read_list_of_doubles_or_default("log10_fraction_maxion_ac",pba->log10_fraction_maxion_ac,-30.0,pba->N_mscf);
     class_read_list_of_doubles_or_default("log10_maxion_ac",pba->log10_maxion_ac,-30.0,pba->N_mscf);
     class_read_list_of_doubles_or_default("fraction_maxion_ac",pba->fraction_maxion_ac,0.0,pba->N_mscf);
-    // class_read_list_of_doubles_or_default("alpha_squared_mscf",pba->alpha_squared_mscf,-30.0,pba->N_mscf);
-    // class_read_list_of_doubles_or_default("power_of_mu_mscf",pba->power_of_mu_mscf,-30.0,pba->N_mscf);
-    // for (n_mscf = 0; n_mscf < pba->N_mscf; n_mscf++){ //initialise these to dummy values, read them afterwards
-      // printf("allocating -30 on unknown parameters\n");
-      // if pba->alpha_squared_mscf[n_mscf]
-      // pba->alpha_squared_mscf[n_mscf]= -30.;
-      // pba->power_of_mu_mscf[n_mscf]= -30.;
-    // }
-    // class_read_list_of_doubles_or_default("alpha_squared_mscf",pba->alpha_squared_mscf,-30.0,pba->N_mscf);
-    // class_read_list_of_doubles_or_default("power_of_mu_mscf",pba->power_of_mu_mscf,-30.0,pba->N_mscf);
     for (n_mscf = 0; n_mscf < pba->N_mscf; n_mscf++){
       if (pba->fraction_maxion_ac[n_mscf] > 0){
         pba->log10_fraction_maxion_ac[n_mscf] = log10(pba->fraction_maxion_ac[n_mscf]);
@@ -8340,6 +8273,7 @@ int input_default_params(struct background *pba,
 
   /** new: many scf */
   pba->N_mscf = 0;
+  // pba->shooting_done_mscf = _FALSE_;
 
 
   /**

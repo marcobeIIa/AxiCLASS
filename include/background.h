@@ -239,6 +239,7 @@ struct background
   double * f_ede_mscf; // TK added doubles to fill with values of the exact z_c and fraction_ede eventually
   double * log10_z_c_mscf; //
   double * n_axion_mscf;
+  int shooting_done_mscf;
 
 
   short mscf_evolve_like_axionCAMB; // ????
