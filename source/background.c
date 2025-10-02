@@ -2882,7 +2882,8 @@ class_call(background_initial_conditions(ppr,pba,pvecback,pvecback_integration,&
       printf("     -> Omega_mscf_tot = %g\n",pba->Omega0_mscf_tot);
       printf("Additional mscf parameters used: \n");
       for (k=0; k<pba->N_mscf; k++){
-        printf("n = %e m_a = %e eV, f_a/mpl = %e\n",pba->n_axion_mscf[k],(pba->m_mscf[k]*pba->H0/1.5638e29),pba->f_axion_mscf[k]);
+       //printf("n = %e m_a = %e eV, f_a/mpl = %e\n",pba->n_axion_mscf[k],(pba->m_mscf[k]*pba->H0/1.5638e29),pba->f_axion_mscf[k]);
+        printf("n = %e m_a = %e, f_a/mpl = %e\n",pba->n_axion_mscf[k],pba->m_mscf[k],pba->f_axion_mscf[k]);
         printf("  phi_ini = %e, phi_prime_ini %e\n", pba->phi_ini_mscf[k], pba->phi_prime_ini_mscf[k]);
         printf("phi_ini_mscf = %e \n", pba->phi_ini_mscf[k]);
         printf("     -> Exact log10(z_c) = %e f_ede = %e log10 f_ede = %e\n", pba->log10_z_c_mscf[k], pba->f_ede_mscf[k], log10(pba->f_ede_mscf[k]));

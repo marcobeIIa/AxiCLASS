@@ -220,7 +220,7 @@ def plot_CLASS_output(files, x_axis, y_axis, ratio=False, printing='',
 
             legend.extend([roots[index]+': '+elem for elem in y_axis])
 
-        ax.legend(legend, loc='best')
+#        ax.legend(legend, loc='best')
         text += ["",
                  "ax.legend([root+': '+elem for (root, elem) in",
                  "    itertools.product(roots, y_axis)], loc='best')",

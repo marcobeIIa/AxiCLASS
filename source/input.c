@@ -1,4 +1,4 @@
-
+#
 /** @file input.c Documented input module.
  *
  * Julien Lesgourgues, 27.08.2010
@@ -25,6 +25,9 @@
 #include "lensing.h"
 #include "distortions.h"
 #include "output.h"
+
+//DEBUGGING
+#include "time.h"
 
 /**
  * Initialize input parameters from external file.
@@ -1187,8 +1190,8 @@ class_call(parser_read_string(pfc,"do_shooting",&string1,&flag1,errmsg),
     // printf("ba.alpha_squared_mscf[0] = %e\n", ba.alpha_squared_mscf[0]);
     // printf("ba.alpha_squared_mscf[1] = %e\n", ba.alpha_squared_mscf[1]);
     // shooting_failed = _FALSE_;
-    if (input_verbose > 1 && shooting_failed == _FALSE_) {
       pba->shooting_done_mscf = _TRUE_;
+    if (input_verbose > 1 && shooting_failed == _FALSE_) {
       printf("Shooting completed using %d function evaluations\n",fevals);
     }
 
@@ -2304,9 +2307,15 @@ int input_try_unknown_parameters(double * unknown_parameter,
   /** Shoot forward into class up to required stage */
   if (pfzw->required_computation_stage >= cs_background){
     if (input_verbose>2)
-      printf("Stage 1: background\n");
+    printf("Stage 1: background\n");
+    clock_t start, end;
+    double cpu_time_used;
+    start = clock();
     ba.background_verbose = 0;
     class_call_except(background_init(&pr,&ba), ba.error_message, errmsg, background_free_input(&ba);thermodynamics_free_input(&th);perturbations_free_input(&pt););
+    end = clock();
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+    printf("Time in this block: %f seconds\n", cpu_time_used);
   }
 
   if (pfzw->required_computation_stage >= cs_thermodynamics){
