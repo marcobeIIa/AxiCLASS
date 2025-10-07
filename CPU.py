@@ -156,9 +156,27 @@ def plot_CLASS_output(files, x_axis, y_axis, ratio=False, printing='',
     legend = []
     if not ratio:
         for index, curve in enumerate(data):
+            # ----------------------------------------------------
+
             # Recover the number of columns in the first file, as well as their
             # title.
             num_columns, names, tex_names = extract_headers(files[index])
+
+            # --- Handle synthetic columns like Omega_mscf_tot ---
+            if "Omega_mscf_tot" in y_axis:
+                # Find all columns matching Omega_mscf[0], Omega_mscf[1], ...
+                mscf_cols = [i for i, n in enumerate(names) if n.startswith("Omega_mscf[")]
+                if mscf_cols:
+                    # Create synthetic summed column
+                    summed = np.sum(curve[:, mscf_cols], axis=1)
+
+                    # Add it as a new column in the data
+                    curve = np.column_stack((curve, summed))
+
+                    # Register new column name
+                    names.append("Omega_mscf_tot")
+                    tex_names.append("Omega_mscf_tot")
+
 
             text += ['', 'index, curve = %i, data[%i]' % (index, index)]
             # Check if everything is in order

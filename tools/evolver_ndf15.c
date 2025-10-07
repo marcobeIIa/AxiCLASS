@@ -1115,11 +1115,11 @@ int fzero_Newton(int (*func)(double *x,
 
   for (k=1;k<=ntrial;k++) {
     /** Compute F(x): */
-    /**printf("x = [%f, %f], delx = [%e, %e]\n",
-       x_inout[0],x_inout[1],delx[0],delx[1]);*/
+    printf("x = [%f, %f], delx = [%e, %e]\n",
+       x_inout[0],x_inout[1],delx[0],delx[1]);
     class_call(func(x_inout, x_size, names_size, param, F0, error_message),
                error_message, error_message);
-    /**    printf("f0 = [%f, %f]\n",f0[0],f0[1]);*/
+        printf("f0 = [%f, %f]\n",F0[0],F0[1]);
     *fevals = *fevals + 1;
     errf=0.0; //fvec and Jacobian matrix in fjac.
     for (i=1; i<=x_size; i++)
@@ -1143,11 +1143,11 @@ int fzero_Newton(int (*func)(double *x,
         delx[i-1] *= -1;
       x_inout[i-1] += delx[i-1];
 
-      /**      printf("x = [%f, %f], delx = [%e, %e]\n",
-               x_inout[0],x_inout[1],delx[0],delx[1]);*/
+            printf("x = [%f, %f], delx = [%e, %e]\n",
+               x_inout[0],x_inout[1],delx[0],delx[1]);
       class_call(func(x_inout, x_size, names_size, param, Fdel, error_message),
                  error_message, error_message);
-      /**      printf("F = [%f, %f]\n",Fdel[0],Fdel[1]);*/
+            printf("F = [%f, %f]\n",Fdel[0],Fdel[1]);
       for (j=1; j<=x_size; j++)
         Fjac[j][i] = (Fdel[j-1]-F0[j-1])/delx[i-1];
       x_inout[i-1] -= delx[i-1];
@@ -1266,14 +1266,14 @@ int numjac(
 
   /* Sparse calculation?*/
   if ((jac->use_sparse)&&(jac->repeated_pattern >= jac->trust_sparse)){
-    /* printf("\n Sparse calculation..neq=%d, has grouping=%d",neq,jac->has_grouping);*/
+     printf("\n Sparse calculation..neq=%d, has grouping=%d",neq,jac->has_grouping);
     /* Everything done sparse'ly. Do we have a grouping? */
     if (jac->has_grouping==0){
       jac->max_group = column_grouping(jac->spJ,jac->col_group,jac->col_wi);
       jac->has_grouping = 1;
     }
     colmax = jac->max_group+1;
-    /*    printf("\n                ->groups=%d/%d.",colmax,neq);  */
+       printf("\n                ->groups=%d/%d.",colmax,neq);  
     for(j=1;j<=colmax;j++){
       /*loop over groups */
       group = j-1;
@@ -1286,7 +1286,7 @@ int numjac(
     }
   }
   else{
-    /*printf("\n Normal calculation..."); */
+//    printf("\n Normal calculation..."); 
     /*Normal calculation: */
     colmax = neq;
     for(j=1;j<=neq;j++){
@@ -1510,8 +1510,7 @@ int numjac(
       if ((jac->has_pattern==_TRUE_)&&(pattern_broken==_FALSE_)){
         /*New jacobian fitted into the current sparsity pattern:*/
         jac->repeated_pattern++;
-        /* printf("\n Found repeated pattern. nz=%d/%d and
-           rep.pat=%d.",nz,neq*neq,jac->repeated_pattern); */
+//         printf("\n Found repeated pattern. nz=%d/%d and           rep.pat=%d.",nz,neq*neq,jac->repeated_pattern); 
       }
       else{
         /*Something has changed (or first run), better still do the full calculation..*/

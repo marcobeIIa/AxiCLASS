@@ -1228,7 +1228,7 @@ int background_init(
     // printf("entering mscf territory in background_init\n");
         for (n_mscf = 0; n_mscf <pba->N_mscf; n_mscf++){
             if(pba->f_axion_mscf[n_mscf] > 0 && pba->m_mscf[n_mscf] > 0){
-              printf("nonshooting case\n");
+//              printf("nonshooting case\n");
               cos_initial = cos(pba->theta_ini_mscf[n_mscf]);
               sin_initial = sin(pba->theta_ini_mscf[n_mscf]);
               // printf("%e %e %e \n",cos_initial,sin_initial,pba->f_axion);
@@ -1242,7 +1242,7 @@ int background_init(
             }
         else if(pba->log10_maxion_ac[n_mscf] > -30 && pba->log10_fraction_maxion_ac[n_mscf] > -30){
 
-              // printf("shooting case, i've fed log10_maxion_ac and fraction_maxion_ac\n");
+ //              printf("shooting case, i've fed log10_maxion_ac and fraction_maxion_ac\n");
            /*-30 is the default value*/
 //            pba->alpha_squared = fabs(pba->alpha_squared);
 //            pba->power_of_mu = fabs(pba->power_of_mu);
@@ -1292,11 +1292,11 @@ int background_init(
 
           // printf("pba->axion_ac %e pba->log10_fraction_axion_ac %e pba->m_scf %e pba->f_axion %e\n",pba->log10_axion_ac,pba->log10_fraction_axion_ac,pba->m_scf,pba->f_axion);
           if(pba->background_verbose>10)printf("n_mscf %d pba->m_mscf[n_mscf] %e pba->f_axion_mscf[n_mscf] %e \n",n_mscf,pba->m_mscf[n_mscf],pba->f_axion_mscf[n_mscf]);
-          // printf("done with shooting case\n");
+//           printf("done with shooting case\n");
           }
 
           else if(pba->alpha_squared_mscf[n_mscf] > -30 && pba->log10_fraction_maxion_ac[n_mscf] > -30){
-
+ //              printf("shooting case 2\n");
             /*shoot for fac by varying alpha*/
             // pba->power_of_mu= sqrt(pow(pba->power_of_mu,2));
             // pba->mu_squared_alpha_squared= sqrt(pow(pba->mu_squared_alpha_squared,2));
@@ -1310,6 +1310,7 @@ int background_init(
               // printf("pba->mu_squared_alpha_squared %e \n",pba->mu_squared_alpha_squared);
           }
           else if(pba->power_of_mu_mscf[n_mscf] > -30 && pba->log10_maxion_ac[n_mscf] > -30){
+           //    printf("shooting case 3\n");
             pba->power_of_mu_mscf[n_mscf] = fabs(pba->power_of_mu_mscf[n_mscf]);
             /*shoot for axion ac by varying mu*/
             // pba->power_of_mu= sqrt(pow(pba->power_of_mu,2));
@@ -3077,7 +3078,7 @@ int background_initial_conditions(
    * - is rho_ur all there is early on?
    */
   if (pba->has_scf == _TRUE_) {
-    printf("shouldnt enter here with mscf and no scf");
+//    printf("shouldnt enter here with mscf and no scf");
     if (pba->attractor_ic_scf == _TRUE_) {
       scf_lambda = pba->scf_parameters[0];
 

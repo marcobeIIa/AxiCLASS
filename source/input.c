@@ -1150,7 +1150,7 @@ class_call(parser_read_string(pfc,"do_shooting",&string1,&flag1,errmsg),
       // precision of around 1e-16, so 1e-20 should be good enough for the shooting
       for (counter = 0; counter < unknown_parameters_size; counter++){
         if (target_namestrings[fzw.target_name[counter]]=="fraction_maxion_ac" || target_namestrings[fzw.target_name[counter]]=="log10_maxion_ac"){
-          for (n_mscf = 0; n_mscf < fzw.N_mscf; n_mscf++){
+          //for (n_mscf = 0; n_mscf < fzw.N_mscf; n_mscf++){
             /* destination buffer in the dummy file_content */
             char *dest = fzw.fc.value[ fzw.unknown_parameters_index[counter] ];
 
@@ -1168,7 +1168,7 @@ class_call(parser_read_string(pfc,"do_shooting",&string1,&flag1,errmsg),
 
               strcat(dest, tmp);
             }
-          }
+          //}
         }
         else {
           class_sprintf(fzw.fc.value[fzw.unknown_parameters_index[counter]],
@@ -1986,15 +1986,6 @@ int input_get_guess(double *xguess,
         // printf("xguess = %g\n",xguess[index_guess_long]);
       case fraction_maxion_ac:
         // printf("fraction_maxion_ac entered in input_get_guess...\n");
-          for (n_mscf=0; n_mscf<ba.N_mscf; n_mscf++,index_guess_long++){
-            phi_initial = ba.theta_ini_mscf[n_mscf];// CHECK this should be theta correct?
-            if(ba.log10_maxion_ac[n_mscf]>-30){
-              axc=pow(10.,ba.log10_maxion_ac[n_mscf]);
-            }
-            else{
-              axc = 0.0;
-            }
-            fxc=pow(10.,ba.log10_fraction_maxion_ac[n_mscf]);
             // printf("axc %e\n", axc);
             // printf("fxc %e\n", fxc);
             FF=0.8;
@@ -2009,12 +2000,22 @@ int input_get_guess(double *xguess,
 
             a_eq = Omega_r /Omega_m;
 
+          for (n_mscf=0; n_mscf<ba.N_mscf; n_mscf++,index_guess_long++){
+            phi_initial = ba.theta_ini_mscf[n_mscf];// CHECK this should be theta correct?
+            if(ba.log10_maxion_ac[n_mscf]>-30){
+              axc=pow(10.,ba.log10_maxion_ac[n_mscf]);
+            }
+            else{
+              axc = 0.0;
+            }
+            fxc=pow(10.,ba.log10_fraction_maxion_ac[n_mscf]);
+
             if(axc<a_eq){
                 // printf("axc<a_eq %e %e\n", axc, a_eq);
                 guess = 0.25*(3.*fxc*pow(1.-cos(phi_initial),ba.n_axion_mscf[n_mscf])*ba.n_axion_mscf[n_mscf]/tan(phi_initial/2.))/((1.-FF)*phi_initial*(5.*pow(1.-cos(FF*phi_initial),ba.n_axion_mscf[n_mscf])+2.*(1.-FF)*ba.n_axion_mscf[n_mscf]*phi_initial*pow(1.-cos(phi_initial),ba.n_axion_mscf[n_mscf])/tan(phi_initial/2.)));
             } else {
                 // printf("axc>a_eq %e %e\n", axc, a_eq);
-                guess = 2./3.*fxc*ba.n_axion_mscf[n_mscf]*pow(1.-cos(phi_initial),ba.n_axion_mscf[n_mscf])/tan(phi_initial/2.)/((1.-FF)*phi_initial*(3.*(pow(1.-cos(FF*phi_initial),ba.n_axion_mscf[n_mscf]))+(1.-FF)*ba.n_axion_mscf[n_mscf]*phi_initial*pow(1.-cos(phi_initial),ba.n_axion_mscf[n_mscf])/tan(phi_initial/2.)));
+                guess =  2./3.*fxc*ba.n_axion_mscf[n_mscf]*pow(1.-cos(phi_initial),ba.n_axion_mscf[n_mscf])/tan(phi_initial/2.)/((1.-FF)*phi_initial*(3.*(pow(1.-cos(FF*phi_initial),ba.n_axion_mscf[n_mscf]))+(1.-FF)*ba.n_axion_mscf[n_mscf]*phi_initial*pow(1.-cos(phi_initial),ba.n_axion_mscf[n_mscf])/tan(phi_initial/2.)));
             }
             xguess[index_guess_long] = log10(guess);
             dxdy[index_guess_long] = log10(guess);
@@ -2025,16 +2026,6 @@ int input_get_guess(double *xguess,
 
       case log10_maxion_ac:
         // printf("log10_maxion_ac reached in get_guess\n");
-          for (n_mscf=0; n_mscf<ba.N_mscf; n_mscf++,index_guess_long++){
-            // printf("here reached\n");
-            phi_initial = ba.theta_ini_mscf[n_mscf]; // CHECK this should be theta correct?
-            axc=pow(10.,ba.log10_maxion_ac[n_mscf]);
-            if(ba.log10_fraction_maxion_ac[n_mscf]>-30){
-                fxc=pow(10.,ba.log10_fraction_maxion_ac[n_mscf]);
-              }
-            else{
-              fxc = 0;
-            }
             FF=0.8;
             Omega_r = ba.Omega0_g;
             if(ba.Omega0_ur > 0) Omega_r += ba.Omega0_ur;
@@ -2045,6 +2036,16 @@ int input_get_guess(double *xguess,
 
             // printf("Omega_r 7 %e\n", Omega_r);
             a_eq = Omega_r /Omega_m;
+          for (n_mscf=0; n_mscf<ba.N_mscf; n_mscf++,index_guess_long++){
+            // printf("here reached\n");
+            phi_initial = ba.theta_ini_mscf[n_mscf]; // CHECK this should be theta correct?
+            axc=pow(10.,ba.log10_maxion_ac[n_mscf]);
+            if(ba.log10_fraction_maxion_ac[n_mscf]>-30){
+                fxc=pow(10.,ba.log10_fraction_maxion_ac[n_mscf]);
+              }
+            else{
+              fxc = 0;
+            }
             if(axc<a_eq){
               p = 1./2;
               guess = 2.*sqrt(5.*(1.-FF)*(ba.Omega0_g+ba.Omega0_ur)*phi_initial*tan(phi_initial/2.)*pow(1.-cos(phi_initial),-ba.n_axion_mscf[n_mscf])/ba.n_axion_mscf[n_mscf]);
@@ -2315,7 +2316,7 @@ int input_try_unknown_parameters(double * unknown_parameter,
     class_call_except(background_init(&pr,&ba), ba.error_message, errmsg, background_free_input(&ba);thermodynamics_free_input(&th);perturbations_free_input(&pt););
     end = clock();
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-    printf("Time in this block: %f seconds\n", cpu_time_used);
+//    printf("Time in this block: %f seconds\n", cpu_time_used);
   }
 
   if (pfzw->required_computation_stage >= cs_thermodynamics){
@@ -2393,12 +2394,14 @@ int input_try_unknown_parameters(double * unknown_parameter,
         // output[j] = log10(ba.f_ede)-pfzw->target_value[j];
         output[j] = ba.f_ede-pfzw->target_value[j];
         if(input_verbose>10)printf("ba.f_ede %e  pfzw->target_value[j] %e output[j] %e\n", ba.f_ede,pfzw->target_value[j],output[j]);
+        printf("f_ede %f target %f output %f\n",ba.f_ede,pfzw->target_value[j],output[j]);
         break;
       case log10_axion_ac:
         // printf("log10_z_c%e\n", ba.log10_z_c);
         ac = 1./(pow(10,ba.log10_z_c)+1);
         output[j] = log10(ac)-pfzw->target_value[j];
          if(input_verbose>10)printf("ac %e  pfzw->target_value[j] %e output[j] %e\n", log10(ac),pfzw->target_value[j],output[j]);
+        printf("ac   %f target %f output %f\n",log10(ac),pfzw->target_value[j],output[j]);
         break;
       case log10_fraction_axion_ac_phi2n: // TLS where to print out log10_fraction_axion_ac and axion_ac
         output[j] = log10(ba.f_ede)-pfzw->target_value[j];
@@ -2451,6 +2454,7 @@ int input_try_unknown_parameters(double * unknown_parameter,
             // output[j] = log10(ba.f_ede)-pfzw->target_value[j];
             output[j] = ba.f_ede_mscf[n_mscf]-pfzw->target_value[j];
             if(input_verbose>10)printf("n_mscf %d, ba.f_ede_mscf %e  pfzw->target_value[j] %e output[j] %e\n", n_mscf, ba.f_ede_mscf[n_mscf],pfzw->target_value[j],output[j]);
+            printf("f_ede %f target %f output %f\n",ba.f_ede_mscf[n_mscf],pfzw->target_value[j],output[j]);
             }
           j--;
         break;
@@ -2461,6 +2465,7 @@ int input_try_unknown_parameters(double * unknown_parameter,
             ac = 1./(pow(10,ba.log10_z_c_mscf[n_mscf])+1);
             output[j] = log10(ac)-pfzw->target_value[j]; 
             if(input_verbose>10)printf("n_mscf %d, ac %e  pfzw->target_value[j] %e output[j] %e\n",n_mscf,log10(ac),pfzw->target_value[j],output[j]);
+            printf("ac   %f target %f output %f\n",log10(ac),pfzw->target_value[j],output[j]);
             }
           j--;
         break;
@@ -4852,7 +4857,7 @@ class_call(parser_read_double(pfc,"Omega_scf_shoot_fa",&param4,&flag4,errmsg),
           }
     if (input_verbose > 5)
       {
-        printf("Setting phi_ini: %e\n",pba->scf_parameters[0]);
+//        printf("Setting phi_ini: %e\n",pba->scf_parameters[0]);
       }
 
     /** - Assign a given scalar field potential */
@@ -5216,10 +5221,10 @@ class_call(parser_read_double(pfc,"Omega_scf_shoot_fa",&param4,&flag4,errmsg),
     // if(pba->scf_parameters[pba->scf_tuning_index]<0)pba->scf_parameters[pba->scf_tuning_index]+=_PI_;
     class_read_double("log10_m_axion",pba->log10_m_axion);
     class_read_double("alpha_squared",pba->alpha_squared);
-    printf("alpha_squared %e\n",pba->alpha_squared);
+//    printf("alpha_squared %e\n",pba->alpha_squared);
 
     class_read_double("power_of_mu",pba->power_of_mu);
-    printf("power_of_mu %e\n",pba->power_of_mu);
+ //   printf("power_of_mu %e\n",pba->power_of_mu);
 
    /***additional parameters: only for shooting*/
    class_read_double("phi_ini_scf",pba->phi_ini_scf);

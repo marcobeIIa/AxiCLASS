@@ -8,6 +8,7 @@
 ## this version creates an array of masses and creates an ini file
 
 import numpy as np
+import subprocess
 
 def write_class_ini(params, filename):
     """
@@ -51,12 +52,12 @@ def write_class_ini(params, filename):
         lines.append(f"N_mscf = {N}")
 
         # Expand repeated parameters
-        lines.append("theta_ini_mscf = " + " , ".join([str(theta_ini)] * N))
-        lines.append("theta_prime_ini_mscf = " + " , ".join([str(theta_prime_ini)] * N))
+        lines.append("theta_ini_mscf=" + ",".join([str(theta_ini)] * N))
+        lines.append("theta_prime_ini_mscf=" + ",".join([str(theta_prime_ini)] * N))
         #lines.append("f_axion_mscf = " + " , ".join([str(f_axion_mscf)] * N))
-        lines.append("n_axion_mscf = " + " , ".join([str(n_axion_mscf)] * N))
-        lines.append("m_mscf = " + " , ".join([f"{val:.2e}" for val in m_vals]))
-        lines.append("f_axion_mscf = " + " , ".join([f"{val:.2e}" for val in f_vals]))
+        lines.append("n_axion_mscf=" + ",".join([str(n_axion_mscf)] * N))
+        lines.append("m_mscf=" + ",".join([f"{val:.2e}" for val in m_vals]))
+        lines.append("f_axion_mscf=" + ",".join([f"{val:.2e}" for val in f_vals]))
 
     # Handle all other parameters (skip N_mscf ones already written)
     #skip_keys = {"header", "N_mscf", "theta_ini_mscf", "theta_prime_ini_mscf", 
@@ -102,13 +103,31 @@ params = {
     "output_verbose":12,
 
     # Special block
-    "N_mscf": 10,
+    "N_mscf":3,
     "theta_ini_mscf": 2.6,
     "theta_prime_ini_mscf": 0.0,
 #    "f_axion_mscf": 0.1,
-    "f_axion_range": (0.1,0.2),
+    "f_axion_range": (0.1,0.1),
     "n_axion_mscf": 3,
-    "log10_m_range": (4,5),
+    "log10_m_range": (0,8),
 }
 
 write_class_ini(params, "madr.ini")
+
+# Write your madr.ini somewhere above in the code...
+ini_file = "madr.ini"
+
+# Run CLASS with that ini
+try:
+    result = subprocess.run(
+        ["./class", ini_file],
+        check=True,
+   #     capture_output=True,
+   #    text=True
+    )
+    print("CLASS finished successfully.")
+    print("stdout:\n", result.stdout)
+    print("stderr:\n", result.stderr)
+except subprocess.CalledProcessError as e:
+    print("Error while running CLASS:")
+    print(e.stderr)

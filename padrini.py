@@ -20,11 +20,11 @@ def write_class_ini(params, filename):
     Special handling for N_mscf: generates multiple entries for 
     theta_ini, theta_prime_ini, fraction_maxion_ac, n_axion_mscf,
     and log10_maxion_ac over a given eedshift range.
-    
+
     Parameters:
-        params (dict): Dictionary of parameters.
-        filename (str): Output filename (.ini).
-    """
+    params (dict): Dictionary of parameters.
+                   filename (str): Output filename (.ini).
+                                   """
 
     lines = []
 
@@ -36,25 +36,25 @@ def write_class_ini(params, filename):
     if "N_mscf" in params:
         N = params["N_mscf"]
 
-        # Base values
-        theta_ini = params.get("theta_ini_mscf", 0.1)
-        theta_prime_ini = params.get("theta_prime_ini_mscf", 0.0)
-        fraction_maxion_ac = params.get("fraction_maxion_ac", 0.01)
-        n_axion_mscf = params.get("n_axion_mscf", 1)
+    # Base values
+    theta_ini = params.get("theta_ini_mscf", 0.1)
+    theta_prime_ini = params.get("theta_prime_ini_mscf", 0.0)
+    fraction_maxion_ac = params.get("fraction_maxion_ac", 0.01)
+    n_axion_mscf = params.get("n_axion_mscf", 1)
 
-        # Redshift range
-        log10_ac_min, log10_ac_max = params.get("log10_ac_range", (-3,-5))
-        log10_vals = np.linspace(log10_ac_min, log10_ac_max, N)
+                                   # Redshift range
+    log10_ac_min, log10_ac_max = params.get("log10_ac_range", (-3,-5))
+    log10_vals = np.linspace(log10_ac_min, log10_ac_max, N)
 
-        # Write N_mscf
-        lines.append(f"N_mscf = {N}")
+    # Write N_mscf
+    lines.append(f"N_mscf = {N}")
 
-        # Expand repeated parameters
-        lines.append("theta_ini_mscf = " + " , ".join([str(theta_ini)] * N))
-        lines.append("theta_prime_ini_mscf = " + " , ".join([str(theta_prime_ini)] * N))
-        lines.append("fraction_maxion_ac = " + " , ".join([str(fraction_maxion_ac)] * N))
-        lines.append("n_axion_mscf = " + " , ".join([str(n_axion_mscf)] * N))
-        lines.append("log10_maxion_ac = " + " , ".join([f"{val:.2f}" for val in log10_vals]))
+    # Expand repeated parameters
+    lines.append("theta_ini_mscf = " + " , ".join([str(theta_ini)] * N))
+    lines.append("theta_prime_ini_mscf = " + " , ".join([str(theta_prime_ini)] * N))
+    lines.append("fraction_maxion_ac = " + " , ".join([str(fraction_maxion_ac)] * N))
+    lines.append("n_axion_mscf = " + " , ".join([str(n_axion_mscf)] * N))
+    lines.append("log10_maxion_ac = " + " , ".join([f"{val:.2f}" for val in log10_vals]))
 
     # Handle all other parameters (skip N_mscf ones already written)
     skip_keys = {"header", "N_mscf", "theta_ini_mscf", "theta_prime_ini_mscf", 
@@ -92,18 +92,21 @@ params = {
     "T_ncdm": 0.71611,
     "do_shooting": 'y',
     "do_shooting_mscf": 'y',
-    "input_verbose": 2,
-    "background_verbose": 4,
+    "input_verbose": 12,
+    "background_verbose": 10,
     "thermodynamics_verbose": 4,
     "output_verbose":5,
+    "tol_shooting_deltax":1e-1,
+    "tol_shooting_deltaF":1e-2,
+
 
     # Special block
-    "N_mscf": 20,
+    "N_mscf": 10,
     "theta_ini_mscf": 2.6,
     "theta_prime_ini_mscf": 0.0,
     "fraction_maxion_ac": 0.1,
     "n_axion_mscf": 3,
-    "log10_ac_range": (-3,-5),
+    "log10_ac_range": (-1,-4.5),
 }
 
 write_class_ini(params, "padr.ini")
