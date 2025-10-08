@@ -2,11 +2,15 @@ CLASS_rename.py
 CPU.py
 Makefile
 README.md
+madrini.py
+padrini.py
 setup.py
 test_lensedCls.py
 ./CLASS_rename.py
 ./CPU.py
 ./Makefile
+./madrini.py
+./padrini.py
 ./test_lensedCls.py
 ./external/.DS_Store
 ./external/HMcode/hmcode.c
@@ -120,6 +124,7 @@ test_lensedCls.py
 ./external_fz/transfer_functions/original/Transfer_Ch3.dat
 ./external_fz/transfer_functions/original/Transfer_Ch4.dat
 ./external_fz/transfer_functions/original/Transfer_Ch5.dat
+./include/.precisions.h.swp
 ./include/arrays.h
 ./include/background.h
 ./include/background_old.h
@@ -163,6 +168,7 @@ test_lensedCls.py
 ./python/interface_generator.py
 ./python/setup.py
 ./python/test_class.py
+./source/.input.c.swp
 ./source/background.c
 ./source/distortions.c
 ./source/fourier.c
@@ -305,6 +311,7 @@ external_fz/transfer_functions/original/Transfer_Ch2.dat
 external_fz/transfer_functions/original/Transfer_Ch3.dat
 external_fz/transfer_functions/original/Transfer_Ch4.dat
 external_fz/transfer_functions/original/Transfer_Ch5.dat
+include/.precisions.h.swp
 include/arrays.h
 include/background.h
 include/background_old.h
@@ -348,6 +355,7 @@ python/extract_errors.py
 python/interface_generator.py
 python/setup.py
 python/test_class.py
+source/.input.c.swp
 source/background.c
 source/distortions.c
 source/fourier.c

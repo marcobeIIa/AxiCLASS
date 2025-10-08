@@ -1115,11 +1115,11 @@ int fzero_Newton(int (*func)(double *x,
 
   for (k=1;k<=ntrial;k++) {
     /** Compute F(x): */
-    printf("x = [%f, %f], delx = [%e, %e]\n",
-       x_inout[0],x_inout[1],delx[0],delx[1]);
+  //  printf("x = [%f, %f], delx = [%e, %e]\n",
+   //    x_inout[0],x_inout[1],delx[0],delx[1]);
     class_call(func(x_inout, x_size, names_size, param, F0, error_message),
                error_message, error_message);
-        printf("f0 = [%f, %f]\n",F0[0],F0[1]);
+    //    printf("f0 = [%f, %f]\n",F0[0],F0[1]);
     *fevals = *fevals + 1;
     errf=0.0; //fvec and Jacobian matrix in fjac.
     for (i=1; i<=x_size; i++)
@@ -1143,11 +1143,11 @@ int fzero_Newton(int (*func)(double *x,
         delx[i-1] *= -1;
       x_inout[i-1] += delx[i-1];
 
-            printf("x = [%f, %f], delx = [%e, %e]\n",
-               x_inout[0],x_inout[1],delx[0],delx[1]);
+ //           printf("x = [%f, %f], delx = [%e, %e]\n",
+//               x_inout[0],x_inout[1],delx[0],delx[1]);
       class_call(func(x_inout, x_size, names_size, param, Fdel, error_message),
                  error_message, error_message);
-            printf("F = [%f, %f]\n",Fdel[0],Fdel[1]);
+//            printf("F = [%f, %f]\n",Fdel[0],Fdel[1]);
       for (j=1; j<=x_size; j++)
         Fjac[j][i] = (Fdel[j-1]-F0[j-1])/delx[i-1];
       x_inout[i-1] -= delx[i-1];

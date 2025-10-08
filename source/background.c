@@ -1277,7 +1277,7 @@ int background_init(
           pba->log10_f_maxion[n_mscf] = log10(pba->f_axion_mscf[n_mscf]);
           pba->log10_m_maxion[n_mscf] = log10(pba->m_mscf[n_mscf]);
 
-          pba->a_c_mscf[n_mscf]=pow(10,pba->log10_maxion_ac[n_mscf]);
+//          pba->a_c_mscf[n_mscf]=pow(10,pba->log10_maxion_ac[n_mscf]);
 
           cos_initial = cos(pba->theta_ini_mscf[n_mscf]);
           sin_initial = sin(pba->theta_ini_mscf[n_mscf]);
@@ -1489,10 +1489,11 @@ int background_free_input(
     if (pba->scf_parameters != NULL)
       free(pba->scf_parameters);
   }
-  if (pba->Omega0_mscf_tot != 0.){
-    // printf("1344 reached background.c, freeing memory\n");
+  if (pba->Omega0_mscf_tot != 0. || pba->N_mscf != 0){
+    printf("1344 reached background.c, freeing memory\n");
     //CHECK i am freeing everything, is this right??????
     free(pba->m_mscf);
+    free(pba->Omega0_mscf);
     free(pba->phi_ini_mscf);
     free(pba->phi_prime_ini_mscf);
     free(pba->theta_ini_mscf);
@@ -1500,12 +1501,13 @@ int background_free_input(
     free(pba->f_axion_mscf);
     free(pba->n_axion_mscf);
     free(pba->log10_fraction_maxion_ac);
+    free(pba->fraction_maxion_ac);
     free(pba->log10_maxion_ac);
     free(pba->alpha_squared_mscf);
     free(pba->power_of_mu_mscf);
     free(pba->log10_f_maxion);
     free(pba->log10_m_maxion);
-    free(pba->a_c_mscf);
+//    free(pba->a_c_mscf);
     free(pba->f_ede_mscf);
     free(pba->log10_z_c_mscf);
   }

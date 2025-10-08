@@ -75,10 +75,10 @@ params = {
               "*  CLASS input parameter file (auto-generated)       *\n"
               "*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*",
     "root": "output/mb_example_axiclass",
-#    "output": "tCl,lCl,mPk",
+    "output": "tCl,lCl,mPk",
     "P_k_max_h/Mpc": 1,
-    "write background": "yes",
-    "write parameters": "yes",
+    "write background": "no",
+    "write parameters": "no",
     "omega_b": 0.02251,
     "omega_cdm": 0.1320,
     "H0": 72.81,
@@ -92,21 +92,20 @@ params = {
     "T_ncdm": 0.71611,
     "do_shooting": 'y',
     "do_shooting_mscf": 'y',
-    "input_verbose": 12,
+    "input_verbose": 11,
     "background_verbose": 10,
     "thermodynamics_verbose": 4,
     "output_verbose":5,
-    "tol_shooting_deltax":1e-1,
-    "tol_shooting_deltaF":1e-2,
-
-
+    "tol_shooting_deltax":0.01,
+    "tol_shooting_deltaF":0.01,
+    "background_Nloga": 100000,
     # Special block
     "N_mscf": 10,
     "theta_ini_mscf": 2.6,
     "theta_prime_ini_mscf": 0.0,
-    "fraction_maxion_ac": 0.1,
+    "fraction_maxion_ac": 0.05,
     "n_axion_mscf": 3,
-    "log10_ac_range": (-1,-4.5),
+    "log10_ac_range": (-3,-4.5),
 }
 
 write_class_ini(params, "padr.ini")

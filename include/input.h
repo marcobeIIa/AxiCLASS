@@ -258,8 +258,8 @@ struct fzerofun_workspace {
   double * scf_parameters;  /**< list of parameters describing the scalar field potential */
   int N_mscf;
   short do_shooting_mscf;        /**< Should we use shooting method to determine phi_init */
-  double * m_mscf;
-  double * f_axion_mscf;
+//  double * m_mscf;
+//  double * f_axion_mscf;
   double * n_axion_mscf;
   double * fraction_maxion_ac; 
   double * log10_maxion_ac;

@@ -235,7 +235,7 @@ struct background
   double * log10_f_maxion;
   double * log10_m_maxion;
   double * f_axion_mscf;
-  double * a_c_mscf;
+//  double * a_c_mscf;
   double * f_ede_mscf; // TK added doubles to fill with values of the exact z_c and fraction_ede eventually
   double * log10_z_c_mscf; //
   double * n_axion_mscf;
