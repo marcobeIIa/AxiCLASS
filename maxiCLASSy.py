@@ -1,6 +1,7 @@
 import sys
-sys.path.append("/Users/bellamarco01/uni/1_master_thesis/AxiCLASS/python")
+import classy
 from classy import Class
+print(classy.__file__)
 
 import os
 import copy
@@ -36,18 +37,21 @@ params_mEDE = {
     "m_ncdm": 0.06,
     "T_ncdm": 0.7161,
 
-    "N_mscf": 1,
-    "n_axion_mscf": 2.6,
-    "f_axion_mscf": 0.1,
-    "m_mscf": 1e4,
-#    "theta_ini_mscf": 2.72,
-#    "theta_prime_ini_mscf": 0.0,
-#    "do_shooting_mscf": 'n',
-    "do_shooting": 'n',
+    "N_mscf": 3,
+    "n_axion_mscf": '3,3,3',
+    #"f_axion_mscf": 0.1,
+    #"m_mscf": 1e4,
+    "theta_ini_mscf": '2.7,2.7,2.7',
+    "theta_prime_ini_mscf": '0.0,0.0,0.0',
+    "do_shooting_mscf": 'y',
+    "do_shooting": 'y',
+    "tol_shooting_deltax":0.01,
+    "tol_shooting_deltaF":0.01,
+    "background_Nloga": 100000,
     # "alpha_squared_mscf": -30.,
     # "power_of_mu_mscf": -30.,
-    #"log10_maxion_ac": '-3,-3.5,-4',
-    #"fraction_maxion_ac": '0.1,0.1,0.1',
+    "log10_maxion_ac": '-3,-3.5,-4',
+    "fraction_maxion_ac": '0.1,0.1,0.1',
 
     "input_verbose": 12,
     "background_verbose": 12,
@@ -62,6 +66,6 @@ params_mEDE = {
     "l_max_scalars":5000,
 }
 EDEm = Class()
-EDEm.compute()
 EDEm.set(params_mEDE)
-bg_m = EDEm.get_background()
+EDEm.compute()
+#bg_m = EDEm.get_background()

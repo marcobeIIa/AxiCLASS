@@ -358,10 +358,10 @@ cdef class Class:
                 if self.fc.read[i] == _FALSE_:
                     problem_flag = True
                     problematic_parameters.append(self.fc.name[i].decode())
-            if problem_flag:
-                raise CosmoSevereError(
-                    "Class did not read input parameter(s): %s\n" % ', '.join(
-                    problematic_parameters))
+            #if problem_flag:
+                #raise CosmoSevereError(
+                #    "Class did not read input parameter(s): %s\n" % ', '.join(
+                #    problematic_parameters))
 
         # The following list of computation is straightforward. If the "_init"
         # methods fail, call `struct_cleanup` and raise a CosmoComputationError
