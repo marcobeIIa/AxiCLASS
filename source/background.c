@@ -2733,7 +2733,7 @@ class_call(background_initial_conditions(ppr,pba,pvecback,pvecback_integration,&
      z_c_new = pba->z_table[index_loga];
      for (n_mscf=0;n_mscf<pba->N_mscf;n_mscf++){
      f_ede_new = pba->background_table[index_loga*pba->bg_size+pba->index_bg_Omega_mscf+n_mscf];
-     // printf("f_ede_new %e old fede %e z_c_new %e\n", f_ede_new,pba->f_ede,z_c_new);
+//     printf("f_ede_new %e old fede %e z_c_new %e\n", f_ede_new,pba->f_ede,z_c_new);
      if(f_ede_new > pba->f_ede_mscf[n_mscf]){//there's a small problem when axion behaves like DM
        pba->log10_z_c_mscf[n_mscf]= log10(z_c_new);
        pba->f_ede_mscf[n_mscf] = f_ede_new;
@@ -2766,10 +2766,6 @@ class_call(background_initial_conditions(ppr,pba,pvecback,pvecback_integration,&
     pba->background_table[index_loga*pba->bg_size+pba->index_bg_ang_distance] = comoving_radius/(1.+pba->z_table[index_loga]);
     pba->background_table[index_loga*pba->bg_size+pba->index_bg_lum_distance] = comoving_radius*(1.+pba->z_table[index_loga]);
   }
- // for (n_mscf=0;n_mscf<pba->N_mscf;n_mscf++){
-  //printf("here reeached, updating f_ede_mscf = %e", pba->f_ede_mscf[n_mscf]);
-//}
-
   /** - fill tables of second derivatives (in view of spline interpolation) */
   class_call(array_spline_table_lines(pba->z_table,
                                       pba->bt_size,
