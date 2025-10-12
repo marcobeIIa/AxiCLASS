@@ -2212,7 +2212,7 @@ int input_try_unknown_parameters(double * unknown_parameter,
   if (flag == _FALSE_)  
     param = 0;
   
-  for (i=0; i < unknown_parameters_size - 2*param+2; i++) {
+  for (i=0; i < unknown_parameters_size - 2*param; i++) {
     if ( (strcmp(pfzw->fc.name[pfzw->unknown_parameters_index[i]], "alpha_squared_mscf") == 0)|| (strcmp(pfzw->fc.name[pfzw->unknown_parameters_index[i]], "power_of_mu_mscf") == 0)){
       // printf("gleruglurgh\n");
         //   // for (n_mscf = 0; n_mscf < ba.N_mscf; n_mscf++){
