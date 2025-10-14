@@ -1351,8 +1351,9 @@ int background_init(
 
 
 
-        // printf("f_axion_mscf = %e \n", pba->f_axion_mscf[n_mscf]);
+      //  printf("f_axion_mscf = %e \n", pba->f_axion_mscf[n_mscf]);
         pba->f_ede_mscf[n_mscf]=0.0;
+       //n_mscf printf("f_ede_mscf[n_mscf]%e",f_ede_mscf[n_mscf]);
         pba->log10_z_c_mscf[n_mscf]=1;
 
         pba->phi_ini_mscf[n_mscf]=pba->f_axion_mscf[n_mscf] * pba->theta_ini_mscf[n_mscf]; //conversion from theta_i to phi_i; multiplying by fa
@@ -2766,10 +2767,6 @@ class_call(background_initial_conditions(ppr,pba,pvecback,pvecback_integration,&
     pba->background_table[index_loga*pba->bg_size+pba->index_bg_ang_distance] = comoving_radius/(1.+pba->z_table[index_loga]);
     pba->background_table[index_loga*pba->bg_size+pba->index_bg_lum_distance] = comoving_radius*(1.+pba->z_table[index_loga]);
   }
-for (n_mscf = 0; n_mscf< pba->N_mscf; n_mscf++){
- //   printf("here reeached, updating f_ede_mscf = %e\n", pba->f_ede_mscf[n_mscf]);
-}
-
   /** - fill tables of second derivatives (in view of spline interpolation) */
   class_call(array_spline_table_lines(pba->z_table,
                                       pba->bt_size,
