@@ -2202,16 +2202,16 @@ int input_try_unknown_parameters(double * unknown_parameter,
 
   // unknown_names_size= unknown_parameters_size - 2*(ba.N_mscf);
 
-   printf("input_try_unknown_parameters: unknown_parameters_size = %d, unknown_names_size = %d, N_mscf = %d\n", unknown_parameters_size, unknown_names_size, ba.N_mscf);
+  class_call(parser_read_int(&(pfzw->fc),"N_mscf",&param,&flag,errmsg),errmsg,errmsg);
+  if (flag == _FALSE_)  
+    param = 0;
+   printf("input_try_unknown_parameters: unknown_parameters_size = %d, unknown_names_size = %d, N_mscf = %d\n", unknown_parameters_size, unknown_names_size, param);
 
   pfzw = (struct fzerofun_workspace *) voidpfzw;
   /** Read input parameters */
   // This needs to be done with enough accuracy. A standard double has a relative
   // precision of around 1e-16, so 1e-20 should be good enough for the shooting
 
-  class_call(parser_read_int(&(pfzw->fc),"N_mscf",&param,&flag,errmsg),errmsg,errmsg);
-  if (flag == _FALSE_)  
-    param = 0;
  
 //  for (i=0; i < unknown_parameters_size - 2*param+2; i++) {
   for (i=0; i < unknown_parameters_size; i++) {
