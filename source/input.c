@@ -1138,7 +1138,7 @@ class_call(parser_read_string(pfc,"do_shooting",&string1,&flag1,errmsg),
                  errmsg);
 
       /* Use multi-dimensional Newton method */
-      // printf("pre bad line \n");
+       printf("pre bad line \n");
       class_call_try(fzero_Newton(input_try_unknown_parameters,
                                   x_inout,
                                   dxdF,
@@ -1152,7 +1152,7 @@ class_call(parser_read_string(pfc,"do_shooting",&string1,&flag1,errmsg),
                      errmsg,
                      pba->shooting_error,
                      shooting_failed=_TRUE_);
-      // printf("post bad line \n");
+       printf("post bad line \n");
 
       /* Store xzero */
       // This needs to be done with enough accuracy. A standard double has a relative
@@ -2164,7 +2164,7 @@ int input_try_unknown_parameters(double * unknown_parameter,
                                  double * output,
                                  ErrorMsg errmsg){
   /** Summary */
-  // printf("entering input_try_unknown_parameters... \n");
+   printf("entering input_try_unknown_parameters... \n");
 
   /** Define local variables */
   struct precision pr;        /* for precision parameters */
@@ -2202,19 +2202,21 @@ int input_try_unknown_parameters(double * unknown_parameter,
 
   // unknown_names_size= unknown_parameters_size - 2*(ba.N_mscf);
 
-  // printf("input_try_unknown_parameters: unknown_parameters_size = %d, unknown_names_size = %d, N_mscf = %d\n", unknown_parameters_size, unknown_names_size, ba.N_mscf);
+   printf("input_try_unknown_parameters: unknown_parameters_size = %d, unknown_names_size = %d, N_mscf = %d\n", unknown_parameters_size, unknown_names_size, ba.N_mscf);
 
   pfzw = (struct fzerofun_workspace *) voidpfzw;
   /** Read input parameters */
   // This needs to be done with enough accuracy. A standard double has a relative
   // precision of around 1e-16, so 1e-20 should be good enough for the shooting
+
   class_call(parser_read_int(&(pfzw->fc),"N_mscf",&param,&flag,errmsg),errmsg,errmsg);
   if (flag == _FALSE_)  
     param = 0;
-  
-  for (i=0; i < unknown_parameters_size - 2*param+2; i++) {
+ 
+//  for (i=0; i < unknown_parameters_size - 2*param+2; i++) {
+  for (i=0; i < unknown_parameters_size; i++) {
     if ( (strcmp(pfzw->fc.name[pfzw->unknown_parameters_index[i]], "alpha_squared_mscf") == 0)|| (strcmp(pfzw->fc.name[pfzw->unknown_parameters_index[i]], "power_of_mu_mscf") == 0)){
-      // printf("gleruglurgh\n");
+       printf("gleruglurgh\n");
         //   // for (n_mscf = 0; n_mscf < ba.N_mscf; n_mscf++){
         //     /* destination buffer in the dummy file_content */
         //     char *dest = (pfzw->fc).value[ pfzw->unknown_parameters_index[i] ];
@@ -2238,7 +2240,7 @@ int input_try_unknown_parameters(double * unknown_parameter,
     class_sprintf(pfzw->fc.value[pfzw->unknown_parameters_index[i]],"%.20e",unknown_parameter[i]);
     }
   }
-  // printf("here reached?");
+   printf("here reached?");
  
   class_call(input_read_precisions(&(pfzw->fc),&pr,&ba,&th,&pt,&tr,&pm,&hr,&fo,&le,&sd,&op,
                                    errmsg),

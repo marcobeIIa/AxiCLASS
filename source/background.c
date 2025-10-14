@@ -1225,7 +1225,8 @@ int background_init(
         // printf("m_scf is %e pba->w_scf %e pba->f_axion %e\n", pba->m_scf,pba->w_scf,pba->f_axion);
      }
   if(pba->has_mscf == _TRUE_){
-    // printf("entering mscf territory in background_init\n");
+
+     printf("entering mscf territory in background_init\n");
         for (n_mscf = 0; n_mscf <pba->N_mscf; n_mscf++){
             if(pba->f_axion_mscf[n_mscf] > 0 && pba->m_mscf[n_mscf] > 0){
 //              printf("nonshooting case\n");
