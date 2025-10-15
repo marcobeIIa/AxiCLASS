@@ -5359,14 +5359,14 @@ class_call(parser_read_double(pfc,"Omega_scf_shoot_fa",&param4,&flag4,errmsg),
     class_call(parser_read_string(pfc,"do_shooting_mscf",&string1,&flag1,errmsg),
               errmsg,
               errmsg);
-    if (flag1 == _FALSE_){
-      // printf("trying to read m_mscf and f_axion\n");
       class_read_list_of_doubles_or_default("m_mscf",pba->m_mscf,0.0,pba->N_mscf);
       class_read_list_of_doubles_or_default("f_axion_mscf",pba->f_axion_mscf,0.0,pba->N_mscf);
+    if (flag1 == _FALSE_){
+      // printf("trying to read m_mscf and f_axion\n");
     }else {
       // printf("not trying to read m_mscf and f_axion\n");
-      class_alloc(pba->m_mscf, pba->N_mscf * sizeof(double), errmsg);
-      class_alloc(pba->f_axion_mscf, pba->N_mscf * sizeof(double), errmsg);
+//      class_alloc(pba->m_mscf, pba->N_mscf * sizeof(double), errmsg);
+ //     class_alloc(pba->f_axion_mscf, pba->N_mscf * sizeof(double), errmsg);
       // printf("pba->shooting_done_mscf %d\n", pba->shooting_done_mscf);
       if (pba->shooting_done_mscf == _TRUE_){
       //prevents memory leaks

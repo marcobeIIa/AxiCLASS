@@ -1228,7 +1228,7 @@ int background_init(
 
      printf("entering mscf territory in background_init\n");
         for (n_mscf = 0; n_mscf <pba->N_mscf; n_mscf++){
-            if(pba->f_axion_mscf[n_mscf] > 1e-100 && pba->m_mscf[n_mscf] > 0){
+            if(pba->f_axion_mscf[n_mscf] > 0 && pba->m_mscf[n_mscf] > 0){
 //              printf("nonshooting case\n");
               cos_initial = cos(pba->theta_ini_mscf[n_mscf]);
               sin_initial = sin(pba->theta_ini_mscf[n_mscf]);
