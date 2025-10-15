@@ -1633,7 +1633,7 @@ int input_get_guess(double *xguess,
                     struct fzerofun_workspace * pfzw,
                     ErrorMsg errmsg){
 
-  // printf("entering input_get_guess... \n");
+   printf("entering input_get_guess... \n");
   /** Summary: */
 
   /** Define local variables */
@@ -2202,12 +2202,12 @@ int input_try_unknown_parameters(double * unknown_parameter,
 
   // unknown_names_size= unknown_parameters_size - 2*(ba.N_mscf);
 
+
+  pfzw = (struct fzerofun_workspace *) voidpfzw;
   class_call(parser_read_int(&(pfzw->fc),"N_mscf",&param,&flag,errmsg),errmsg,errmsg);
   if (flag == _FALSE_)  
     param = 0;
    printf("input_try_unknown_parameters: unknown_parameters_size = %d, unknown_names_size = %d, N_mscf = %d\n", unknown_parameters_size, unknown_names_size, param);
-
-  pfzw = (struct fzerofun_workspace *) voidpfzw;
   /** Read input parameters */
   // This needs to be done with enough accuracy. A standard double has a relative
   // precision of around 1e-16, so 1e-20 should be good enough for the shooting
