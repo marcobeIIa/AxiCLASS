@@ -1356,8 +1356,8 @@ int background_init(
        //n_mscf printf("f_ede_mscf[n_mscf]%e",f_ede_mscf[n_mscf]);
         pba->log10_z_c_mscf[n_mscf]=1;
 
-        pba->phi_ini_mscf[n_mscf]=pba->f_axion_mscf[n_mscf] * pba->theta_ini_mscf[n_mscf]; //conversion from theta_i to phi_i; multiplying by fa
-        pba->phi_prime_ini_mscf[n_mscf]=pba->f_axion_mscf[n_mscf] * pba->theta_prime_ini_mscf[n_mscf]; //conversion from theta_dot_i to phi_dot_i; multiplying by fa
+        pba->phi_ini_mscf[n_mscf]=pba->f_axion_mscf[n_mscf] * pba->phi_ini_mscf[n_mscf]; //conversion from theta_i to phi_i; multiplying by fa
+        pba->phi_prime_ini_mscf[n_mscf]=pba->f_axion_mscf[n_mscf] * pba->phi_prime_ini_mscf[n_mscf]; //conversion from theta_dot_i to phi_dot_i; multiplying by fa
         // printf("phi ini = %e \n", pba->phi_ini_mscf[n_mscf]);
         // printf("phi prime ini = %e \n", pba->phi_prime_ini_mscf[n_mscf]);
         }
