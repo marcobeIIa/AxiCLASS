@@ -1359,8 +1359,8 @@ int background_init(
         //pba->phi_ini_mscf[n_mscf]= pba->theta_ini_mscf[n_mscf]; //conversion from theta_i to phi_i; multiplying by fa
         pba->phi_ini_mscf[n_mscf]=pba->f_axion_mscf[n_mscf] * pba->theta_ini_mscf[n_mscf]; //conversion from theta_i to phi_i; multiplying by fa
         pba->phi_prime_ini_mscf[n_mscf]=pba->f_axion_mscf[n_mscf] * pba->theta_prime_ini_mscf[n_mscf]; //conversion from theta_dot_i to phi_dot_i; multiplying by fa
-        // printf("phi ini = %e \n", pba->phi_ini_mscf[n_mscf]);
-        // printf("phi prime ini = %e \n", pba->phi_prime_ini_mscf[n_mscf]);
+         printf("phi ini = %e \n", pba->phi_ini_mscf[n_mscf]);
+         printf("phi prime ini = %e \n", pba->phi_prime_ini_mscf[n_mscf]);
         }
      }
      printf("exited mscf territory in background_init\n");
