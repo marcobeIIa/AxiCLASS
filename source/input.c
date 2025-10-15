@@ -5,6 +5,7 @@
  * * internal organization of the module structured and improved by Nils Schoeneberg and Matteo Lucca, 07.03.2019
  *
  */
+ #include <assert.h>
 
 #include "input.h"
 
@@ -1299,6 +1300,7 @@ class_call(parser_read_string(pfc,"do_shooting",&string1,&flag1,errmsg),
     double sigma8_or_S8;
 
     /* Now run for a single time, get the value of sigma8 (or S8) for the guess*/
+    printf("am i here?\n");
     class_call(input_try_unknown_parameters(&A_s,
                                             1,
                                             1,
@@ -1483,8 +1485,9 @@ int input_fzerofun_1d(double input,
                       void* pfzw,
                       double *output,
                       ErrorMsg error_message){
-  // printf("entering input_fzerofun_1d... \n");
+   printf("entering input_fzerofun_1d... \n");
 
+  printf("am i here?2 \n");
   class_call(input_try_unknown_parameters(&input,
                                           1,
                                           1,
@@ -1633,7 +1636,7 @@ int input_get_guess(double *xguess,
                     struct fzerofun_workspace * pfzw,
                     ErrorMsg errmsg){
 
-  // printf("entering input_get_guess... \n");
+  printf("entering input_get_guess... \n");
   /** Summary: */
 
   /** Define local variables */
@@ -2201,13 +2204,15 @@ int input_try_unknown_parameters(double * unknown_parameter,
   //   ba.N_mscf = 0;
 
   // unknown_names_size= unknown_parameters_size - 2*(ba.N_mscf);
-
+  pfzw = (struct fzerofun_workspace *) voidpfzw;
+  assert(pfzw != NULL);
+assert(&(pfzw->fc) != NULL);
   class_call(parser_read_int(&(pfzw->fc),"N_mscf",&param,&flag,errmsg),errmsg,errmsg);
   if (flag == _FALSE_)  
     param = 0;
+
    printf("input_try_unknown_parameters: unknown_parameters_size = %d, unknown_names_size = %d, N_mscf = %d\n", unknown_parameters_size, unknown_names_size, param);
 
-  pfzw = (struct fzerofun_workspace *) voidpfzw;
   /** Read input parameters */
   // This needs to be done with enough accuracy. A standard double has a relative
   // precision of around 1e-16, so 1e-20 should be good enough for the shooting

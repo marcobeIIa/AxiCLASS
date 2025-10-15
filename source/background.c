@@ -548,13 +548,13 @@ int background_functions(
 
   if (pba->has_mscf == _TRUE_) {
     for (k = 0; k < pba->N_mscf; k++) {
-      // printf("551 reached background.c, phi and potential update\n");
+       printf("551 reached background.c, phi and potential update\n");
       //pba->kg_fld_switch = _FALSE_;
       //printf("Inside scf table update\n"); //print_trigger
       phi = pvecback_B[pba->index_bi_phi_mscf+k];
-      // printf("phi %e \n", phi);
+       printf("phi %e \n", phi);
       phi_prime = pvecback_B[pba->index_bi_phi_prime_mscf+k];
-      // printf("phi' %e \n", phi_prime);
+       printf("phi' %e \n", phi_prime);
       //At this point phi and phi prime have already been updated, from their evolution equations, rho_scf is still from the last step,
       //The next few lines then calculate the new values for the density etc... from the new values of phi and phi prime
       pvecback[pba->index_bg_phi_mscf+k] = phi; // value of the scalar field phi
@@ -562,12 +562,13 @@ int background_functions(
       pvecback[pba->index_bg_phi_prime_mscf+k] = phi_prime; // value of the scalar field phi derivative wrt conformal time
       // printf("phi' %e \n", phi_prime);
       pvecback[pba->index_bg_V_mscf+k] = V_mscf(pba,k,phi); //V_scf(pba,phi); //write here potential as function of phi
-      // printf("V_mscf %e \n", V_mscf(pba,k,phi));
+       printf("V_mscf %e \n", V_mscf(pba,k,phi));
       pvecback[pba->index_bg_dV_mscf+k] = dV_mscf(pba,k,phi); // dV_scf(pba,phi); //potential' as function of phi
-      // printf("dV_mscf %e \n", dV_mscf(pba,k,phi));
+       printf("dV_mscf %e \n", dV_mscf(pba,k,phi));
       pvecback[pba->index_bg_ddV_mscf+k] = ddV_mscf(pba,k,phi); // ddV_scf(pba,phi); //potential'' as function of phi
-      // printf("ddV_mscf %e \n", ddV_mscf(pba,k,phi));
+       printf("ddV_mscf %e \n", ddV_mscf(pba,k,phi));
       pvecback[pba->index_bg_rho_mscf+k] = (phi_prime*phi_prime/(2*a*a) + V_mscf(pba,k,phi))/3.; // energy of the scalar field. The field units are set automatically by setting the initial conditions
+      printf("rho_mscf[%d] = %f\n", k, pvecback[pba->index_bg_rho_mscf+k]);
       pvecback[pba->index_bg_p_mscf+k] = (phi_prime*phi_prime/(2*a*a) - V_mscf(pba,k,phi))/3.; // pressure of the scalar field
       pvecback[pba->index_bg_w_mscf+k] =pvecback[pba->index_bg_p_mscf+k]/pvecback[pba->index_bg_rho_mscf+k]; // e.o.s of the scalar field, only used for outputs
       // pvecback_B[pba->index_bi_rho_mscf+k] = pvecback[pba->index_bg_rho_mscf+k];
@@ -689,7 +690,6 @@ int background_functions(
     pvecback[pba->index_bg_Omega_scf] = pvecback[pba->index_bg_rho_scf] / rho_tot;
   }
   if(pba->has_mscf == _TRUE_){
-    // printf("683 reached background.c, Omega_mscf\n");
     for (k = 0; k < pba->N_mscf; k++) {
       pvecback[pba->index_bg_Omega_mscf+k] = pvecback[pba->index_bg_rho_mscf+k] / rho_tot;
     }
@@ -1356,13 +1356,14 @@ int background_init(
        //n_mscf printf("f_ede_mscf[n_mscf]%e",f_ede_mscf[n_mscf]);
         pba->log10_z_c_mscf[n_mscf]=1;
 
+        //pba->phi_ini_mscf[n_mscf]= pba->theta_ini_mscf[n_mscf]; //conversion from theta_i to phi_i; multiplying by fa
         pba->phi_ini_mscf[n_mscf]=pba->f_axion_mscf[n_mscf] * pba->theta_ini_mscf[n_mscf]; //conversion from theta_i to phi_i; multiplying by fa
         pba->phi_prime_ini_mscf[n_mscf]=pba->f_axion_mscf[n_mscf] * pba->theta_prime_ini_mscf[n_mscf]; //conversion from theta_dot_i to phi_dot_i; multiplying by fa
         // printf("phi ini = %e \n", pba->phi_ini_mscf[n_mscf]);
         // printf("phi prime ini = %e \n", pba->phi_prime_ini_mscf[n_mscf]);
         }
      }
-    // printf("exited mscf territory in background_init\n");
+     printf("exited mscf territory in background_init\n");
 
   /** - check that input parameters make sense and write additional information about them */
   class_call(background_checks(ppr,pba),
@@ -2591,6 +2592,8 @@ class_call(background_initial_conditions(ppr,pba,pvecback,pvecback_integration,&
            pba->error_message,
            pba->error_message);
 
+printf("phi_mccf %f", pvecback_integration[pba->index_bg_phi_mscf]);
+
  class_alloc(pba->loga_table,pba->bt_size * sizeof(double),pba->error_message);
  class_alloc(used_in_output, pba->bt_size*sizeof(int), pba->error_message);
 
@@ -3153,8 +3156,10 @@ int background_initial_conditions(
       for(k = 0; k<pba->N_mscf; k++){
         //print("2992 reached background.c, doing stuff\n");
         //print("index_bi_phi_mscf = %e", pba->index_bi_phi_mscf);
-        pvecback_integration[pba->index_bi_phi_mscf+k] = pba->phi_ini_mscf[k];
-        pvecback_integration[pba->index_bi_phi_prime_mscf+k] = pba->phi_prime_ini_mscf[k];
+        pvecback_integration[pba->index_bi_phi_mscf+k] = pba->theta_ini_mscf[k];
+        pvecback_integration[pba->index_bi_phi_prime_mscf+k] = pba->theta_prime_ini_mscf[k];
+        printf("pba->phi_ini_mscf[%d]%f", k, pba->theta_ini_mscf[k]);
+
     //  }
     }
 
@@ -3179,7 +3184,7 @@ int background_initial_conditions(
       // pvecback_integration[pba->index_bi_rho_mscf+k] = 0; //vp: in axiclass we initialise the fluid scf variable to 0, we will update its value when needed at the time of the switch.
     }
   }
-  // printf("calling background functions.\n");//print_trigger
+   printf("calling background functions.\n");//print_trigger
   /* infer pvecback from pvecback_integration */
   class_call(background_functions(pba, a, pvecback_integration, normal_info, pvecback),
              pba->error_message,
@@ -3555,6 +3560,8 @@ int background_derivs(
   a = exp(loga);
 
   /** - calculate functions of \f$ a \f$ with background_functions() */
+
+   printf("2calling background functions.\n");//print_trigger
   class_call(background_functions(pba, a, y, normal_info, pvecback),
              pba->error_message,
              error_message);
@@ -3782,6 +3789,8 @@ int background_sources(
   /** -> compute all other quantities depending only on a + {B} variables and get them stored
       in one row of background_table
       The value of {B} variables in pData are also copied to pvecback.*/
+
+   printf("3calling background functions.\n");//print_trigger
   class_call(background_functions(pba, a, y, long_info, bg_table_row),
              pba->error_message,
              pba->error_message);

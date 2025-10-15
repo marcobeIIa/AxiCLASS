@@ -4,6 +4,7 @@ build/
 class
 *.prof
 *.ini
+*.swp
 libclass.a
 *out
 python/classy.cpp
