@@ -1228,8 +1228,9 @@ int background_init(
 
      printf("entering mscf territory in background_init\n");
         for (n_mscf = 0; n_mscf <pba->N_mscf; n_mscf++){
-            if(pba->f_axion_mscf[n_mscf] > 0 && pba->m_mscf[n_mscf] > 0){
-//              printf("nonshooting case\n");
+            if(pba->f_axion_mscf[n_mscf] > 10e-30 && pba->m_mscf[n_mscf] > 0){
+            printf("faxion mscf %f", pba->f_axion_mscf[n_mscf]);
+              printf("nonshooting case\n");
               cos_initial = cos(pba->theta_ini_mscf[n_mscf]);
               sin_initial = sin(pba->theta_ini_mscf[n_mscf]);
               // printf("%e %e %e \n",cos_initial,sin_initial,pba->f_axion);
@@ -1243,7 +1244,7 @@ int background_init(
             }
         else if(pba->log10_maxion_ac[n_mscf] > -30 && pba->log10_fraction_maxion_ac[n_mscf] > -30){
 
- //              printf("shooting case, i've fed log10_maxion_ac and fraction_maxion_ac\n");
+               printf("shooting case, i've fed log10_maxion_ac and fraction_maxion_ac\n");
            /*-30 is the default value*/
 //            pba->alpha_squared = fabs(pba->alpha_squared);
 //            pba->power_of_mu = fabs(pba->power_of_mu);
@@ -1297,7 +1298,7 @@ int background_init(
           }
 
           else if(pba->alpha_squared_mscf[n_mscf] > -30 && pba->log10_fraction_maxion_ac[n_mscf] > -30){
- //              printf("shooting case 2\n");
+               printf("shooting case 2\n");
             /*shoot for fac by varying alpha*/
             // pba->power_of_mu= sqrt(pow(pba->power_of_mu,2));
             // pba->mu_squared_alpha_squared= sqrt(pow(pba->mu_squared_alpha_squared,2));
@@ -1311,7 +1312,7 @@ int background_init(
               // printf("pba->mu_squared_alpha_squared %e \n",pba->mu_squared_alpha_squared);
           }
           else if(pba->power_of_mu_mscf[n_mscf] > -30 && pba->log10_maxion_ac[n_mscf] > -30){
-           //    printf("shooting case 3\n");
+               printf("shooting case 3\n");
             pba->power_of_mu_mscf[n_mscf] = fabs(pba->power_of_mu_mscf[n_mscf]);
             /*shoot for axion ac by varying mu*/
             // pba->power_of_mu= sqrt(pow(pba->power_of_mu,2));
@@ -1351,7 +1352,7 @@ int background_init(
 
 
 
-      //  printf("f_axion_mscf = %e \n", pba->f_axion_mscf[n_mscf]);
+        printf("f_axion_mscf = %e \n", pba->f_axion_mscf[n_mscf]);
         pba->f_ede_mscf[n_mscf]=0.0;
        //n_mscf printf("f_ede_mscf[n_mscf]%e",f_ede_mscf[n_mscf]);
         pba->log10_z_c_mscf[n_mscf]=1;
