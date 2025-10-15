@@ -3156,8 +3156,8 @@ int background_initial_conditions(
       for(k = 0; k<pba->N_mscf; k++){
         //print("2992 reached background.c, doing stuff\n");
         //print("index_bi_phi_mscf = %e", pba->index_bi_phi_mscf);
-        pvecback_integration[pba->index_bi_phi_mscf+k] = pba->theta_ini_mscf[k];
-        pvecback_integration[pba->index_bi_phi_prime_mscf+k] = pba->theta_prime_ini_mscf[k];
+        pvecback_integration[pba->index_bi_phi_mscf+k] = pba->phi_ini_mscf[k];
+        pvecback_integration[pba->index_bi_phi_prime_mscf+k] = pba->phi_prime_ini_mscf[k];
         printf("pba->phi_ini_mscf[%d]%f", k, pba->theta_ini_mscf[k]);
 
     //  }
