@@ -2214,8 +2214,9 @@ int input_try_unknown_parameters(double * unknown_parameter,
 
  
 //  for (i=0; i < unknown_parameters_size - 2*param+2; i++) {
-  for (i=0; i < unknown_parameters_size; i++) {
-    if ( (strcmp(pfzw->fc.name[pfzw->unknown_parameters_index[i]], "alpha_squared_mscf") == 0)|| (strcmp(pfzw->fc.name[pfzw->unknown_parameters_index[i]], "power_of_mu_mscf") == 0)){
+  for (i=0; i < unknown_names_size; i++) {
+//    if ( (strcmp(pfzw->fc.name[pfzw->unknown_parameters_index[i]], "alpha_squared_mscf") == 0)|| (strcmp(pfzw->fc.name[pfzw->unknown_parameters_index[i]], "power_of_mu_mscf") == 0)){
+    if ((pfzw->fc.name[pfzw->unknown_parameters_index[i]] == "alpha_squared_mscf")||(pfzw->fc.name[pfzw->unknown_parameters_index[i]] == "power_of_mu_mscf")){
        printf("gleruglurgh\n");
         //   // for (n_mscf = 0; n_mscf < ba.N_mscf; n_mscf++){
         //     /* destination buffer in the dummy file_content */
@@ -2237,20 +2238,23 @@ int input_try_unknown_parameters(double * unknown_parameter,
         //     }
         // // }
   }else{
+  printf("here reached glirb?");
     class_sprintf(pfzw->fc.value[pfzw->unknown_parameters_index[i]],"%.20e",unknown_parameter[i]);
     }
   }
-   printf("here reached?");
+  printf("here reached glorb?");
  
   class_call(input_read_precisions(&(pfzw->fc),&pr,&ba,&th,&pt,&tr,&pm,&hr,&fo,&le,&sd,&op,
                                    errmsg),
              errmsg,
              errmsg);
 
+  printf("here reached glurb?");
   class_call(input_read_parameters(&(pfzw->fc),&pr,&ba,&th,&pt,&tr,&pm,&hr,&fo,&le,&sd,&op,
                                    errmsg),
              errmsg,
              errmsg);
+  printf("here reached glarb?");
   if (pfzw->do_shooting_mscf == _TRUE_){
     for (i=0, j=0; i < unknown_parameters_size- 2*(ba.N_mscf-1); i++,j++){
       // printf("pfzw->fc.name[pfzw->unknown_parameters_index[%d]] = %s\n", i, pfzw->fc.name[pfzw->unknown_parameters_index[i]]);
