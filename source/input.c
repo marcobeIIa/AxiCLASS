@@ -2214,7 +2214,7 @@ int input_try_unknown_parameters(double * unknown_parameter,
 
  
 //  for (i=0; i < unknown_parameters_size - 2*param+2; i++) {
-  for (i=0; i < unknown_names_size; i++) {
+  for (i=0; i < unknown_names_size - 2*param; i++) {
 //    if ( (strcmp(pfzw->fc.name[pfzw->unknown_parameters_index[i]], "alpha_squared_mscf") == 0)|| (strcmp(pfzw->fc.name[pfzw->unknown_parameters_index[i]], "power_of_mu_mscf") == 0)){
     if ((pfzw->fc.name[pfzw->unknown_parameters_index[i]] == "alpha_squared_mscf")||(pfzw->fc.name[pfzw->unknown_parameters_index[i]] == "power_of_mu_mscf")){
        printf("gleruglurgh\n");
