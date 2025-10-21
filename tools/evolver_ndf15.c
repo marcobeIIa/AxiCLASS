@@ -218,7 +218,7 @@ int evolver_ndf15(
     for(ii=1;ii<=neq;ii++){
       if (interpidx[ii]==_TRUE_) numidx++;
     }
-    printf("%d/%d ",numidx,neq);
+    //printf("%d/%d ",numidx,neq);
   }
 
   htspan = fabs(tfinal-t0);

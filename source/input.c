@@ -429,7 +429,7 @@ int input_read_from_file(struct file_content * pfc,
                             errmsg),
              errmsg,
              errmsg);
-  printf("pba->shooting_done_mscf = %d \n",pba->shooting_done_mscf);
+//  printf("pba->shooting_done_mscf = %d \n",pba->shooting_done_mscf);
   /** Update structs with input that is potentially updated after shooting */
   class_call(input_read_parameters(pfc,ppr,pba,pth,ppt,ptr,ppm,phr,pfo,ple,psd,pop,
                                     errmsg),
@@ -1325,7 +1325,7 @@ class_call(parser_read_string(pfc,"do_shooting",&string1,&flag1,errmsg),
     free(fzw.target_name);
     free(fzw.target_value);
   }
-  printf("exited input find root\n");
+  //printf("exited input find root\n");
   return _SUCCESS_;
 
 }
