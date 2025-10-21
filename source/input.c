@@ -435,7 +435,7 @@ int input_read_from_file(struct file_content * pfc,
                                     errmsg),
               errmsg,
               errmsg);
-   printf("starting to read input parameters...\n");
+   //printf("starting to read input parameters...\n");
   if (has_shooting == _TRUE_ && pba->shooting_failed == _TRUE_) {
     // Shooting failed, but error must be thrown in background in order to trigger a
     // runtime error, so here we skip the rest and go straight to background
@@ -445,7 +445,6 @@ int input_read_from_file(struct file_content * pfc,
   /** Write info on the read/unread parameters. This is the correct place to do it,
       since we want it to happen after all the shooting business,
       and after the final reading of all parameters */
-   printf("input write info\n");
   class_call(input_write_info(pfc,pop,
                               errmsg),
              errmsg,
@@ -463,7 +462,6 @@ int input_read_from_file(struct file_content * pfc,
                errmsg);
   }
 
-   printf("input write inf doneo\n");
   return _SUCCESS_;
 
 }

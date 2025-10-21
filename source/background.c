@@ -1362,7 +1362,6 @@ int background_init(
         // printf("phi prime ini = %e \n", pba->phi_prime_ini_mscf[n_mscf]);
         }
      }
-     printf("exited mscf territory in background_init\n");
 
   /** - check that input parameters make sense and write additional information about them */
   class_call(background_checks(ppr,pba),

@@ -1266,14 +1266,14 @@ int numjac(
 
   /* Sparse calculation?*/
   if ((jac->use_sparse)&&(jac->repeated_pattern >= jac->trust_sparse)){
-     printf("\n Sparse calculation..neq=%d, has grouping=%d",neq,jac->has_grouping);
+     //printf("\n Sparse calculation..neq=%d, has grouping=%d",neq,jac->has_grouping);
     /* Everything done sparse'ly. Do we have a grouping? */
     if (jac->has_grouping==0){
       jac->max_group = column_grouping(jac->spJ,jac->col_group,jac->col_wi);
       jac->has_grouping = 1;
     }
     colmax = jac->max_group+1;
-       printf("\n                ->groups=%d/%d.",colmax,neq);  
+      // printf("\n                ->groups=%d/%d.",colmax,neq);  
     for(j=1;j<=colmax;j++){
       /*loop over groups */
       group = j-1;
