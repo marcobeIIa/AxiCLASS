@@ -14,6 +14,7 @@ test_lensedCls.py
 ./maxiCLASSy.py
 ./padrini.py
 ./test_lensedCls.py
+./external/.DS_Store
 ./external/HMcode/hmcode.c
 ./external/HMcode/hmcode.h
 ./external/Halofit/halofit.c
@@ -70,6 +71,7 @@ test_lensedCls.py
 ./external/heating/injection.h
 ./external/heating/noninjection.c
 ./external/heating/noninjection.h
+./external_fz/.DS_Store
 ./external_fz/DarkAges_Example.py
 ./external_fz/Fallback.dat
 ./external_fz/VERSION
@@ -159,13 +161,21 @@ test_lensedCls.py
 ./include/transfer.h
 ./include/trigonometric_integrals.h
 ./main/class.c
+./python/.DS_Store
 ./python/README
 ./python/cclassy.pxd
+./python/classy.cpp
 ./python/classy.pyx
 ./python/extract_errors.py
 ./python/interface_generator.py
+./python/libclass.a
 ./python/setup.py
 ./python/test_class.py
+./source/.background.c.swk
+./source/.background.c.swl
+./source/.background.c.swm
+./source/.background.c.swn
+./source/.background.c.swo
 ./source/background.c
 ./source/distortions.c
 ./source/fourier.c
