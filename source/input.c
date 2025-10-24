@@ -3146,10 +3146,10 @@ int input_read_parameters_general(struct file_content * pfc,
     pba->H0 = param1*1.e3/_c_;
     pba->h = param1/100.;
   }
-  // if (flag2 == _TRUE_){
-  //   pba->H0 = param2*1.e5/_c_;
-  //   pba->h = param2;
-  // }
+   if (flag2 == _TRUE_){
+     pba->H0 = param2*1.e5/_c_;
+     pba->h = param2;
+   }
 
 
 
