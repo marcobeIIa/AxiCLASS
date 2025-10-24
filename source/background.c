@@ -1226,7 +1226,6 @@ int background_init(
      }
   if(pba->has_mscf == _TRUE_){
 
-     printf("entering mscf territory in background_init\n");
         for (n_mscf = 0; n_mscf <pba->N_mscf; n_mscf++){
             if(pba->f_axion_mscf[n_mscf] > 0 && pba->m_mscf[n_mscf] > 0){
 //              printf("nonshooting case\n");
@@ -1491,7 +1490,6 @@ int background_free_input(
       free(pba->scf_parameters);
   }
   if (pba->Omega0_mscf_tot != 0. || pba->N_mscf != 0){
-    printf("1344 reached background.c, freeing memory\n");
     //CHECK i am freeing everything, is this right??????
     free(pba->m_mscf);
     free(pba->Omega0_mscf);

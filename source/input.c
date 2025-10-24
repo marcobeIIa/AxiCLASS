@@ -863,7 +863,7 @@ class_call(parser_read_string(pfc,"do_shooting",&string1,&flag1,errmsg),
   );
   // printf("in fzero workspace, N_mscf = %d \n",fzw.N_mscf);
   if (fzw.do_shooting_mscf &= _TRUE_ ){
-    printf("N_mscf != 0\n");
+//    printf("N_mscf != 0\n");
     //class_alloc(fzw.m_mscf, fzw.N_mscf*sizeof(double),errmsg);
     // class_read_list_of_doubles_or_default("m_mscf",fzw.m_mscf,0.,fzw.N_mscf);
     //class_alloc(fzw.f_axion_mscf, fzw.N_mscf*sizeof(double),errmsg);
@@ -965,7 +965,7 @@ class_call(parser_read_string(pfc,"do_shooting",&string1,&flag1,errmsg),
                                                  errmsg),
                  errmsg,
                  errmsg);
-      printf("needs_shooting %d\n", needs_shooting);
+//      printf("needs_shooting %d\n", needs_shooting);
       if (needs_shooting == _TRUE_){
         if(input_verbose > 10){
           printf("Found target: %s, target value =  %e\n",target_namestrings[index_target],param1);
@@ -1136,7 +1136,6 @@ class_call(parser_read_string(pfc,"do_shooting",&string1,&flag1,errmsg),
                  errmsg);
 
       /* Use multi-dimensional Newton method */
-       printf("pre bad line \n");
       class_call_try(fzero_Newton(input_try_unknown_parameters,
                                   x_inout,
                                   dxdF,
@@ -1150,7 +1149,6 @@ class_call(parser_read_string(pfc,"do_shooting",&string1,&flag1,errmsg),
                      errmsg,
                      pba->shooting_error,
                      shooting_failed=_TRUE_);
-       printf("post bad line \n");
 
       /* Store xzero */
       // This needs to be done with enough accuracy. A standard double has a relative
@@ -1210,7 +1208,7 @@ class_call(parser_read_string(pfc,"do_shooting",&string1,&flag1,errmsg),
     /** Free arrays allocated */
 //    if(pba->N_mscf > 0){
       /*CHECK i think we are freeing these */
-      printf("entering freeing section\n");
+//      printf("entering freeing section\n");
       //free(fzw.m_mscf);
       //free(fzw.f_axion_mscf);
       //free(param1_arr);
@@ -1631,7 +1629,7 @@ int input_get_guess(double *xguess,
                     struct fzerofun_workspace * pfzw,
                     ErrorMsg errmsg){
 
-   printf("entering input_get_guess... \n");
+//   printf("entering input_get_guess... \n");
   /** Summary: */
 
   /** Define local variables */
@@ -1678,7 +1676,7 @@ int input_get_guess(double *xguess,
   /** Estimate dxdy */
   index_guess_long = 0;
   for (index_guess=0; index_guess < pfzw->target_size; index_guess++,index_guess_long++) {
-    printf("index_guess_long at start of switch = %d\n", index_guess_long);
+    //printf("index_guess_long at start of switch = %d\n", index_guess_long);
     if (index_guess_long >= pfzw->target_size_mscf) {
       class_stop("somehow index_guess_long >= pfzw->target_size_mscf, this should not happen",errmsg);
     }
@@ -2162,7 +2160,7 @@ int input_try_unknown_parameters(double * unknown_parameter,
                                  double * output,
                                  ErrorMsg errmsg){
   /** Summary */
-   printf("entering input_try_unknown_parameters... \n");
+//   printf("entering input_try_unknown_parameters... \n");
 
   /** Define local variables */
   struct precision pr;        /* for precision parameters */
@@ -2205,7 +2203,7 @@ int input_try_unknown_parameters(double * unknown_parameter,
   class_call(parser_read_int(&(pfzw->fc),"N_mscf",&param,&flag,errmsg),errmsg,errmsg);
   if (flag == _FALSE_)  
     param = 0;
-   printf("input_try_unknown_parameters: unknown_parameters_size = %d, unknown_names_size = %d, N_mscf = %d\n", unknown_parameters_size, unknown_names_size, param);
+//   printf("input_try_unknown_parameters: unknown_parameters_size = %d, unknown_names_size = %d, N_mscf = %d\n", unknown_parameters_size, unknown_names_size, param);
   /** Read input parameters */
   // This needs to be done with enough accuracy. A standard double has a relative
   // precision of around 1e-16, so 1e-20 should be good enough for the shooting
@@ -2236,23 +2234,19 @@ int input_try_unknown_parameters(double * unknown_parameter,
         //     }
         // // }
   }else{
-  printf("here reached glirb?");
     class_sprintf(pfzw->fc.value[pfzw->unknown_parameters_index[i]],"%.20e",unknown_parameter[i]);
     }
   }
-  printf("here reached glorb?");
  
   class_call(input_read_precisions(&(pfzw->fc),&pr,&ba,&th,&pt,&tr,&pm,&hr,&fo,&le,&sd,&op,
                                    errmsg),
              errmsg,
              errmsg);
 
-  printf("here reached glurb?");
   class_call(input_read_parameters(&(pfzw->fc),&pr,&ba,&th,&pt,&tr,&pm,&hr,&fo,&le,&sd,&op,
                                    errmsg),
              errmsg,
              errmsg);
-  printf("here reached glarb?");
   if (pfzw->do_shooting_mscf == _TRUE_){
     for (i=0, j=0; i < unknown_parameters_size- 2*(ba.N_mscf-1); i++,j++){
       // printf("pfzw->fc.name[pfzw->unknown_parameters_index[%d]] = %s\n", i, pfzw->fc.name[pfzw->unknown_parameters_index[i]]);
@@ -3132,23 +3126,23 @@ int input_read_parameters_general(struct file_content * pfc,
   class_call(parser_read_double(pfc,"H0",&param1,&flag1,errmsg),
              errmsg,
              errmsg);
-  // printf("in input_read_parameters, H0 = %e\n", param1);
-  class_call(parser_read_double(pfc,"h",&param2,&flag2,errmsg),
-             errmsg,
-             errmsg);
-  // printf("in input_read_parameters, h = %e\n", param2);
+//   printf("in input_read_parameters, H0 = %e\n", param1);
+  //class_call(parser_read_double(pfc,"h",&param2,&flag2,errmsg),
+   //          errmsg,
+    //         errmsg);
+ // printf("in input_read_parameters, h = %e\n", param2);
   /* Test */
-  class_test((flag1 == _TRUE_) && (flag2 == _TRUE_),
-             errmsg,
-             "You can only enter one of 'h' or 'H0'.");
+ // class_test((flag1 == _TRUE_) && (flag2 == _TRUE_),
+  //          errmsg,
+   //          "You can only enter one of 'h' or 'H0'.");
   /* Complete set of parameters */
   if (flag1 == _TRUE_){
     pba->H0 = param1*1.e3/_c_;
     pba->h = param1/100.;
   }
   // if (flag2 == _TRUE_){
-  //   pba->H0 = param2*1.e5/_c_;
-  //   pba->h = param2;
+   //  pba->H0 = param2*1.e5/_c_;
+    // pba->h = param2;
   // }
 
 

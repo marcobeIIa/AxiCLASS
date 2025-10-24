@@ -100,7 +100,7 @@ params = {
     "tol_shooting_deltaF":0.01,
     "background_Nloga": 100000,
     # Special block
-    "N_mscf": 3,
+    "N_mscf": 10,
     "theta_ini_mscf": 2.6,
     "theta_prime_ini_mscf": 0.0,
     "fraction_maxion_ac": 0.05,
