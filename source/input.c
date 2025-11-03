@@ -1038,11 +1038,11 @@ class_call(parser_read_string(pfc,"do_shooting",&string1,&flag1,errmsg),
       index_target = target_indices[counter];
       if((target_namestrings[index_target] == "log10_maxion_ac") || (target_namestrings[index_target] == "fraction_maxion_ac")){
         class_call(parser_read_list_of_doubles(pfc, target_namestrings[index_target], &(fzw.N_mscf),&param1_arr, &flag1, errmsg), 
-                    errmsg,
-                    errmsg);
-      for (n_mscf = 0; n_mscf < fzw.N_mscf; n_mscf++, counter_mscf++){
-        /* store name of target parameter */
+                    errmsg,errmsg);
+                 /* store name of target parameter */
         fzw.target_name[counter] = index_target;
+      for (n_mscf = 0; n_mscf < fzw.N_mscf; n_mscf++, counter_mscf++){
+
         /* store target value of target parameter */
         param1 = param1_arr[n_mscf];
         fzw.target_value[counter_mscf] = param1;
