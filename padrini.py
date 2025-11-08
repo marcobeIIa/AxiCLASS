@@ -114,16 +114,18 @@ write_class_ini(params, "padr.ini")
 ini_file = "padr.ini"
 
 # Run CLASS with that ini
-try:
-    result = subprocess.run(
-        ["./class", ini_file],
-        check=True,
-   #     capture_output=True,
-   #    text=True
-    )
-    print("CLASS finished successfully.")
-    print("stdout:\n", result.stdout)
-    print("stderr:\n", result.stderr)
-except subprocess.CalledProcessError as e:
-    print("Error while running CLASS:")
-    print(e.stderr)
+run_class = 0 #this parameter decides if we are just computing the ini array or actually running class
+if run_class:
+    try:
+        result = subprocess.run(
+            ["./class", ini_file],
+            check=True,
+       #     capture_output=True,
+       #    text=True
+        )
+        print("CLASS finished successfully.")
+        print("stdout:\n", result.stdout)
+        print("stderr:\n", result.stderr)
+    except subprocess.CalledProcessError as e:
+        print("Error while running CLASS:")
+        print(e.stderr)
