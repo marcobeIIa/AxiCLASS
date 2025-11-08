@@ -103,13 +103,13 @@ params = {
     "output_verbose":12,
 
     # Special block
-    "N_mscf":3,
+    "N_mscf":9,
     "theta_ini_mscf": 2.6,
     "theta_prime_ini_mscf": 0.0,
 #    "f_axion_mscf": 0.1,
     "f_axion_range": (0.1,0.1),
     "n_axion_mscf": 3,
-    "log10_m_range": (0,8),
+    "log10_m_range": (np.log10(3.14e4),np.log10(1.8e7)),
 }
 
 write_class_ini(params, "madr.ini")
