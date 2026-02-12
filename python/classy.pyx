@@ -2945,6 +2945,16 @@ cdef class Class:
                 if (self.pt.has_pk_matter == _FALSE_):
                     raise CosmoSevereError("No power spectrum computed. In order to get sigma8, you must add mPk to the list of outputs.")
                 value = self.fo.sigma8[self.fo.index_pk_m]
+            elif name == 'S8':
+                self.compute(["fourier"])
+                if (self.pt.has_pk_matter == _FALSE_):
+                    raise CosmoSevereError(
+                        "No power spectrum computed. In order to get S8, you must add mPk to the list of outputs."
+                    )
+                value = (
+                    self.fo.sigma8[self.fo.index_pk_m]
+                    * np.sqrt(self.ba.Omega0_m / 0.3)
+                )
             elif name == 'sigma8_cb':
                 self.compute(["fourier"])
                 if (self.pt.has_pk_matter == _FALSE_):
